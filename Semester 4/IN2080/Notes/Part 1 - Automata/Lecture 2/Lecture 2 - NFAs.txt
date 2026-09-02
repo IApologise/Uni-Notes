@@ -1,0 +1,12 @@
+Some automata might not be determenistic, meaning that from some state and the same input it may "choose" to go to
+different states (it is still finite and always halts), i.e. it may branch. To see the example check out
+"NFA_Example.png". Note that the transitions might also require nothing to hop from one state to another, e.g.
+the input so far remains unchanged, but the state in which the automata is changes denoted with a transition edge ε.
+
+Notice that both accept regular languages, and since DFA is a special case of NFA, whether something is or isn't a
+regular langauge is determined by whether there exists an NFA (or a DFA) that accepts the language (e.g. all words
+without changing the given NFA).
+
+Also, if NFA accepts Q set of states, then to make an equal form of DFA we must create one that accepts P(Q) amount
+of states to avoid potential infinite loops. There is also something I don't understand completely so I just took
+an example screenshot so I can repilcate it named "DFA=NFA" and "NFA=DFA".

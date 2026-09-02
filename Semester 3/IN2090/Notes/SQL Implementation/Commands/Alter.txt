@@ -1,0 +1,28 @@
+This is a continuation of SQL Core file.
+All the syntax rules there also apply here.
+
+
+
+Data Types:
+| SCHEMA  ->  Altering a schema
+| TABLE  ->  Altering a table
+| COLUMN  ->  Alters or creates a collumn
+
+
+
+General Helper Instructions:
+| ADD {Target}  ->  Adds the target to a schema or table. We can add whatever
+| RENAME TO {Name}  ->  Altering by renaming the target, so a table or a schema
+
+
+
+Instruction Examples:
+|
+| ALTER TABLE Students
+| RENAME TO Students2025;
+|
+| ALTER TABLE Courses
+| ADD COLUMN Professor text;
+|
+| ALTER TABLE Courses
+| ADD CONSTRAINT cid_pk PRIMARY KEY (cid);  -- Stands for Course ID Primary Key

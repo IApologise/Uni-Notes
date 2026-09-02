@@ -1,0 +1,97 @@
+--- Introduction ---
+Rules and structure here is similar that to Sequent Calculus LK,
+but in here we also consider worlds and how rules apply then.
+
+So, instead of writing p, q, p → q, etc. we write w : p, w : q,
+and so on. We basically specify in which world the assumptions
+and conclusions are made in.
+
+Note that termination might never occur, the SAT might never
+halt. For that we create what's called a blocking condition.
+More on blocking conditions later (probably in ALC).
+
+Note that if we have a model other than K, like a transitive
+one (K4), then we have more relation (label) rules like:
+
+Γ, wRv, vRu, wRu ⊢ ∆
+--------------------- trans
+  Γ, wRv, vRu ⊢ ∆
+
+This is just an example, but you get the gist. If you don't then
+read further on rules, especially the new ones, and return later.
+
+
+
+
+
+--- Copy/Pasted Rules (Excluding Quantifiers) ---
+
+-------------------- axiom
+Γ, w : A ⊢ ∆, w : A
+
+
+
+Left/Right structural rules:
+
+  Γ ⊢ ∆                    Γ ⊢ ∆
+------------- W-left   ------------- W-right
+Γ, w : A ⊢ ∆           Γ ⊢ ∆, w : A
+
+Γ, w : A, w : A ⊢ ∆           Γ ⊢ ∆, w : A, w : A
+------------------- C-left   --------------------- C-right
+  Γ, w : A ⊢ ∆                   Γ ⊢ ∆, w : A
+
+Γ, w : A, v : B ⊢ ∆           Γ ⊢ ∆, w : A, v : B
+-------------------- P-left   -------------------- P-right
+Γ, v : B, w : A ⊢ ∆           Γ ⊢ ∆, v : B, w : A
+
+
+
+Left/Right logical rules:
+
+ Γ ⊢ ∆, w : A            Γ, w : A ⊢ ∆
+-------------- ¬-left   --------------- ¬-right
+Γ, w : ¬A ⊢ ∆           Γ ⊢ ∆, w : ¬A
+
+Γ, w : A, w : B ⊢ ∆,           Γ ⊢ ∆, w : A   Γ ⊢ ∆, w : B
+--------------------- ∧-left   ----------------------------- ∧-right
+  Γ, w : A ∧ B ⊢ ∆                   Γ ⊢ ∆, w : A ∧ B
+
+Γ, w : A ⊢ ∆   Γ, w : B ⊢ ∆             Γ ⊢ ∆, w : A, w : B
+----------------------------- ∨-left   ---------------------- ∨-right
+Γ, w : A ∨ B ⊢ ∆                         Γ ⊢ ∆, w : A ∨ B
+
+Γ ⊢ ∆, w : A   Γ, w : B |- ∆            Γ, w : A ⊢ ∆, w : B
+----------------------------- →-left   -------------------- →-right
+     Γ, w : A → B ⊢ ∆                   Γ ⊢ ∆, w : A → B
+
+
+
+--- New Rules (Modal Version of Quantifiers) ---
+
+Since we travel between worlds, to define rules for □ and ◇ we
+must write down which relations are used between worlds. So for
+example, "Γ, wRv, v : A, w : □A ⊢ ∆" where "wRv" is a relation.
+
+Of course worlds w, v, etc. must be in W, relations wRv, etc.
+so (w, v) must be in R, and since we are working with frames,
+V is supposed to be empty (I think we work with frames).
+
+Note that in † we can only create new labels (relations), if
+we can't then we can't apply them. Rules that don't have †
+can always be applied. Once they are applied, used labels
+are assumed if they weren't yet. Note that we also keep
+what was before, and don't if the rule has a † symbol.
+
+Γ, wRv, v : A, w : □A ⊢ ∆           Γ, wRv ⊢ ∆, v : A
+-------------------------- □-left   ------------------ □-right †
+   Γ, wRv, w : □A ⊢ ∆                Γ ⊢ ∆, w : □A
+
+Γ, wRv, v : A ⊢ ∆             Γ, wRv ⊢ ∆, v : A, w : ◇A
+----------------- ◇-left †   --------------------------- ◇-right
+ Γ, w : ◇A ⊢ ∆                  Γ, wRv ⊢ ∆, w : ◇A
+
+Imporatant note: to satisfy ◇A in a world w there must be at least
+one world v accessible from w (so wRv) that satisfies A. For □A, all
+the worlds accessible from w (so wRx) must satisfy A to satisfy □A.
+Note that with □, there might be 0 and still be true, but not for ◇.

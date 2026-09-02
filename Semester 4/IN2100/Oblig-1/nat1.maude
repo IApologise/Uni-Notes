@@ -1,0 +1,15 @@
+in less-than.maude
+
+fmod LIKHET is
+  protecting NAT< .
+
+  op _==_ : Nat Nat -> Boolean .
+
+  vars M N : Nat .
+
+  eq 0 == 0 = true .
+  eq 0 == s(N) = false .
+  eq s(M) == 0 = false .
+  eq s(M) == s(N) = M == N .
+
+endfm

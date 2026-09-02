@@ -1,0 +1,17 @@
+You can simply just start those programs right away.
+There are instructions included in the programs themselves.
+I also added comments on how it does stuff. I hope it's enough.
+
+main.py is the SAT Solver (not optimized)
+test.py generates all the possible combinations
+
+I could have optimized main.py by making it consider
+one branch at a time instead of all at the same time,
+and probably introduced many more better techniques.
+However, I prioritized readebility and simplicity.
+(I also didn't want to think too hard on it)
+
+Therefore, the most my program can handle quickly
+is about 100 clauses. I used my test.py to check.
+This is way worse than the millions that the other
+SAT Solvers can handle (this makes me feel bad now).

@@ -1,0 +1,23 @@
+This is a continuation of SQL Core file.
+All the syntax rules there also apply here.
+
+Most of the command is already explained in the
+SQL Core file, so here are just some examples.
+
+Note that these commands can be executed from bash
+in linux using "cat ..." commands. No examples here
+though, check video 04-01.mp4 at timestamp 15:00.
+
+
+
+Helper Instructions:
+| DELIMETER '{Separator}'  ->  A piece of string that serves
+|  ->  as the separator between the collumns
+
+
+
+Instruction Examples:
+|
+| COPY persons
+| FROM '~/documents/people.csv' DELIMITER ',' NULL AS '';
+|

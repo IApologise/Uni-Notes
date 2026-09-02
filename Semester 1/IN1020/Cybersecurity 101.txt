@@ -1,0 +1,25 @@
+Cybersecurity 101
+
+
+
+Hashing:
+A function which takes in a full input like a password and scrambles it.
+Hashes are not meant to be reversed like encryption and decryption is.
+
+What defines a good hash?
+- Result is completely random and unpredictable.
+- The length is always the same.
+- Even a tiniest change in the input yields a completely different result.
+
+Salting:
+This is a feature for hashing which allows multiple of the same inputs to be created.
+An example is having the same password as other user. Hashes would become the same,
+so to fix that we add an identifier like a random number or user id for example to
+create a unique hash. This identifier is not supposed to be hidden though.
+
+Peppering:
+This is an extra layer of defense for salting to prevent from hacking hashes.
+Since salting, which is not hidden, is being added it works as an extra clue for
+brute-forcing for hackers which makes the process much faster. To combat this we
+add a hidden constant to the passwords which even if the server is hacked, this
+value is hidden and is required in hacking the hash. Still possible, but too long.

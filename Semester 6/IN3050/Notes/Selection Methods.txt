@@ -1,0 +1,45 @@
+Parent Selection:
+
+1. Roulette Based Selection:
+   - Probability to survive based on score
+   - Allows more control over selection with an integrated pressure
+   - Takes all competitors into account
+
+  To calculate the odds of a roulette based selection you take the
+  total score and divide the candidate's score by the total, that is
+  its chance to become a parent.
+
+
+
+2. Rank Based Selection:
+   - Score determines your rank which determines probability of survival
+   - Also allows lots of control pressure via probability of selecting worse
+     answers randomly
+   - This punishes small differences severely, and big differences much less
+   - Also takes all competitors into account (except for parallells)
+
+   To calculate the odds of a rank based selection you take the total
+   score where if there are n candidates the total score becomes a sum
+   so n(n + 1)/2 where the first place has a score of n and last place
+   has a score of 1, so odds of a candidate becoming a parent where s
+   is the candidate's score is s / (n(n + 1)/2) or 2s / n(n + 1).
+
+
+
+3. Tournament Based Selection:
+   - Taking a single or few winners from the tournament
+   - Allows to control pressure via tournament size and competitor selection
+   - Used in case global evaluation is hard
+
+   To calculate the odds in tournament based selection you divide
+   the candidates into groups. Within those groups the candidates
+   are compared by their fitness score and ranked best to worst.
+   When choosing a parent, the best one is chosen from each group.
+
+
+
+Elitism (Optional Implementation):
+- Always keep some of the best parents, the rest may be offspring
+- Reason: Make sure that we do not lose best candidates
+
+

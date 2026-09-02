@@ -1,0 +1,95 @@
+--- Memory Allocation & Management Algorithms ---
+Processes get memory allocated to some place in memory. There are three popular methods on how to decide how much
+memory can be allocated, first is called fixed or static partitioning which is where the process gets some pre-
+determined amount of memory in a single slot, 8MB slot for a process that requires 3MB. This of course creates 5MB
+of unused space which is called internal fragmentation: Allocated space not used by the process.
+
+This is bad if we want to run a process that is larger than the largest slot we got. This is where the second
+method comes in called dynamic partitioning. There we allocate the exact amount of memory space to the process as
+we need. The problem with that is that once the process is done it creates a hole of that size which can not be
+used by a process of bigger size, also known as external fragmentation: unused space between processes is too
+small. To fix this we need to rearange memory addresses of all of the processes in memory, and it is really slow.
+Restarting the PC is also a solution, but that is an even slower one.
+
+The third method is basically splitting memory allocation space into 2 until it is exactly enough for a process to
+work or can't be split further. Whenever the process is done we merge all the space we can with the one that was
+released until it becomes the highest factor of 2 it can be. This method is called the Buddy system.
+
+There is also a method called Segmentation which is where the process is split into parts when possible as to not
+overlap with other processes, and it gives more control over what segments are read-only, or can be written to,
+etc. The only thing that we need to do is to just keep track of when these parts end and start, but that is not
+OS's problem anymore, that is compiler's (I think). It basically adds an extra step to the way address lookup
+works, because now we also have to find the segment that the address we are looking for is in. Note that this is
+not enough on its own, it does not assign how much memory the process or its parts are allowed to use. However, it
+is often implemented as a dynamic partitioning, so the same thing but with segments. The only reason to use
+segmentation is for memory security reasons.
+
+External fragmentation caused by segmentation is bad and its size is uncontrollable, so we did what we could do
+best and decided to control it as best as we could by shifting towards Paging which causes internal fragmentation
+instead. The idea is the same as with static partitioning, but since we got segmentation implemented we might as
+well apply the same logic to the segments. We got pages which are the same as these slots in static partitioning,
+but their sizes are often miniscule (4KB). Each segment gets N amount of pages, and each segment is a part of a
+process. Segments are there for memory security reasons, and pages are there to minimize fragmentation. Pages are
+scattered all around the memory, but we got address lookup which fixes this issue (at a cost of extra CPU power).
+
+--- Virtual Memory ---
+Physical memory is the type of memory that we can get fast, the memory that doesn't have to be "loaded in".
+Specifically, we are talking about RAM. Disk or SSD is what makes virtual memory possible. Virtual memory is the
+illusion of physical memory. Basically, whenever we want to load data in we might not have enough space in our
+physical memory (RAM), so we load in as much as we can. Virtual memory is the illusion that all of it was loaded
+into the physical memory, when in reality only some of it did. We do this because sometimes there just isn't enough
+memory space, everything is relevant for all of the requested processes to work.
+
+Anyways, here is how it works: When we have to get the data that we think we loaded in from SSD into RAM, we try
+looking up the address. But if it was actually not loaded in (virtual memory lied), then we have to actually load
+it in from the SSD into RAM. However, since RAM is full, we have to free up some memory that is supposedly
+important, but we do it anyways to complete the current request since that takes priority. What we did is we
+released some memory from RAM, and replaced its place with something that was needed for the current request. Yes,
+the other process will need to load that released memory back in, but it was unavoidable to keep up with the
+demand, and yes it is slow. So basically, in virtual memory we got addresses that overlap. Those that do, only one
+of them can be loaded in at a time into the physical memory (RAM).
+
+To do a memory lookup each page has a few bytes of memory allocated. Out of those bytes, some are the addresses
+that point to a virtual page, and the rest are the pointers to the memory within the page. Then we use the virtual
+page address and a primitive map (which has duplicate outputs) to get the physical page address. The map also
+points out if that memory is already loaded in or not. If it is then we go to that physical address page + space
+within the page and get the data from that memory.
+
+If it isn't then we load it in, then we get what is called a "Page Fault". Handling page fault is a tough thing to
+do. Because that means that there is a memory that is potentially in use right now by some process and we might not
+be able to replace it, so we have to do a context-switch. Figuring it all out is expensive, and many algorithms
+tackle it differently (moslty choosing which memory to release to make space for current one). Check out a
+screenshot on it. As for the algorithm, the newest one that was implemented is called LRU - Least Recently Used, is
+the one replaced.
+
+However, sometimes LRU is really bad (extreme cases), and many algorithms have their own, so this is a tradeoff to
+consider when programming. What is OS and apps made on it used for, how to minimize these extreme cases. Sometimes
+OS have multiple implemented for various types of apps. There are 2 types in general: Block caching and Stream
+caching. Block is basically when the OS thinks that data in memory is unrelated to each other. Stream predicts data
+that are close to each other in memory to be likely related to each other.
+
+For example, Block is bad when similar data is being released and loaded back into memory often, like if you are
+rewatching a video or going back to review some parts of it, that is what Stream is good at and what it solves. The
+algorithm for it is called L/MRP - Least/Most Relevant for Presentation. Sometimes, like when streaming a video
+from some server on the internet, that server is likely running L/MRP. However, multiple users can stream at the
+same time which is where the relevancy value of certain frames (data in memory) is combined into an average
+"global" value. The downside is obviously the more complicated code and extra steps which could be unecessary
+depending on what you need to do.
+
+IC - Interval Caching is similar to L/MRP, the only difference is the global value that is being calculated,
+because it actually gives extra points to the relevant data that is between the two currently active frames in
+video streaming (or just data in memory, doesn't matter what it actually represents). So not just the average,
+instead we calculate the interval (the distance between the two), and keep as many of the ones with the shortest
+intervals as we can loaded in our RAM (or just physical memory).
+
+Anyways, This was low scale system with a single lookup table. In reality of 32-bit systems we nest these tables.
+To be specific, we got two of them. One which points to a another address in another table, and that one pointing
+to the page. This takes us 20 bits, the other 9 are used to get the memory from that page, and the rest (3 bits)
+are for security, like can it be accessed by a user (1st), can it be written to (2nd), and whether it is present
+(3rd) or not - whatever that means.
+
+Lastly there was some talk about how sending data was optimized from O(2n) copy time and O(2n) system calls to O(n)
+copy time and O(n) system calls, up to O(0) copy time and O(1) system calls. Also, how context-switches were
+avoided when coppying from application, and how the copied stuff wouldn't be temporarily saved separately. If you
+are wondering, it was all solved by simply giving a pointer to that data skipping the security layer, the command
+for that was something like "sendfile()", not sure what language, but probably C. Didn't bother much with that...

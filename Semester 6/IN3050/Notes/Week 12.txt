@@ -1,0 +1,14 @@
+Policy:
+How an AI chooses to act based on observations. So a transition function,
+a map of sorts from inputs (observations) to outputs (actions). It may
+be determenistic or stochastic (non-deterministic, random). The reason why
+we may want for it to be stochastic because of exploration vs exploitation.
+
+Supervisor:
+This is a part of environemnt that rewards, punishes, or ignores the AI
+based on how well its actions performed in the environment. 
+
+Agent:
+This is what updates the Policy weights during training. Once the feedback
+from the supervisor is received the agent learns from the feedback and either
+reinforces similar action it made in the environment or the opposite.

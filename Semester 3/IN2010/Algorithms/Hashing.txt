@@ -1,0 +1,33 @@
+Hashing is the process of creating a function that maps
+infinite inputs into a finite one. Hashing functions are
+supposed to be have as little collisions as possible. In
+cyber security, hashing has one more requirement which
+is that the input of the function must be as hard to get
+from its output as possible.
+
+In java for example, hashing function takes in a string S
+and the function map size N denoted as H(S, N) where it
+converts each character C in S into an integer value using
+an ASCII table. This value is then added in the following
+way: hashValue = hashValue * 31 + charValue. In the end the
+function returns mod_N(hashValue). Why 31? Because it is
+a prime number and maybe because it is also 2^5 - 1 which
+probably computes faster aswell.
+
+Since hashes are bound to have collisions, we need to handle
+them somehow. with Separate chaining method what we do is
+we simply make it so that the same values end up in the same
+array. However, this forces us to create an array per each
+collision which is bad memory efficiency. In linear probing
+we simply add one more index to the key instead, but deleting
+the item becomes slightly problematic and the efficiency gets
+worse especially after half of the hashmap is filled. 
+
+This concept is called a load factor calculated as n/N where
+n is the amount of items currently in the hashmap and N is the
+max amount the hashmap can currently store. It also forces us to
+rescale the hashmap size once this happens which only partially
+solves the problem (slower than what it once was). Same for when
+the hashmap is too large because memory is used up on something
+that does not exist. The golden rule is to double/half the size.
+We also call this rescaling process rehashing.

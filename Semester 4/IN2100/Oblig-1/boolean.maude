@@ -1,0 +1,14 @@
+set include BOOL off .
+
+fmod BOOLEAN is 
+  sort Boolean .
+  ops true false : -> Boolean [ctor] .
+  op not_ : Boolean -> Boolean [prec 53] .
+  op _and_ : Boolean Boolean -> Boolean [prec 55] .
+  op _or_ : Boolean Boolean -> Boolean [prec 59] .
+
+  var B : Boolean .
+  eq not false = true .        eq not true = false .
+  eq true and B = B .          eq false and B = false .
+  eq true or B = true .        eq false or B = B .
+endfm

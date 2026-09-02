@@ -1,0 +1,27 @@
+In this course (IN3020) we learn how the databases work in background. Namely, how they optimize everything and make
+requests (queries, updates, etc.) faster. This is optimized separately every time the requests are lanunched because
+the optimizations depend on the data currently available, so it is done during runtime.
+
+
+
+Here is how we can optimize joins & simple search, for example in:
+| SELECT B, C, Y
+| FROM R, S
+| WHERE W = X AND A = 3 AND Z = ´a´;
+
+First, note that table R has collumns A to W, whilst S has collumns X to Z. Here, we basically try to delay the
+cross-join as much as possible because we can potentially shorten the amount of combinations we need to take. Here
+for example we can shorten it by first reducing the table R by selecting rows where A = 3, and the table S where
+Z = 'a'. Then we can cross-join these two and select rows where W = X.
+
+Next, to optimize for simple searches of a single collumn, like A = 3 from the previous example, we can try sorting
+the table before hand and using a binary search, whenever we add a new element it would be the wisest to use a binary
+search to insert a new element aswell. The only problem is that we can only sort for a single collumn, this can be
+fixed by using what's called "indexes", but I am not explained yet how it works, check other notes for more.
+
+
+
+Whenever we send requests to the database, they come in sequences called transactions. These requests can come from
+different users at different times which may overlap and such. Kind of like threads in multi-threading. So we ensure
+that ACID holds by creating a transaction manager object which controls this for us. It uses the same tehcnique as
+multi-threading in Java where we lock and unlock certain rows and such, and prevent deadlocks, etc.

@@ -1,0 +1,1 @@
+PLU koder brukt: Ingen

@@ -1,0 +1,26 @@
+Risk assessment is the value when we multiply the possibility of
+something happening (a risk) with the severity that will. This
+is often used to assess whether the resource should be spent
+to make it less frequent or less severe when it happens.
+
+Often times you provide reasons for assessing the probability
+and severity that may happen. Also, by risk we mean whatever
+bad that can happen like getting sick, wounded, damage equipment
+and/or buildings, and such.
+
+When assessing the risk we also want to write about how we can
+reduce these risks, how much resources it will take to reduce it,
+and what risk value we will end up after implementing changes.
+
+There are 3 questions you ask yourself, 1. What can go wrong?
+2. What can you do to prevent it, and 3. What can you do to
+minimize the damage if it happens?
+
+We assess risk whenever we think there might be any such as
+when chemicals are involved, when machines are involved, when
+heavy stuff is involved, psychological and social work environment,
+overworking causing back pain, and much more.
+
+These parties must be involved in risk assessment:
+- Work environment representative
+- Employer & Employees

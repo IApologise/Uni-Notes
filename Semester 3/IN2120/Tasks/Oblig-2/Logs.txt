@@ -1,0 +1,41 @@
+Phase 0:
+
+Looks like i stumbeled upon a yet another intersting file. There is a link "https://cyanpilled.no/" that leads to some sketchy website which asked for my email to "join" them in their cause. I gave them a disposable one to stay safe. Instantly I get a message and a task. I have to go outside?! That was insane... but I did it. Next step was to get "the payload" which was a QR code located in the room 9470 at IFI. Wasn't hard to get there physically. I simply acted as if I was lost but didn't try to draw in too much attention. Anyways, the QR code led me to a rickroll video. I immediately noticed that the length was not correct (from experience, ha-ha), so the video was tweaked in some way. At the end there was a link "https://shorturl.at/UNxuG" which finally gave me a secret file which brought me to phase 1.
+
+
+
+Phase 1:
+
+readme.txt had some questions to me. The group wanted to know what I am capable of, I don't mind answering them but I will do so in the pdf file "IN2120-Oblig2.pdf". Now, back to logs. What I did first is I got curious of those .jpeg files that, once opened, didn't result in a picture, but in an error since the file couldn't be read properly. I assume that is because the file type is wrong and the data inside is actually not meant to be .jpeg at all. I checked their properties, and funny enough all files have the same size (except for the readme.txt). So I opened them all as a .txt instead and found an interesting piece of information in both .jpeg and in an unknown type file that goes something like this (ignoring all the machine code):
+
+"Hei, verden! xor exec Connecting to target host Attempting to breach firewall %d Firewall breached! Infiltrating the mainframe Hostile tracking initiated HIDE! Hide where?
+GPU, CPU, RAM %s CPU
+ NO They found us It's over... They're gone We did it. We fucking did it We're in! Deploy payload? (Y/N) %d
+ Fuck this, we're out Disconnecting.. Payload delivered Success https://shorturl.at/T561d      Usage: <mode> <enc.string> <key>        Meeting fierce resistance, choose target port: 
+19, 8080, or 4500       Breach failed, flee and try again!      The mainframe's our bitch! Let's deploy the payload     Get your shit together, do it!  Deleting logs and removing traces.."
+
+This was an interesting find. I got the url "https://shorturl.at/T561d" which again resulted in a rickroll, and again with the wrong length. However, I couldn't get anything from it, the only weird part is that the video loses about 2 seconds of sound at the end. This could be a distraction, so I will look at it later.
+
+For now, note that from those files I also found "ELF" at the very start and "/lib64/ld-linux-x86-64.so.2". Some googling and it turns out that it is an executable file for linux machines. This also explains why I found "GCC: (Ubuntu 11.4.0-1ubuntu1~22.04)" and more. So I went to my WSL program that I had from before and simply ran the program.
+
+As expected with no arguments it simply prints "Hello World!", just in norwegian... Expected because I found "Usage: <mode> <enc.string> <key>" before in the text file which are the arguments that it takes in when running it where modes are "exec" or "xor". I did run "exec" as an arguemnt, but it was a distraction too (as expected).
+
+Lastly, since I found "1y621y791y7g1y631y651y641y631y7b1y3d1y701y651y3g1y621y731y631y481y7d" in all 3 of those files which I assume I should decrypt this message using XOR which is one of the arguments for the mode. If we split it up and remove "0x" ("1y" in our case) we get "62 79 7g 63 65 64 63 7b 3d 70 65 3g 62 73 63 48 7d" which indicates that the original text is 17 in length. Since "1y" is supposed to be "0x" (Since that is how memory address is), I went to cyberchef and on my first try I put "1" as a key for XOR operation, just to see what happens, and it worked right then and there. Guess 1 iteration was enough... I was shocked, was I lucky, was I supposed to guess it / brute force it? Anyways, I simply decode from Hex to Utf-8 after that and got the link "shorturl.at/sbrYn" which brings me to phase 2.
+
+
+
+Phase 2:
+
+I successfully load the website and instantly get tasked of getting access to both admin and mamaboi87's accounts. To log into as mamaboi87 I need to get the password through admin priviliges, so I need to get into one. But first I assume that nickname "admin" (I checked through register option and it returned user with that name already exists) is the one. After opening the server.js through docker I notice that there is an authentication "const query = `SELECT * FROM users WHERE username = '${username}' AND password = '${password}'`;" that was vulnerable to SQL Injection (on purpose btw, the comments give it away). I write "admin'; --" into the usernames input and whatever I want into the passwords input, and I get in to find Raw SHA256 hashes of all user passwords. I also went into users.db which is where I found these hashes anyways, so there was no need to log into the admin account either way. As you can see, I never play by the rules >:)
+
+Apparently, the account I logged in as wasn't admin's but one with admin priviliges. I know that because I tried to do the same with my own account that I created but instead got in as an admin :/ I guess all accounts have admin priviliges by default, oh and the hash for the "default" admin password is "adminpass". It was pretty easy to crack that hash without the rules :D
+
+Now that I got into Mamaboi87's account I can finally read his diary (which I already could since it was also in users.db, seriously, hide that stuff better). The reason we had to crack it is to create a targeted phishing email to him which he would fall for. All we have to do is to make him believe it for a few seconds and click an unsuspicious link.
+
+I did create one and sent it, I didn't bother too much on it though since once I get into his accounts I can easily delete the traces, all that will remain are his memories. (bad way of thinking, had to make an excuse for being lazy).
+
+
+
+The End:
+
+In the end I think I did everything not how it was supposed to be and instead of working from a black-box I got info I guess I wasn't supposed to figure out (your fault by the way). So once I opened the website's users.db file through a docker, I technically got everything I needed then and there. Same goes for those 3 executables that I opened as text files. Still not sure what the secret message from the one with puppies was supposed to be ;(

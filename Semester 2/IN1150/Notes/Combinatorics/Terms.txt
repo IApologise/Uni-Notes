@@ -1,0 +1,92 @@
+Inclusion-Exclusion Principle:
+...
+
+
+
+Multiplication Principle:
+If there are two independent sets (so sets where no two)
+elements are the same, then the amount of possible combinations,
+also known as the cardinality of the cartician product of two sets,
+that can be made between them is product of their cardinalities.
+
+Example: A = {1, 2, 3}, B = {4, 5}, |A x B| = |A| * |B| = 6.
+When taking relations into consideration, order matters, so we
+would get 2^6 possibilities instead.
+
+
+
+Permutation:
+This is an another word for the change of order and patterns.
+So for example changing a set {1, 2, 3} to {2, 3, 1} means
+that we permutated it, changed its order. It can also mean
+the order of elements in a list, so {2, 3, 1} is one of the
+permutations or simplified - a permutation, so is {1, 2, 3}.
+
+
+
+Ordered Selection / K-permutation:
+This is like a premature ending to the n! permutations
+calculation. If we want not all n elements to be ordered,
+but only k first elements, then we should stop our n!
+when it reaches n - (k - 1).
+
+Example: Say we have 8 elements in our set and we want
+to find all the permutations, but only up to first 3
+elements. Then the point at which we should stop
+multiplying would be when n reaches n - (k - 1), so
+when n reaches 8 - (3 - 1) = 6. Then we do our factorial
+as usual, 8 * 7 * 6. Now since we reached 6, we stop now.
+Thus the result is 8 * 7 * 6 which is 336.
+
+There is also a specific notation for this formula. It is
+easier explained with a picture, but in text one may write
+it as "^n P_k" which results in a formula n! / (n - k)!
+
+
+
+Combination:
+This one means how many posibilities we can have where
+order doesn't matter. So for example if we have a set S
+{1, 2, 3}, we want to see how many sets of 2 elements from
+S we can make, so how many combinations there are. And there
+are: {1, 2}, {1, 3}, and {2, 3}. Note that order does not
+matter here, {1, 2} and {2, 1} are considered the same thing.
+
+
+
+K-combination / Binomialcoefficient:
+This one is kind of like an example from combination
+description, except that k in this case it the number of
+elements from some arbitrary set A we must end up with.
+
+Here is a neat formula for counting combinations. Say we
+have a set A that has 5 elements, {1, 2, 3, 4, 5} and we
+want a combiantion of 3 elements, how many can there be?
+
+Well, 3 elemenets can have 5! / (5 - 3)! = 60 permutations.
+But we don't want the permutations, just the combinations,
+in that case we remove them as such: 60 / k! = 60 / 6 = 10.
+To generalize: "^n C_k" results in n! / ((n - k)! * k!)
+
+However, sometimes it is written "(n, k)", and is written
+vertically, kind of like vectors in Geogebra Classic. You
+read it as "n velg k", so "(5, 3)" would be "5 velg 3".
+In the same way "^n P_k" can be written as "(n, k) * k!".
+
+It is important to note that (n, k) will yield the same
+result as (n, n - k). So for example (10, 7) = (10, 3).
+
+In addition to that, say we want to create a string. We
+have 3 types of letters in our possession, "a", "b", "c".
+And the string has to be of length 12 where "a" is used 3
+times, "b" is used 5 times, and "c" is used 4 times.
+
+To find each unique combination of strings we can make
+we must ignore the letter permutations, so we take the
+total length 12! and divide by the permutation count,
+so 3! + 5! + 4! which results in 12! / (3! + 5! + 4!).
+
+To generalize, the formula is: n! / (a! + b! + c!)
+where a, b, and c are the letters. The formula is
+easily extended, if we add a "d", then we get
+n! / (a! + b! + c! + d!), and so on...

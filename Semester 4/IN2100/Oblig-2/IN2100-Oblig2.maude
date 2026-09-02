@@ -1,0 +1,370 @@
+--- Note: Dependencies were copy pasted, some created
+--- Note: Comments starting with --- are my own comments
+
+--- Exercises 26-27: 
+fmod LIST-INT is 
+  protecting INT .
+  
+  sorts List NeList .
+  subsorts Int < NeList < List .  
+
+  *** Constructors
+  op nil : -> List [ctor] .
+  op __ : List List -> List [assoc id: nil ctor] .
+  op __ : NeList NeList -> NeList [assoc id: nil ctor] .
+  op length : List -> Nat .
+  ops first last : NeList -> Int .
+  op empty? : List -> Bool .
+  op rest : NeList -> List .
+  op reverse : List -> List .
+  op _occursIn_ : Int List -> Bool .
+  op max : NeList -> Int .
+  op isSorted : List -> Bool .
+
+  vars I J K : Int .
+  var L : List .  var NEL : NeList .
+
+  eq length(nil) = 0 .
+  eq length(I L) = 1 + length(L) .
+  eq first(I L) = I .
+  eq last(L I) = I .
+  --- missing definitions, exercises
+  eq I occursIn nil = false .
+  eq I occursIn J L = (I == J) or (I occursIn L) .
+
+  *** Oblig1:
+  op comesBeforeIn : Int Int List -> Bool .
+  op _>lex_ : List List -> Bool .
+  
+  --- Exercise 26: Implementation of empty?, rest, reverse, max, isSorted
+  --- Explaining empty?
+  eq empty?(L) = not 0 < length(L) .
+
+  --- Explaining rest
+  eq rest(I) = nil .
+  eq rest(NEL I) = rest(NEL) I .
+
+  --- Explaining reverse
+  eq reverse(nil) = nil .
+  eq reverse(I) = I .
+  eq reverse(I L) = reverse(L) I .
+
+  --- Explaining max
+  eq max(I) = I .
+  eq max(L I J) = max(L if I < J then J else I fi) .
+
+  --- Explaining isSorted
+  eq isSorted(nil) = true .
+  eq isSorted(I) = true .
+  eq isSorted(I J) = not J < I .
+  eq isSorted(NEL I J) = isSorted(NEL I) and isSorted(I J) .
+  --- I don't like how it takes so many rewrites
+  --- The solution does not look elegant
+
+  --- Adding extra list variable
+  var L' : List .
+
+  --- Exercise 27: Implementation of >lex
+  --- Explaining >lex
+  eq nil >lex L = false .
+  eq L >lex nil = true .
+  eq I L >lex J L' = I > J or L >lex L' .
+  --- We check the length in the first two equations
+  --- Then we compare the k-th element of both lists and repeat
+
+endfm
+
+--- Some testing
+red first(nil) .        *** should give error, ie. first(nil) of kind [List]
+red first(200 2) .      *** 200
+red first(1 2 3 4 5) .  *** 1
+red first(12) .         *** 12
+red reverse(nil) .      *** nil
+red reverse(200 2) .    *** give back 2 200
+red reverse(12) .       *** 12
+red reverse(1 2 3 4 5) .   *** 5 4 3 2 1
+red max(12) .           *** 12
+red max(10 2 2003) .    *** 2003
+red max(1 2 3 4 5) .    *** 5 
+red max(5 7 6) .        *** 7
+red isSorted(nil) .     *** true
+red isSorted(2003) .    *** true
+red isSorted(5 7 6) .   *** false 
+red isSorted(1 2 3 4 5) . *** true
+red 1 2 3 4 >lex 1 2 3 .   *** true
+red 2 3 4 >lex 1 2 3 4 .  *** true
+red 1 >lex 1 0 .          *** false 
+red 2 5 6 >lex 2 4 678 12 .  *** true
+
+--- My own tests
+red nil >lex nil .   --- false
+red nil >lex 0 .     --- false
+red 0 >lex nil .     --- true
+red 0 >lex 0 .       --- false
+
+
+
+--- Exercises from 28.1 to 28.6
+fmod STRING is
+
+  --- Exercise 28.1: Implementation of Char and String
+  sorts Char String .
+  subsort Char < String .
+
+  ops a b c d e f g h i j k l m n o p q r s t u v w x y z : -> Char [ctor] .
+  op nil : -> String [ctor] .
+  op __ : String String -> String [assoc id: nil ctor] .
+
+  --- Setup for the rest of the sub exercises
+  op isPal : String -> Bool .
+  op _prefixOf_ : String String -> Bool .
+  op _substringOf_ : String String -> Bool .
+
+  vars C C' : Char .
+  vars S S' : String .
+
+  --- Exercise 28.2: Explaining isPal
+  eq isPal(nil) = true .
+  eq isPal(C) = true .
+  eq isPal(C S C') = isPal(S) and C == C' .
+
+  --- Exercise 28.3: Explaining prefixOf
+  eq nil prefixOf S = true .
+  eq S prefixOf nil = false .
+  eq C S prefixOf C' S' = S prefixOf S' and C == C' .
+
+  --- Exercise 28.4: Explaining substringOf
+  eq nil substringOf S' = true .
+  eq S substringOf nil = false .
+  eq S substringOf C' S' = if S prefixOf C' S' then true else S substringOf S' fi .
+
+  --- Exercise 28.5: Explaining Pattern and ?
+  sort Pattern .
+  subsort String < Pattern .
+
+  op ? : -> Pattern [ctor] .
+  op __ : Pattern Pattern -> Pattern [assoc id: nil ctor] .
+
+  --- Exercise 28.6: Explaining some more
+  op _prefixOf_ : Pattern String -> Bool .
+  op _substringOf_ : Pattern String -> Bool .
+
+  var P : Pattern .
+
+  --- prefixOf
+  eq P prefixOf nil = false .
+  eq ? P prefixOf C' S' = P prefixOf S' .
+  eq C P prefixOf C' S' = P prefixOf S' and C == C' .
+
+  --- substringOf
+  eq P substringOf nil = false .
+  eq P substringOf C' S' = if P prefixOf C' S' then true else P substringOf S' fi .
+
+endfm
+
+--- My own tests
+red nil prefixOf nil .   --- true
+red a prefixOf nil .     --- false
+red nil prefixOf a .     --- true
+red a prefixOf a .       --- true
+red nil substringOf nil .   --- true
+red a substringOf nil .     --- false
+red nil substringOf a .     --- true
+red a substringOf a .       --- true
+
+--- More advanced tests
+red b a c prefixOf n m b a c x .   --- false
+red c m prefixOf c m a b c .       --- true
+red q o v prefixOf nil .           --- false
+red n prefixOf n l k .             --- true
+red a c substringOf o p a c c b .     --- true
+red p substringOf n o t p a r t y .   --- true
+red l l o substringOf w o r l d .     --- false
+red r o l l substringOf nil .         --- false
+
+--- How can "nil prefixOf nil" give both true and false?
+--- I also have the exact same question to the "nil substringOf nil".
+--- As I can see from my tests they are confluent. I did not find a single mistake.
+--- An empty string is in fact in an empty string. Same in many other languages like Python.
+
+
+
+--- Exercises 30 and 32
+fmod MSET-INT is
+  protecting INT .
+
+  sorts Mset NeMset .                   *** Multisets and non-empty multisets
+  subsorts Int < NeMset < Mset .        *** A number is also a multiset
+  
+  op none : -> Mset [ctor] .            *** Empty multiset
+  op __ : Mset Mset -> Mset [ctor assoc comm id: none] .
+  op __ : NeMset NeMset -> NeMset [ctor assoc comm id: none] .
+
+  op size : Mset -> Nat .               *** No of elements in a multiset
+  op mult : Int Mset -> Nat .           *** Multiplicity of an element
+  op delete : Int Mset -> Mset .        *** Remove ONE occurrence of element
+  op _in_ : Int Mset -> Bool .          *** Is element in multiset?
+  op max : NeMset -> Int .              *** Largest element
+  op empty? : Mset -> Bool .            *** Empty?
+  op _>mul_ : Mset Mset -> Bool .       *** Multiset comparison
+
+  vars I J : Int .
+  vars MS MS' : Mset .  vars NEMS NEMS' : NeMset .
+
+  eq delete(I, I MS) = MS .
+  ceq delete(I, MS) = MS if not I in MS .
+  eq I in MS = mult(I, MS) > 0 .
+
+  --- Exercise 30: Implement size, mult, max, empty?, >mul
+  --- Explaining size
+  eq size(none) = 0 .
+  eq size(I MS) = 1 + size(MS) .
+
+  --- Explaining mult
+  eq mult(I, none) = 0 .
+  eq mult(I, MS J) = if I == J then 1 + mult(I, MS) else mult(I, MS) fi .
+
+  --- Explaining max
+  eq max(I) = I .
+  eq max(MS I J) = max(MS if I < J then J else I fi) .
+
+  --- Explaining empty?
+  eq empty?(none) = true .
+  eq empty?(MS) = false .
+
+  --- Helper function to remove all duplicates (Also hate it cuz it's slow)
+  --- I could make it better but I am too lazy for that
+  --- I will just wait for a way more elegant solution in the feedback
+  op delDupes : Mset Mset -> Mset .
+  eq delDupes(none, MS) = none .
+  eq delDupes(MS, none) = MS .
+  eq delDupes(I MS, MS') = if I in MS' then delDupes(MS, delete(I, MS')) else I delDupes(MS, MS') fi .
+
+  --- Explaining >mul
+  eq none >mul MS = false .
+  eq MS >mul none = true .
+  eq MS >mul MS' = max(delDupes(MS, MS')) >= max(delDupes(MS', MS)) .
+  --- Very inefficient, I am crying right now ;(
+  --- But it was easy to make so I am happy :D
+  --- Also, it works :)
+
+  --- Exercise 32: Explaining Mset-ObjMsg
+  sorts Obj Msg Mset-ObjMsg .
+  subsorts Obj Msg < Mset-ObjMsg .
+  
+  op empty : -> Mset-ObjMsg [ctor] .
+  op __ : Mset-ObjMsg Mset-ObjMsg -> Mset-ObjMsg [assoc id: empty] .
+  --- Pretty sure I answered exercise 32, what else did I have to make?
+  --- There are the defined sorts, don't see the problem...
+  --- Nothing was mentioned about the operators or such.
+
+endfm
+
+--- Some testing
+red mult(4, none) .                       *** should give 0
+red mult(4, 1 2 3 4 5 6 3 4 5 12 44 4) .  *** should give 3
+red mult(7, 1 2 3 4 5 6 8 9)  .           *** should give 0
+red mult(1, 5 7 3 1 8) .                  *** should give 1
+red max(1 2 3 4 5 6 3 4 5 12 44 4) .      *** should give 44
+red max(345) .                            *** should give 345
+red max(4 5 6 7 1 2 3 4 5 6 7 3) .        *** should give 7
+red empty?(none) .                        *** should give true
+red empty?(345) .                         *** should give false
+red empty?(2 1 3 1) .                     *** should give false
+red none >mul none .                      *** should give false
+red 1969 >mul none .                      *** should give true
+red 1 2 3 4 5 1 2 3 >mul 1 3 5 6 .        *** should give false
+red 3 4 7 7 >mul 1 2 2 0 4 1 -3 7 7 .     *** should give true
+red 3 4 7 7 >mul 1 2 2 0 4 4 1 -3 7 7 .   *** should give false
+
+--- I don't see the problem with empty? operator.
+--- From my point of view it works completely fine.
+
+
+
+--- Exercise 37: Insertion sort algorithm
+fmod INSERT-SORT is
+  protecting LIST-INT .
+  
+  op insertSort : List -> List .
+  op insert : Int List -> List .
+  
+  vars I J : Int .
+  vars L : List .
+
+  eq insert(I, nil) = I .
+  eq insert(I, J L) = if I <= J then I J L else J insert(I, L) fi .
+
+  eq insertSort(nil) = nil .
+  eq insertSort(I) = I .
+  eq insertSort(I L) = insert(I, insertSort(L)) .
+
+endfm
+
+--- Some more testing of my own
+red insertSort(nil) .   --- nil
+red insertSort(1) .     --- 1
+red insertSort(1 2) .   --- 1 2
+red insertSort(2 1) .   --- 1 2
+
+red insertSort(1 2 3) .   --- 1 2 3
+red insertSort(1 3 2) .   --- 1 2 3
+red insertSort(2 1 3) .   --- 1 2 3
+red insertSort(2 3 1) .   --- 1 2 3
+red insertSort(3 1 2) .   --- 1 2 3
+red insertSort(3 2 1) .   --- 1 2 3
+
+
+
+--- Exercise 63.1-4
+--- 1. Here we use lpo-1. For each input in left side we check if it is greater than
+---    or equal to the right side, if any is then it terminates.
+
+---    As you can see on the left function we have t_i = f(x)
+---    and on the right side we have u = f(x).
+---    Thus, we have f(x) = f(x) -> t_i = u.
+
+--- 2. In this case we use lpo-2. That is because we compare two different functions.
+---    If we know the order we can show the termination using lpo-2.
+
+--- 3. Lpo-2 is probably the choice here. If we know that {f > g} and
+---    {f(g(x)) > g(x)} then we can show that {f(g(x)) > g(f(x))}. 
+
+--- 4. This is a very similar situation to task 3 in which we also use lpo-2.
+
+--- Exercise 71.1-2
+--- 1. from {f(g(x)) = h(x), h(x) = g(f(x)), a = b} we can assign weights to these
+---    functions. Assume that we have a function {W(x)} that tells us the weight
+---    of a function. Now we lets generate some pseudo-random weights for each one
+---    {W(f(x)) = 2 * W(x) + 1}, {W(g(x)) = W(x) + 2}, {W(h(x)) = 2 * W(x) + 4}.
+
+---    From this we can now show that the weight strictly decreases.
+---    1. {W(f(g(x))) = 2 * W(x) + 5}, and since {W(h(x)) = 2 * W(x) + 4} we get
+---       {W(f(g(x))) > W(h(x))} meaning that it is decreasing in step 1.
+
+---    2. {W(g(f(x))) = 2 * W(x) + 3}, and again since {W(h(x)) = 2 * W(x) + 4}
+---       we get that {h(x) > W(g(f(x))} which shows that it is decreasing again.
+
+---    Thus we have shown that it is possible to prove by providing an example.
+---    In the end we got that the weights can be {f(g(x)) > h(x) > g(f(x))}.
+
+--- 2. It is not possible to prove the termination of this specification.
+---    If we attempt to do so we will encounter a precedence errors.
+
+---    1. Lets assume that we have a precendence {f > h > g}. According to the
+---       precedence {f(g(x)) > h(x)} which is fine. However the next step isn't.
+---       That is because {h(x) > g(f(x))}, and if we check using lpo-2 we get
+---       {x > f(x)} which simply contradicts the fact that {f(x) > x}.
+
+---    2. if we attempt to do this with other precedences we will run into similar
+---       problem due to {h} function. Thus it can not be proven using lpo or mpo.
+
+--- Exercise 82.1
+--- 1. Since we want it to be confluent, meaning we want to end up at the same point
+---    we can simply make {r1 = f(h(x))} and {r2 = h(h(x))}. This way there is no
+---    self reference so it will terminate. It is also confluent, since no matter
+---    which path you choose you will end up at the same solution.
+
+---    I have even made a python code to test it, and it worked flawlessly :D
+---    I sent the code in case you are interested and would like to play with it.
+---    I added comments which also include instructions on how to use it.

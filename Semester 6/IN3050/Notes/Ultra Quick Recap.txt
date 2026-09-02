@@ -1,0 +1,25 @@
+repeat:
+- linear regression gradient
+
+prediction:
+- Perceptron: weights * train_data with bias
+- Linear Regression: 
+- Logistic Regression: σ = 1 / (1 + e^-(weights * train_data with bias))
+
+loss functions: tl = true label, pl = predicted label.
+- Mean Squared Error (MSE): L(tl, pl) = sum((tl - pl)^2) / total count
+- Binary Cross Entropy Loss: L(tl, pl) = -|tl * log(pl) + (1 - tl) * log(1 - pl)|
+- Cross Entropy Loss: L(tl, pl) = ...
+
+dot product:
+- [a, b]   [e, f]   [ae + bg, af + bh]
+  [c, d] x [g, h] = [ce + dg, cf + dh]
+
+fitness sharing:
+- s'_i = s_i / share(d(i, j))
+- share(d(i, j)) = 1 - (d(i, j) / b)^a if d < b, else shade(d(i, j)) = 0
+
+scaling:
+- min-max scaling: x_scaled = (x - x_min) / (x_max - x_min)
+- mean = sum(x) / n
+- standard deviation = sqrt(sum((mean - x)^2) / (n - 1))

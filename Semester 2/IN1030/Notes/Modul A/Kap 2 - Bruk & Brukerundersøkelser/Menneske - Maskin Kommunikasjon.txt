@@ -1,0 +1,25 @@
+Ofte for å forbedre design (ikke hvordan systemet ser ut men hvordan brukeren kan interagere med systemet),
+kommunikasjon mellom menske og maskin er beskrevet via en slags tabel med 4 kolonner. Disse kolonene er:
+1. Handling ikke synlig for maskin - Når brukeren gjør noe sånn som å finne telefonen sin for å få 2-faktor kode
+   når man logger seg inn i et system.
+2. Handling synlig for maskin - Når brukeren gjør noe sånn som å taste inn og sende denne 2-faktor koden videre,
+   i.e. når maskinen/nettside/system får vite at du har gjort noe via noen form for input.
+3. Effekt synlig for brukeren - Det er det systemet viser frem til brukeren, en effekt av inputs brukeren gjort.
+   Dette kan være tekst på skjermen "Velkommen Tilbake!", bevegelse sånn som å åpne døren til safen, osv.
+4. Design rasjonale - Dette er kanskje den mest forvirrende delen. Det er liksom det som skjer bak kulisene til
+   maskinen. Mer presist: Det handler om begrunnelse for hvorfor maskinen viser det den gjør. For eksempel, når
+   den sender 2-faktor koden til telefonen, så viser maskinen det på skjermen slik at brukeren får vite at maskinen
+   har gjort det, samt hvor koden finnes. En annen eksempel er når maskinen viser en timeout, så er design rationale
+   (i.e. begrunnelse) at en 1-minutters nedtelling for å skrive inn 2-faktor koden sin har gått ut (fordi sikkerhet).
+Disse handlingene og effektene er gjennomført sekvensielt hvor starten er på toppen og konsekvensene går nedover.
+
+Så var det snakk om overvåkingskapitalismen, som er basically bruk av appene og tjenestene til å samle inn data om
+deg for å oppnå egne måler. Disse personlige dataene (ofte uten at vi vet om det) er enten brukt til målrettet
+reklamasjon som kan skape echo-chambers og andre form for still (quiet) manipulasjon, eller selges til andre
+bedriftene. Dette gjelder også andre måter hvor man kan tjene penger ved å selge dine personlige data. Denne
+konsepten ble popularisert av Shoshana Zuboff.
+
+Enshitification er også nevnt, som er når man førts lager en god og ofte gratis app for å få inn brukere (fase 1),
+så sakte gjør man appen mer "shitty". Først legger man inn reklame for å tjene penger (fase 2 - bra for bedriften),
+så gjør man short-term gains endringene som ofte også gjør alt verre, sånn som enda mer reklame (fase 3 - bra for
+shareholders).

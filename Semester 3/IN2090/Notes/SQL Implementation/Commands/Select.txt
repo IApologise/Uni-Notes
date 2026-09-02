@@ -1,0 +1,163 @@
+This is a continuation of SQL Core file.
+All the syntax rules there also apply here.
+
+
+
+General Helper Instructions:
+| FROM {Table}  ->  Selects data from specific table
+| WHERE {Condition}  ->  Selects row if it satisfies the conditions
+| AS {Collumn}  ->  Gives a name to the outputed table
+| {Collumn} IN {Table}  ->  Checks whether a collumn is in a table
+| WITH {Function}  ->  Defines a function that can be easily repeated with the help of AS
+|
+| ORDER BY {Collumn}  ->  Sorts the output table according to a collumn (lowest to highest)
+| LIMIT {Integer}  ->  Limits the amount of rows received to the inputed value
+| OFFSET {Integer}  ->  Pushes the X first rows to the bottom.
+| GROUP BY {Collumn}  ->  Sorts and applies functions on rows with same collumn values.
+| HAVING {Condition}  ->  Works like a WHERE, but for GROUP BY function
+
+
+
+Helper Arguments:
+| DISTINCT  ->  Exclude duplicates from the outputed table when using SEARCH
+| DESC  ->  Swaps the order from ascending to descending when using ORDER BY
+|
+| These are used when using WHERE:
+| {Condition A} AND {Condition B}  ->  Adds an additional requirement
+| {Condition A} OR {Condition B}  ->  Adds an alternative requirement
+| NOT {Condition}  ->  Outputs everything that is not what was requested
+| IS {Condition}  ->  Outputs everything where the condition is met
+| EXISTS {Function}  ->  Outputs False if function returns a NULL, True otherwise.
+|   ->  Reminder, functions are same as SQL commands such as "SELECT * FROM ...".
+|
+| These are used when using WITH and when working with text:
+| LIKE {Argument}  ->  Transforms argument into its similar counterparts.
+|   ->  Usually used with % like in '%TV%' to search for all rows where substring 'TV' exists.
+|   ->  '%TV%' is similar to 'TV%' and '%TV'. The difference is that in 'TV%' we want it to start
+|   ->  with 'TV' and the rest we don't care and vice versa for 'TV%'. You may also do like
+|   ->  'TV%inch' if you want to find products where the name starts with 'TV' and ends with 'inch'.
+| SIMILAR TO  ->  Works similar to LIKE command, but allows argument part modification
+| ~  ->  Has something with POSIX to do (idk what that is), similar to SIMILAR TO command
+
+
+
+General Arguemnts:
+| NULL  ->  A placeholder for nothing
+|   ->  NULL is data, it can not be compared or used in any way other
+|   ->  than to store missing data, WHERE X = NULL won't work even if
+|   ->  we have X = NULL in our database. NULL = NULL is false as well.
+|   ->  So is NOT (NULL = NULL). If there is NULL in the output or command,
+|   ->  it automaticlaly evaluates back to NULL, so NULL = NULL -> NULL.
+|   ->  NULL AND FALSE -> FALSE, because NULL makes no difference.
+|   ->  However, using it with IS command works just fine.
+|
+| .  ->  A placeholder for a single something
+| *  ->  A placeholder for all possible data
+| %  ->  A placeholder for any possible data, a wildcard
+| {Collumn}*  ->  A placeholder for none or more of something
+
+
+
+Argument & String Alteration:
+| Compatible with SIMILAR TO and ~ commands
+| {A} & {B}  ->  An additional part of or a whole argument
+| {A} | {B}  ->  An alternative part of or a whole argument
+| {A} || {B}  ->  Outputs a single, concatenated argument (merges A and B).
+
+
+
+Math & Integer Logic:
+| Compatible with integer data types
+| {A} + {B}  ->  Outputs the sum of A and B, works on table collumns and rows.
+| {A} - {B}  ->  Outputs the difference of A and B, works on table collumns and rows.
+| {A} * {B}  ->  Outputs the product of A and B, works on table collumns and rows.
+|
+| sum({Collumn})  ->  Outputs a sum of the whole collumn
+| avg({Collumn})  ->  Outputs the mean of the whole collumn
+| max({Collumn})  ->  Outputs the maximum of the whole collumn
+| min({Collumn})  ->  Outputs the minimum of the whole collumn
+| count({Collumn})  ->  Outputs Total amount of non NULL rows in the collumn
+|
+| Compatible with integer data types
+| {A} > {B}  ->  Outputs rows where A is more than B
+| {A} < {B}  ->  Outputs rows where A is less than B
+| {A} = {B}  ->  Outputs rows where A is equal to B
+
+
+
+Set Operators:
+| {Table A} UNION {Table B}  ->  Merges data from both tables,
+|   -> Also replaces NULL values with non-empty ones.
+|   -> Note that both tables must have same amount of collumns,
+|   -> as well as the same collumn value types so we may merge em.
+|   -> Same goes for the rest of the logical operators here.
+| {Table A} INTERSECT {Table B}  ->  Keeps identical data from both tables.
+| {Table A} EXCEPT {Table B}  ->  Removes data of Table B from data in table A.
+|   ->  For each of those logical operators you may also add "ALL" such as
+|   ->  ... UNION ALL ... if you want to keep the duplicate answers.
+
+
+
+Instruction Examples:
+|
+| SELECT Name, Birthdate
+|   FROM Customers;
+|     -> Returns a table with all names & birthdates from customers table
+|
+| SELECT Name
+|   FROM Customers
+|  WHERE Identifier = 3;
+|     -> Returns a table with all names from customers table where customer id is 3
+|
+| SELECT Name, Brand, Price
+|   FROM Product
+|  WHERE Name = 'TV 50 inch' OR
+|        Name = 'TV 48 inch';
+|     -> Returns a table with names, brands and prices from products table
+|        Where the names of the products are 50 inch and 48 inch TVs.
+|
+| SELECT Name, Brand, Price
+|   FROM Product
+|  WHERE Name SIMILAR TO 'TV (50|48) inch';
+|     -> Returns the same output as the command above
+|
+| SELECT DISTINCT
+|       c.company_name as customer,
+|       e.first_name || e.last_name AS employee
+|  FROM orders AS o, customers AS c, employees AS e
+| WHERE o.customer_id = c.customer_id AND
+|       o.employee_id = e.employee_id AND
+|       o.freight > 500;
+|
+| SELECT planet.navn
+|   FROM planet INNER JOIN materie ON (planet.navn = materie.planet)
+|        INNER JOIN stjerne ON (planet.stjerne = stjerne.navn)
+|  WHERE avstand < 12 AND
+|        molekyl = 'H';
+|
+| SELECT p1.navn
+|   FROM planet AS p1, planet AS p2
+|        INNER JOIN stjerne ON (p2.stjerne = stjerne.navn)
+|  WHERE p1.navn != p2.navn AND
+|        p1.stjerne = p2.stjerne AND
+|        p1.masse > 10 AND p2.masse > 10 AND
+|        avstand < 50;
+|
+|   SELECT product_name, unit_price, units_in_stock
+|     FROM products
+| ORDER BY unit_price DESC,
+|          units_in_stock DESC
+|    LIMIT 10
+|   OFFSET 5;
+|
+|   SELECT Category, avg(Price) AS AveragePrice
+|     FROM Products
+| GROUP BY Category;
+|
+| (SELECT Name, Phone, Email
+|    FROM person
+|   WHERE Phone IS NOT NULL)
+| UNION
+| (SELECT Name, Phone, Email
+|    FROM person
+|   WHERE Email IS NOT NULL);

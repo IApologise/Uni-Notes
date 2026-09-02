@@ -1,0 +1,68 @@
+Soundness theorem is a bunch of proofs about the soundness of a
+system. For Sequent Calculus LK there are 3 proofs on the matter.
+
+1. Preservation of falsifiability:
+The first one is Preservation of Falsifiability. We know that the system
+has rules such as left negation, etc. And we have to make sure that if we
+start with a falsifiable sequent, then we end with it as well. Otherwise
+that would make the system unsound since there would then be falsifiable
+sequents at first that we would then prove to be valid which is just wrong.
+
+To prove that the rule is preserving falsifiablity (upwards) we use rule's
+definition and interpret the situation. First assume that an interpretation
+I validates all assumptions such as Γ denoted as I ⊨ Γ, and falsifies all
+conclusions such as ∆ denoted as I ⊭ ∆. This includes assumptions such as
+A, B, etc. and conclusions such as C, D, etc. not just Γ and ∆. Next we use
+this interpretation and rule definition to show what the formula should be
+like upwards, for example lets take a negation right rule.
+
+Say we have Γ ⊢ ∆, ¬A. Now we say that I ⊨ Γ and that I ⊭ ∆, ¬A. Since I
+does not satisfy ¬A per definition of ¬, I ⊨ A. Thus, the next rule upwards
+due to I ⊨ Γ, A and I ⊭ ∆ goes from Γ ⊢ ∆, ¬A to Γ, A ⊢ ∆. Whenever there
+are multiple cases, we split into branches such as with implication left rule.
+
+2. Falsifiable root sequent has a falsifiable leaf sequent:
+This is one of the keys to the soundness of the Sequent Calculus LK. We want
+to know that if we start with a falsifiable sequent, we end with a leaf that
+has one as well (same reason as in first rule). However, to prove this we
+need to show that it holds for the base case first, and then for induction.
+
+Base case is simple. Say we got a sequent Γ ⊢ ∆. Assume that an interpretation
+I ⊭ Γ ⊢ ∆. Since Γ ⊢ ∆ is the root and end sequent, the case holds fine. Now,
+for induction step, we make use of the Preservation of Falsifiability. Assume
+that there is an interpretation I that falsifies a sequent, since I falsifies
+a sequent, and the falsifiability is preserved, the is bound to be a leaf node
+that is also falsifiable as long as all rules preserve such condition (they must).
+
+3. All axiomed branches validate root sequent
+This one is self explanatory. Since the second theorem states that a falsifiable
+root sequent must have a falsifiable leaf sequent, this means that if there is
+one, then it can't be that all the branches are closed by an axiom from the start.
+
+
+
+Completeness theorem is a proof that in the system (Sequent Calculus LK)
+if Γ ⊢ ∆ is valid, it can be proven (make a tree with all branches closed):
+
+First we assume that Γ ⊢ ∆ is not provable. Then we create a derivation D of
+Γ ⊢ ∆ where no more rules can be applied. Since it is not provable there is at
+least one branch B that is not closed. Let us now call the formulae in ∆ that are
+in a non-closed branch as B^⊥ and Γ in B^⊤. Those that are in all the other branches
+are in B^⊤ or B^⊥ also based on whether they are in Γ or ∆ part of the proof. Now
+lets say that we got an interpretation I_B that makes all the formulae in B^⊤ true,
+and those in B^⊥ false.
+
+Now we show the base case of our induction proof. Let's choose A, it is
+thus in either B^⊤ or B^⊥. If A is in B^⊤ then I_B holds since that is
+how I_B is defined, so I_B = A. If A is in B^⊥ then by definition A does
+not hold for I_B which means that I_B ⊭ A. Since A was arbitrarily chosen
+from derivation D, base completeness step is done.
+
+For the induction step we now must show for each left and right rules in
+calculus LK that the same properties hold, e.g. that once all rules are
+applied we (and they are eventually), then we can create I_B that shows
+us how exactly it can be falsified. So I_B can show everything that can
+be falsified based on those rules from a proof, and therefore we can show
+everything that is valid. Since we can differentiate precisely about what
+is valid and not based on a proof, we can say that what is valid can be proved.
+Therefore, Sequent Calculus LK is complete.

@@ -1,0 +1,57 @@
+--- Asymmetric Encryption ---
+The problem with symmetric encryption is the initial setup of the communication channel. During this time, it can
+be compromised by both passive and active attacker. To ensure that a third-party doesn't get the symmetric key we
+first establish a communication channel using asymmetric encryption/decryption.
+
+Here we have a public and a private key. Private key is two functions, one for encryption and one for decryption, same goes for the public key. Private key consists of variables {n} and {d}, where {n = p * q} where both {p} and {q}
+are large primes, and where {d = e^(-1) mod ϕ(n)}, where {e} is chosen such that {gcd(e, ϕ(n)) = 1} and {ϕ(n)} is
+calculated as {(p - 1) * (q - 1)} which is hard to reverse. Public key consists of {n} and {e}, and that is the info
+that is shared to all. What is not shared are: {p}, {q}, {d}, and ϕ(n) which as we know needs {p} and {q} to be
+calculated quickly, otherwise we'd need to brute force it which is why we choose large primes.
+
+Original messages are {M}, encrypted messages are {C} and decrypted are {M'} which, if done right, {M ≡ M'}.
+Encryption is done as {C = M^e mod n}, and decryption as {M' = C^d mod n = (M^e mod n)^d mod n = M}. With this
+method no one can intercept the message and read it, so any passive attacks are not working. However, spoofing
+and packet replayability and such is still possible. It was a bigger threat to begin with, and its capabilities
+did not become any more limited than they were from the start. It's just that the attacker can't read anything...
+
+
+
+--- Hashing & Digital Signatures ---
+The problem with encryption is that it can still be modified, so we have no way to verify the integrity of the
+message and key exchange. To fix that we hash the message and send that and the original unhashed message too.
+That way, once both arrive the recipient can use the same hashing function to verify that the message was not
+modified; Likely, hash functions may have collisions, and it was demonstrated by compromising SHA-1, and SHA-2
+is soon falling too. However, SHA-3 is using a completely different algorithm where trying to create a collision
+on purpose wouldn't work.
+
+However, an active attacker can spoof everything and thus mislead everyone and be able to do anything just like
+before, like modifying the message contents and its integrity without anyone knowing, and the original sender can
+deny sending the message which is crucial for stuff like contracts and such, i.e. there is no Non-repudiation.
+
+To fix that, we encrypt the hashed message using our private key, that way the receiver (and everyone else) can be sure exactly who encrypted it by simply using our public key to decrypt the hashed encrypted message. Note that
+both hashed and unhashed messages are also encrypted via the receiver's public key. Anyways, if the message is
+modified, then by simply comparing the unhashed message (by hashing it) with the hashed one, the receiver knows
+that this message was maybe spoofed, or modified, etc. But we still can't counter the message repeating attack :/
+Also, the one who sent the message won't be able to deny sending one: Non-repudiation achieved.
+
+P.S. I did not look into how private keys encrypt and public keys decrypt without exposing the secrets, i.e. {p},
+{q}, {d}, and {ϕ(n)}. Might be simple, might be something comletely different, investigate at your own risk.
+
+
+
+--- Notes ---
+1.1: Often {e} is chosen to be {65537} due to some simplifications and thus faster calculations we can do, and both
+     {p} and {q} are chosen around that to satisfy other conditions of {e}.
+1.2: Both {p} and {q} are about 2048 bits in size which is what RSA-228 uses.
+1.3: We often don't calculate prime numbers to use, instead we generate some number and check if it is a prime with
+     some certainty using some really fast algorithm (can never be 100% certain). But, I don't understand why not
+     just randomly take a prime from some table? We are guaranteed to get a prime and the file size is 2048^2 = 4KB.
+     It is also likely to be faster as well, but can this "random" choice then be predicted and thus hacked?
+2.1: Whenever people say SHA-256 they mean the SHA-2 version, i.e. SHA-2-256 and not SHA-3-256.
+2.2: Rainbow tables are used to quickly lookup a hash, which thanks to the binary search is in O(log(n)), but it
+     may be even faster depending on how the hashing algorithm works. Once found it will give the plaintext that
+     generates this hash. To fix that we use "salt", i.e. add random text for each user (different for each) before
+     hashing. That way you'll have to brute-force each password instead of just once where users have same hash. To
+     protect against rainbow tables, we also use peppering which is a secret plaintext also added before hashing
+     (often same for all). That will throw off the rainbow tables making them give wrong plaintexts.

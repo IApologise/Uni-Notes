@@ -1,0 +1,30 @@
+--- Syntax & Semantics ---
+In modal logic, every atom and their variations (like the use of negation,
+conjucntion, disjunction, etc.) are considered formulae. There are also two
+special symbols, square □ and diamond ◇, but those are not formulas.
+
+Those two special symbols are equivalent to each other in the following
+two ways: ◇A ≡ ¬□¬A, and ¬◇A ≡ □¬A. □ means that one is certain of
+something, so A is always true. For example, let "p" mean that "it rains".
+So, once it rains, it rains, simply denoted as "p -> □p". However, it is
+possible that it doesn't rain which is where ◇ comes in. ◇ means that
+something will become true at some point. Since it might not rain, we
+can denote it as "◇¬p".
+
+Now, if it rains then we would already know that. But since we do not, we
+consider that it doesn't rain. Since we had to consider that it doesn't rain,
+we conclude that it doesn't rain, because otherwise we would know. We denote
+it like this: "{p -> □p, ◇¬p} ⊨ ¬p".
+
+
+
+--- Example ---
+Here is another example, we know that traffic lights are either green or red
+and alternate between these two states. Now, let "p" mean "the light is green",
+and "q" mean "the light is red". First we describe the system, □(p -> ◇q)
+which says "It is always true that if the light is green, it eventually turns
+red", and □(q -> ◇p) which says "It is always true that if the light is red,
+it eventually turns green". Now, if we start with let's say a green light "p",
+then we can conclude that for example "it is always true that the light
+eventually will become red and later, eventually turn green again" denoted as
+"□◇(p -> ◇q)". All in all, "{p, □(p -> ◇q), □(q -> ◇p)} ⊨ □◇(p -> ◇q)".

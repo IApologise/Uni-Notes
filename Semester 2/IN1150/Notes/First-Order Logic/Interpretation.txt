@@ -1,0 +1,84 @@
+Theory:
+It is a set of formulas. Think of it as unproven
+set of elements (formulas) that we believe is true.
+
+
+
+Axiom:
+These are the elements in a theory - ideas, etc.
+Since they are in a theory, these must be formulas.
+
+
+
+Theorem:
+Theorems are all the logical consequences of a theory.
+In other words, whatever we derive from a theory, whatever
+the conclusion is, the result is called a theorem.
+
+
+
+Signature: S
+is a specification to our model which tells it what
+constants, function, and relations we got in our model.
+
+The signature can be constructed with the following blueprint:
+S = {constant, ... ; function, ... ; relation, ...}
+To specify the arity of the functions and relations introduced
+you can either take a number representing arity to the power of
+a function/relation introduced and put it in parantheses.
+So like f^(2) for example. Alternatively you can add a slash {/}
+where the element to the left of it is the function/relation and
+the element to the right of it is arity count. It is also accepted
+to simply write it down next to a signature.
+
+
+
+Domain: |ℳ|, D
+A specification to our model and signature telling it what values
+the constants and what evaluation the functions and relations
+may have. It is basically like a Universal Set {U}.
+
+
+
+Model: ℳ
+A model is what we use to interpret. It is made of a signature and
+domain. It can already be predefined, but we usually construct one
+to interpred the formulas and more from the signatures and domains.
+
+Whenever we interpret something in our model we specify it
+by typing {I^ℳ} where I and ℳ are placeholders.
+I is what we interpret, so a constant, a function, or a relation.
+ℳ is the model that we choose to use as interpreter.
+
+Here is a small example on interpretation:
+Let our signature be S = {a; f; } and our domain be D = {0, 1, 2, 3}
+Now we can interpret it all in the other way, but we do it like that here:
+1. a^ℳ = 3   2. f^ℳ = {<0, 0>, <1, 1>, <2, 0>, <3, 1>}
+
+It is important to note that whenever we choose to interpret
+a function for example we interpret it in the following way:
+F(t_1, ... t_n)^ℳ ≡ F^ℳ(t_1^ℳ, ..., t_n^ℳ)
+
+So the result from our example will be as follows:
+f(a)^ℳ = f^ℳ(a^ℳ) = f^ℳ(3) = 1
+
+
+
+logical consequence:
+If we have a set S and a closed formula φ, and if
+we can show that in every model ℳ that ℳ ⊨ S,
+and ℳ ⊨ φ, then S ⊨ φ is the logical consequence.
+
+If a formula φ is a tautology then it is a logical consequence
+of all the formulas in S denoted as S ⊨ φ. If a formula φ is a
+contradiction, then all the formulas in S are its logical
+consequences denoted as φ ⊨ S.
+
+
+
+logical equivalence:
+If we have a model ℳ, and closed formulas φ and ψ,
+and if ℳ ⊨ φ ∧ ψ, and we show that in every model,
+then the logical consequence is that φ ≡ ψ. Note
+that φ and ψ is are now considered equivalent, this
+is called a logical equivalence.

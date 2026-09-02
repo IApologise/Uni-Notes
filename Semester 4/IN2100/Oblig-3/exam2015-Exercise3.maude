@@ -1,0 +1,195 @@
+--- 3a) Modeling in Maude
+mod RBLE is
+  protecting NAT .
+  
+  
+  
+  sorts Node Message .
+  sorts Sequence Ring Inbox .
+  
+  subsort Ring Inbox < Sequence .
+  subsort Node < Ring .
+  subsort Message < Inbox .
+  
+  
+  
+  op empty : -> Sequence [ctor] .
+  op _ _ : Ring Ring -> Ring [assoc id: empty ctor] .
+  op _ _ : Inbox Inbox -> Inbox [assoc id: empty ctor] .
+  
+  op node : Nat Nat Nat -> Node [ctor] .   --- ThisID, NextID, LeaderID
+  op elect : Nat Nat -> Message [ctor] .   --- InitiatorID, TargetID
+  op lead : Nat Nat -> Message [ctor] .    --- InitiatorID, TargetID
+  
+  op run : Ring Inbox -> Ring .
+  
+  
+  
+  var R : Ring .
+  var I : Inbox .
+  
+  var N : Node .
+  var M : Message .
+  
+  vars ID NID LID : Nat .
+  vars IID TID : Nat .
+  
+  
+  
+  --- Queueing tasks
+  rl [start] :
+    run(R, M I)
+      => run(run(R, M), I) .
+  
+  --- Finishing election
+  rl [finish-election] :
+    run(node(ID, NID, LID) R, elect(ID, ID))
+      => run(R node(ID, NID, ID), lead(ID, NID)) .
+  
+  --- Comparing and forwarding election
+  rl [forward-election] :
+    run(node(ID, NID, LID) R, elect(IID, ID))
+      =>   if ID > IID
+        then run(R node(ID, NID, LID), elect(ID, NID))
+        else run(R node(ID, NID, LID), elect(IID, NID))
+          fi .
+  
+  --- Finishing leading
+  rl [finish-leader] :
+    run(node(ID, NID, LID) R, lead(NID, ID))
+      => node(ID, NID, NID) R .
+  
+  --- Forwarding leader
+  rl [forward-leader] :
+    run(node(ID, NID, LID) R, lead(IID, ID))
+      => run(R node(ID, NID, IID), lead(IID, NID)) .
+  
+  --- Searching for target node
+  rl [search-node] :
+    run(N R, M)
+      => run(R N, M) .
+  
+endm
+
+
+
+--- 3b) Initial States
+rew in RBLE :
+run(
+  node(1, 2, 0)
+  node(2, 3, 0)
+  node(3, 4, 0)
+  node(4, 5, 0)
+  node(5, 1, 0)
+  ,
+  elect(2, 3)
+  elect(4, 5)
+) .
+
+
+
+--- 3c) Concurrent Steps:
+---     In theory, if all the messages arive at the same time all of them can be processed.
+---     The only limiting factor is whether they want to access the same thing.
+---     So if {m} amount of nodes want to initiate a leader election process, then m is the max.
+
+
+
+--- 3d) Checking Invariants
+
+--- For that I decided to create something that will help.
+--- The only reason being because I couldn't figure out
+--- why I was getting a bad token in my search with two nodes.
+
+mod LC is
+  protecting RBLE .
+  
+  op maxID : Ring -> Nat .
+  op lc1 : Ring -> Bool .
+  op lc2 : Ring Nat -> Bool .
+  op lc : Ring -> Bool .
+  
+  var R : Ring .
+  vars N N' : Node .
+  
+  vars ID NID LID : Nat .
+  vars ID' NID' LID' : Nat .
+  var MID : Nat .
+  
+
+
+  --- Helper function:
+  --- Base case
+  eq maxID(node(ID, NID, LID))
+    = ID .
+  
+  --- Recursive case
+  eq maxID(node(ID, NID, LID) R)
+    = max(ID, maxID(R)) .
+  
+  
+  
+  --- Leader check 1:
+  --- Base case
+  eq lc1(node(ID, NID, LID) node(ID', NID', LID'))
+    = LID == LID' .
+  
+  --- Recursive case
+  eq lc1(node(ID, NID, LID) node(ID', NID', LID') R)
+    = LID == LID' and lc1(node(ID', NID', LID') R).
+  
+  
+  --- Leader check 2:
+  --- Base case
+  eq lc2(node(ID, NID, LID), MID)
+    = LID == MID .
+  
+  --- Recursive case
+  eq lc2(N R, MID)
+    = lc2(N, MID) and lc2(R, MID) .
+  
+  --- P.S. As you can see I didn't use it
+  --- Also, it is important to note that
+  --- it doesn't need MID (Max ID).
+  --- But it is so unoptimized that my eyes hurt.
+  --- There is more to be done with it,
+  --- but I won't bother...
+  
+  
+  --- Leader check 1 & 2
+  eq lc(node(ID, NID, LID) R)
+    = lc1(node(ID, NID, LID) R) and LID == maxID(R) .
+  
+  --- Since all are the same (checked by lc1) we only
+  --- need to check whether one of them is the highest
+  
+endm
+
+
+
+--- If all of those are false (which is good)
+--- then the output should be "no solution".
+
+search [1] in LC :
+  run(
+    node(1, 2, 0)
+    node(2, 3, 0)
+    node(3, 4, 0)
+    node(4, 5, 0)
+    node(5, 1, 0)
+    ,
+    elect(2, 3)
+    elect(4, 5)
+  )
+=>* R:Ring such that not lc(R) .
+
+--- We basically check whether there is no path
+--- that can be chosen which leads to dissatisfaction
+--- of our lc (lead check) function.
+
+
+
+--- 3e) I would use a search command which is pretty nifty.
+--- In fact I already used it, but not effectively (still learning).
+
+

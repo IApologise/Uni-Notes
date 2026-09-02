@@ -1,0 +1,42 @@
+In lecture 9 titled Coding & Halting we talked about deciders and recognizers, as well as given an example of a
+decider, and one that doesn't fall into any of these two, but not one for recognizers. To fix that, here is a
+recognizer, but not a decider: Say we got some turing machine M which can simulate and see if some other turing
+machine A accepts some input w. Unlike a turing machine that simulates a DFA or one that can reconstruct and
+simulate a PDA, both of which are deciders, a TM that can simulate some other TM and be a decider is not possible.
+It is always a recognizer at the very least. Some specific TMs can be optimized for and simulating those can be
+decidable, but not all of them at the same time. Unlike with PDAs, there is no clever algorithm that can be used
+to solve this (i.e. the clever reconstruction phase mentioned before).
+
+Further more, if some turing machine A is Finite or there exists a bijection, then A is Countable. To specify, the
+type of bijection we mean is a map f : N -> A where f is some funcion and N is the set of all the natural numbers.
+P.S. A reminder from IN1150, bijection is a function that is both injective and surjective. Injective means that,
+in our case, each different element in N maps to a different element in A (a unique mapping). And surjective means
+that each of the A's elements is accessable from some element in N. Note that the function f itself doesn't have to
+be countable or an algorithm of sorts and such...
+
+When it comes to cardinality, we obviously got the countable and uncountable infinites which we already have heard
+about. And we are reminded of it here, but I want to point out some notation like {a, b}^ω where ω denotes an
+infinite length (ω is called omega). Unlike the kleene-star (e.g. {a, b}^*) which creates infinite combinations,
+the length of each element in the set generated is still finite, whereas {a, b}^ω has only elements on infinite
+lengths. This also means that {a, b}^ω does not have "a", nor "ε" (an empty string), nor anything else with finite
+length. Likewise, kleene-star does have them, but none of the infinitely long combinations possible.
+
+We also prove that such a turing machine M (the one that checks if some input is in some language A_TM) is a
+recognizer using cardinalities and contradictions. First of all we show that -K (a language we will define soon)
+is not recognizable. To do that we define a set of all the recognizer's codes s_i for the machines M_i that define
+some language L_i which we will call S. So, S is an infinite language of all the codes (i.e. words of finite
+lengths). Now let us define a new language K = {s_i | s_i ∈ L_i} which makes K a set of all the codes that accept
+themselves once simulated. Its complement -K is the opposite of that (i.e. all that reject). -K is a langauge over
+the same domain Σ (i.e. -K ⊆ Σ^*) just like L_i is, and -K is also not in S. Since -K is not in S which we know
+from before contains all the recognizers, then there is no s_i that recognizes -K, thus -K is not recognizable.
+
+Next we show that if we have a decider turing machine m_a which recognizes A_TM (some language recognized by a
+turing machine), then -K must be recognizable (which we now know it can't be). First we construct our own turing
+machine M which runs m_a. m_a itself checks whether some turing machine m_i accepts its own input s_i (i.e. is in
+K). Whenever M runs m_a, if m_i accepts s_i then m_a accepts, and if not it rejects. However, whenever M sees that
+m_a accepts M itself rejects, and when m_a rejects M accepts. So, M is also a decider which by the way recognizes
+-K (as you may have noticed already); Contradiction! Thus A_TM can not be a decider.
+
+With that we also conclude with a theorem which states: If some language L is decidable (i.e. there exists a turing
+machine that always halts), then L is also recognizable (duh...) and -L (L's complement) is also recognizable
+(makes sense, but not too obvious). And vice versa (also not trivial, but still really easy).

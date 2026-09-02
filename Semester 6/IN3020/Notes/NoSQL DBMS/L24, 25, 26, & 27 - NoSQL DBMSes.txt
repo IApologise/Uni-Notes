@@ -1,0 +1,281 @@
+--- Lecture 24 ---
+For now I want to point out a lot that I either do not understand or think is something stupid, and that is the
+explanation about "the problem of using SQL" such as "assuming that data is stored on disks", as well as "Big Data"
+which is basically for when we need to take special measures on how to process data (cuz there is too much so we
+like split it into multiple facilities around the globe and sync them sometimes or idk). By the way, NoSQL stands
+for "Not only SQL", just to clarify...
+
+So this use of NoSQL is basically the addition of other languages and tools to the already existing SQL langauge,
+toolkit, and an addition to how the Relational Databases operate overall, like adding JSON, XML, and RDF/S files
+for when a schema is not required creating "semi-structured" or "self-describing" data models. Semi-structured is
+when the data between the rows doesn't always have the same collumns. Think of it as creating a single table for
+each unique data we gather, such as a human always having a name and an age, but the contact varies. Some might
+have gmail as their contact, some their phone number. Instead of creating 2 collumns for the person's gmail and
+phone number where most have one of the two as NULL, or infinitely many other options for that matter, if all we
+care about is a way to contact the person a JSON gives us this flexibility at the cost of structure. Note that
+this is just an example, and many still accept either just a phone number or a gmail. Self-describing is like
+foreign keys in SQL, but much more flexible than that. In RDF/S it is true that it basically is the foreign key
+which is basically describing the relations between data in the database. But what if you have two databases whose
+foreign keys have a different name or one is more complicated than the other and you want to merge some data? That
+is when in RDF/S you can simply connect the meaning between the two, even if the structure is internally different.
+
+Obviously for semi-structured stuff we can simply split them into structured stuff, like an SQL table for human's
+name and age and then a foreign key to a table of what we couldn't categorize properly to each due to uniqueness.
+And for semi-describing we could simply create a table linking IDs from one database's tables to another one's.
+
+
+
+Back to Big Data, this is the largest issue here. Whenever there are too many users for a single computer to
+handle, and too many data stored for a single disk to handle, we must use multiple. That is what Distributed
+Database Systems is about, we spread the load to multiple devices all connected together acting as one. So the
+scaling goes as follows: We got vertical scaling which means upgrading to a better single device (bad scalability
+but easy), and we got horizontal scaling meaning buying more devices and connecting them together (good scalability
+but hard).
+
+Each device (whether it's main purpose is to process transactions or store data) counts as a "node". Due to speed
+often there are servers around the globe, and to make those servers and transaction processing faster they also
+have databases with identical or very similar data which they sync from time to time (I believe). There are two
+architectures describing how this structure works: First assume that we got many databases and many servers around
+the globe all loosely connected through internet (i.e. relatively slow and low-scale connection). First is called
+Master-Slave which is when we have a single (or very few) master servers that users contact to apply changes. But,
+we got many servers only for reading data called slaves. Like Imagine a blog platform where people go to read
+articles. There are many slave servers which are for users who are there to provide the majority with these
+articles, and only few users (authors) write these articles. The goal is to distribute the load, but there is also
+a lot of consistency (same data) between all the slave and master servers. The disadvantage is that if a single
+master server is down, then nobody can update or write new articles, and slave servers must elect a new master.
+The second is called a master-master architecture which is precisely when each server is a master server (or most)
+basically accepting both writes and reads. The data between them is synced up, but it may bring some conflicts...
+Some use a combination of both, having few master servers (rather than only 1) and doing syncs between them every
+few hours or so I think, where each master server has many of its slave servers around it. Like say having 3
+master servers, 1 in USA, 1 in Europe, and 1 in Asia, each of which have many slave servers in their regions.
+Though I prefer calling this type a Multi Master-Slave. As for the conflict resolution, that is what we call
+reconsaliation, which is when we either merge the changes (if possible), keep the most recent write, or some other
+stuff (idk which tho). So Master-Slave vs Master-Master is like Consistency vs Availability.
+
+To improve the Master-Master architecture we introduce Sharding which is basically when we split the data between
+the master servers, like if a user is in Lithuania and we have two master servers, one in Lithuania and one in USA,
+then the one in Lithuania gets all the users that are in Lithuania and handles them, but doesn't handle any that
+are in USA. This is done for more consistency (no conflicts possible now), and doesn't reduce availability, that is
+unless the user that is from Lithuania decided to travel to the USA, but that is fixable in many ways.
+
+Remember the principles for databases (ACID)? Well we also have one for distributed database systems (CAP) being:
+- C: Consistency which is "every read getting the most recent write", i.e. being up to date without conflicts.
+- A: Availability which is "every read and write receives a response", i.e. no timeouts or full servers.
+- P: Partition Tolerance which is "works after a (disconnected) split", i.e. splitting up the database into
+     multiple servers will retain the functionality and everything will work as usual, even when network is down.
+Note that unlike ACID, CAP principles can not be guaranteed for all servers when partitioning is at play. We can
+do 2 of these (out of 3), like to ensure consistency (C) and partitioning (P) we can pause the availability (A)
+until the data is synchronized and then resume. C and A can be easily resolved if there is no P, and obviously A
+and P can be done if we don't value C. To ensure all 3, that is C, A, and P, we need instant syncs no matter the
+circumstances which is practically impossible. So it is a trade-off, but P and A are the ones most focus on.
+
+
+
+When it comes to database systems, whenever we talk about NoSQL we categorize between multiple (5) types of DBMS:
+1. Document: This is basically a database system that is not really structured, like it defines a collection which
+   you can add the JSON or XML documents to, and then when you are intereseted in something you search for some
+   condition in that collection. In SQL the queries are more fine-grained and you know exactly where to take what
+   from where, here it is more less structured and thus searching is more of a hassle (but no joins & such). You
+   can actually think of each file as being an instantiated object, and the whole Document DBMS as an array of
+   these objects, whereas SQL is a tensor where each matrix is an array of similar objects (in structure).
+
+2. Key-Value: This is the least structured DBMS which is basically like having a single huge table for everything
+   with just two collumns: The first collumn is the primary key (ID), and the second one is the value, that's it.
+   It's like having an insanely huge hashmap. It mostly works by first getting some data and leaving the quering
+   and sorting and such to the application itself. The goal here is to get the data from rows as fast as possible.
+   I am not sure here, but I think that values themselves can be re-used again as keys which is what makes it work.
+
+3. Column: This DBMS is like Key-Value one, but with there being multiple key layers. Like a Hashmap within a
+   hashmap, and then more hashmaps in that, and so on... Usually there are 3 layers, so a key-key-key-value table.
+   Still a single huge table though, but with more structure I suppose. What these keys mean may be different, like
+   first key being the section name (so like a table in SQL), second being the value type (so like the table's
+   collumn), and third being the primary key (so the row). To me that seems like just SQL, but weirder... I guess
+   it gives some structure flexibility (so creating your own structure instead of doing some complex queries).
+
+   There is also a second type of Column based DBMSes, more natural to the name. It is like the rows and columns
+   have switched roles, each row is as if a column, and vice versa. It isn't quite like the multi key-value one I
+   explained, and is actually fundamentally different from the first explanation. The first one is actually called
+   a "Wide-Column" based DBMS, whilst this second explanation is the "Column" based DBMS.
+
+4. Hybrid: Not explained just mentioned, or at least it doesn't seem like it will be as of lecture 24.
+
+5. Graph: We will focus most future lectures on that, check out below for more on it and what it actually is.
+
+
+
+--- Lecture 25 ---
+When it comes to Graph DBMSes they are the most popular addition of the NoSQL. There are systems like RDF and
+SPARQL are the standarts with good documentation, but there are also ones like Neo4j, Cypher, and GQL which aren't
+that widely adopted but have good documentation aswell. Note that they are different Graph based DBMSes, and GQL
+we will not look at in this course.
+
+At this point I feel like I owe myself at least a general idea of what Graph based DBMS is like, which is hard
+because the definition varies; It is... "flexible"? There are mainly 2 types: Knowledge Graphs (KGs) and just
+normal Graphs. A normal graph is typically an undirected graph where nodes are some files, images, links, etc.
+KGs are graphs, but they are typically directed and there might be multiple such directed edges between any two
+nodes. KGs are also always annotated (i.e. have labels on top, both nodes and edges between them). There is also
+a third new type called Property Graphs, but for now let's focus on Knowledge Graphs, i.e. RDF and SPARQL.
+
+
+
+World Wide Web (WWW) for example is a knowledge graph of websites and such. Google has web scraper bots visiting
+all the websites it can find, reading them, and storing these websites + their data into the tables that they have.
+So when you use google's search engine there is an algorithm that compares the data and gives the most relevant
+links to those websites. The important part is that whenever you google something like "Oslo", and to the right a
+bunch of facts about your search appears, like how Oslo is the capital of Norway. That second, important part, is
+how an RDF is used. Google it is a knowledge graph (which it is) that they got which takes what you wrote in and
+also spits out some of the facts about it (if it has any). Those facts, i.e. leaf-nodes in the RDF, are added
+by humans as official or common sense information, or by the scraper bots finding overwhelming amount of the same
+data on the topic. Or at least that is how Google manages the information in their RDFs.
+
+The reason as to why RDFs in the examples from the lecture use full URLs (i.e. IRIs), is to remove any ambiguity
+when that data is to be linked with some other database system (cuz URLs are unique). This convention was
+acknowledged and standartized by the W3C (WWW Consortium - "An entity that manages the whole web"). So if in my
+website I have some facts about Oslo like it being a "great city", I can add it to my RDF and classify it as a
+description (through some XML file which has a similar URL convention). The URL convention here (i.e. the use of my website's domain) as prefix is done so that whenever I want to merge the data with some other entity they won't
+clash. There are public RDFs available such as Wikidata which I can download and merge with my own RDF for a simple
+database merge between my DBMS and Wikipedia's DBMS. This is done indepedently by my system and for my system so
+that my DBMS can use Wikipedia's DBMS aswell, Wikipedia doesn't do anything of the sort because I didn't share my
+RDF and DB, but it's not like Wikipedia wants it in the first place... Theirs is public, ours can be private.
+
+So all of this data is linked in a format called RDF. The "Knowledge" itself which I believe is the data is written in RDF/S and OWL standarts. Quering in this web requires SPARQL. In an RDF graph, the objects are the HTTP links,
+and the connections are what's called triples. Triples are of the form subject-predicate-object, where predicate is
+an edge going from subject to object. Think of subject, predicate, and object as each being their own column and
+the whole RDF knowledge graph as a single table (I think... might be not a single table, idk) where each row is
+this subject-predicate-object tuple. This is basically the formal description of what I mentioned earlier, and
+please check out the screenshot on RDF prefix examples & data node connections at "L25 - RDF Example.png". To sum
+up, RDF is a data model similar to the knowledge graph or something like that I believe, and SPARQL is the query
+language used there.
+
+
+
+Property graphs were developed by a company called Neo4j having its own query language named Cypher standartized
+by ISO in 2024 (Cypher's brand name is GQL I believe, Oracle helped to develop it and did some merging with it
+or something like that, idk). So, Property Graph is the model, and Cypher/GQL is the query language used there.
+
+As for the usefulness of all of this you can actually check out a screenshots of what this model does better than
+SQL (and by better I mean faster). The first screenshot introduces the problem at "L25 - Useful Graph Algorithm
+Types.png", and the second one "L25 - Graph Algorithms Part 1.png" is the actual algorithms that solve their
+respective problems (the top algorithm is for the top type, and the other 2 alrogithms is about Centralities
+part only, Community detection is what we gonna describe next). Community detection isn't really explained in
+detail (like what a community or a cut is), but here is an image anyways "L25 - Graph Algorithms Part 2.png".
+Apparently this community detection is about clustering and such, though again, idk what that is exactly. But we
+have seen some machine learning on graphs which do talk about that from IN3050.
+
+
+
+--- Lecture 26 ---
+So uh... We are back to talking more about RDFs and how they work apparently, yay! :D I think I already did mention
+quite a lot on them to be honest (googled), but I finally get the full explanation in person. So, RDF is described
+as the language that allows us to make statements about "resources", such as "John is father of Bill", kind of
+like first-order logic, specifically where we got a bunch of pair variables/constants and 2-arity predicates. For
+example, "ex:father-of(ex:john, ex:bill)" where "ex:" is the http://my-domain.com/ prefix (in IRI form which I
+explained before). This specific example (and all the possible examples) always follow this structure when
+translated to first-order logic. We got a triplet where the subject is john, predicate is father-of, and object is
+bill, but in RDF's language it looks more like "(ex:john ex:father-of ex:bill)" where " " is the delimeter, "ex:"
+is the prefix, and parantheses define the whole triplet. An RDF set has many triplets each of which are separated
+by a "." as the delimeter. Subject, predicate, and object all have to be resources, but subject and object can also
+be blank (no input). Additionally object can be a literal. As for what a resource is exactly my guess is that it is
+some thing that we got in our database or something the database stores information about or can store. Perhaps a
+table, a tuple in it, an attribute type, or a variable, anything that we want to define basically. As for a literal
+it is a concrete piece of data such as text, number, boolean, etc. Whenever we leave a blank (or maybe also in some
+other situations) we may also use other vocabulary like rdf:type which are some pre-defined stuff by the RDF. Also,
+note that the way the syntax is and the visualization is in "Turtle" format, because there are multiple ways to
+draw stuff and such (like XML format and more, but idk how they look, differ, and by how much). But I believe that
+Turtle syntax is the use of "." and " " as delimeters (without the parantheses, these weren't really necessary).
+
+So the RDF graph is a set of these triples which is often visualized as a single labelled directed multi-graph,
+i.e. a Knowledge Graph (KG). Though sometimes in our visualization some predicates can be represented as a node.
+You should check out the screenshots on it for easier explanation (I believe they are better than my explanations
+and go more into details than I do here). Anyways, there are common structures in our RDF graphs that we have a
+syntax for (to simplify) called containers. There are 3 in total: "bag", "seq", and "alt". Bag is when we use can
+use empty ovals (depends on what is empty) to describe whether the connected parts are all part of a single parent
+oval (i.e. subject is parent to object) (also unordered), a part of a single object and in that specific order, or
+alternatives to some of the other children that the parents have. It's best to look at screenshots for this one...
+But note that in the visualization (which is of the rdf:bag) it is all just a convention, and you can make it
+look horribly wrong to confuse everyone because nothing enforces anything here, not the label names not when and
+where you use the "rdf:bag" and such, nor how many u can have. Like it wouldn't make sense to have both "rdf:bag"
+and "rdf:alt", but we can do that. Just note that it has to be readable to the application, that is the point.
+There are even lists of triplets called collections, all of it is kinda confusing but it reminds me of the Maude
+System I learned in IN2100, just because the end of the collection is "nil" in the screenshot to be honest. I'd
+think of it as a linked list to be honest. There are also "Reification"s which is basically how we represent
+statements in this RDF graph, again check out screenshot for more details cuz I am too lazy & tired right now.
+Though I don't have a visualization of Reification, I drew it myself as I went with the lecture and I got it ez.
+Reification is just a convention to simplify the number of edges and easily connect some new stuff, nothing
+changes in our RDF graph semanticly (but applications might disagree).
+
+
+
+Now to the SPARQL which is the RDF's query language. Technically we can translate RDF into an SQL and use SQL
+queuring, but that is what we want to avoid in the first place, so we got SPARQL to work with RDFs efficiently. It
+is similar to SQL syntax, and uses the RDF's Turtle syntax too, you actually need to look at some examples here.
+Note that "?" is a variable prefix. It's like using SQL syntax to describe what you want to query (generally),
+and using RDF Turtle's syntax to describe precisely what subjects, predicates, and objects you want. SPARQL and
+RDF is basically like having an already self-joined table in SQL (which is what it is slow at, joining). Note
+that although there are extra commands like "REDUCED" with SQL's "SELECT", the "REDUCED" doesn't actually exist
+in the SQL itself, but it does in SPARQL, though lots is very similar (except for FROM, NULLs, etc.).
+
+A pretty cool task that was in some of the exams is how to implement the SPARQL's OPTIONAL query addition to the
+WHERE. The idea is probably to look for whatever it is and simply ignore it if there is a NULL, but I am not sure
+about if relational algebra has NULLs and such, I don't really remember .-.
+
+Also, note that in SQL we got tuples, whilst in SPARQL we got mappings. The difference is that a mapping apparently
+can store something that is undefined, not really sure what that means cuz I skipped all the examples and
+explanations, but I am sure you will look at them (or Claude will explain briefly). Also, SQL gives both tables
+as outputs and takes them in as inputs to search over (perhaps multiple), but SPARQL takes in RDF Graphs as
+inputs and mappings as outputs, "a weird mismatch".
+
+
+
+--- Lecture 27 ---
+Next we gonna talk about RDFS and OWL which is about implicit logic. I.e. if some subject A such as John is a
+type of some object B such as Student, and say all subjects B (i.e. Students) are a sub class of C (such as
+Persons), then we can derive the fact that all subjects A (such as John) being of type B (like Students) are also
+of type C (so People). In RDF this is written as "A rdf:type B . B rdf:subClassOf C" then "A rdf:type C", that is
+implicit logic, check out a screenshot for how to write it, but it is similar to INN3070's derivation trees. In
+fact, OWL (Web Ontology Language) is literally THE language I learned at the end of IN3070's course.
+
+
+
+Moving on, now we gonna talk more about Neo4j's Property Graphs (PGs) and its query engine Cypher (GQL is also a
+query language used with Property Graphs, but we ignore it here). SPARQL is similar to SQL, but Cypher is
+completely different. That is because SPARQL isn't optimized to quering graphs, whilst Cypher was designed for it.
+SPARQL just wanted something familiar to SQL to make the transition easier for everyone. Cypher's language is even
+optimized for traversing and quering graphs, unlike SPARQL.
+
+You can actually see the difference between PGs and RDFs once you familiarize youself with PG from the screenshot
+"L27 - Property Graph (PG) Introduction.png". It is more structured and simplier to work with, but KGs can still
+do everything that PGs can. This structure though allows for more optimizations (but it depends sometimes I think).
+
+P.S. The next part which is the syntax part is slightly wrong, writing just "()" for example won't do a query, you
+must also add a "MATCH" and "RETURN". Creating nodes and connections requires the use of "CREATE", and even after
+writing a CREATE you can write the next CREATE command using the previous command's variables. I believe that it
+is this way until we issue a RETURN at which point the whole command is finalized, but we don't use any ending
+symbols so I am not sure about that, maybe it is a single file that is one single command, or maybe there are no
+"\n"s in there and pressing Enter on keyboard finalizes it, idk... 
+
+As for Cypher it is best to just check out the screenshots I took from the lecture to familiarize youself with
+both the syntax and semantics. So we got Nodes and Relationships between those Nodes, so when we query we might
+want just any nodes, or maybe some nodes with specific relationships, and so on... Here are some examples: "()" is
+simply like doing "SELECT *" from the current schema (here we got a single graph, think of it as having a single
+schema in our whole database as the equivalent in SQL). Next, "(node)" is like doing "SELECT * AS node WHERE
+node...", so name here is basically a variable we can refer to in our query, kind of like how we do it in RDF to
+then impose restrictions on it. Then, "(node:Movie)" is like doing "SELECT * AS node WHERE node.Movie IS NOT NULL".
+Also, think of "node.type" as a column in our SQL table that only movies got. You can also do just "(:Movie)", but
+idk how to translate it to SQL without refering to the column :/ And for more control we can do specific value
+restrictions such as "(node:Movie {title: "Shrek", released: 2001})" which can be roughly translate to the "Select
+* AS node WHERE node.type = Movie AND node.title = 'Shrek' AND node.released = 2001".
+
+In Cypher, if you are looking for X that is related to something else like Y (like subject to object via predicate
+in RDF, i.e. a triple), then you use arrows and square brackets like. It is best to look at the screenshot for
+this one where a predicate is the one inside "[...]" and both subject and object are each in their own "(...)"
+connected with a "-" and a "->" to show direction of who is the subject and who is the object, i.e. which
+type of connection we want (so the connection type's direction). Note that the colors in these images are for
+clarity and don't represent different objects or classes or anything of the sort. Also, note that clauses "()"
+are not only used for quering, it can also be used for creation, filtering, etc.
+
+If statements are more like using "MERGE" and "ON" together, it is best explained with an example, so check out
+the "L27 - Cypher Merge.png" for how it is done and how it may be used and such. As for specific value comparisons
+of comparisons between nodes we use "WHERE", kind of like in SQL, but usually used for exactly what I said only.
+Also, note that deleting an object (i.e. a node) might fail if it is connected to some relation (i.e. an edge),
+and when deleting the node, to remove all of its connection automatically you can just use the "DETACH" addition.

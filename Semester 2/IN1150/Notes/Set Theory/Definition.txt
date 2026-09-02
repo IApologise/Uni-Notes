@@ -1,0 +1,3 @@
+The basics of logic. Set theory is a formal way
+to talk about something, its existance, provabilty,
+and is essentially the backbone of all we do here.

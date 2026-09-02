@@ -1,0 +1,58 @@
+--- Hashing ---
+The goal is to convert something from an arbitrary
+size into something with a fixed size, typically
+256 or 512 bits. It is also supposed to be hard
+to reverse the hashing process and figure out
+the input based on hash's output. The outputs must
+also be unique for every input. So strong and Weak
+Collision Resistance must be satisfied.
+
+MD5 hashing is weak, so is SHA-1. SHA-2 is good
+due to its increased size and is the most popular
+today, but SHA-3 is the better one.
+
+Hashing is typically used to compare file integrity
+(by comparing), and to protect user passwords as
+well as cryptocurrency, digital signatures, pseudo
+random number generation, and much more.
+
+
+
+--- Pepper & Salt ---
+Because everyone was using hashes like SHA-256, and
+because hash tables take at most O(log(n)) time to find
+a match, what people would do is find someone who brute
+forced a huge amount of passwords and their hashes and
+into a huge map with hash as key and password as value.
+As a hacker you would just download such a table and get
+the password in seconds.
+
+To prevent this before we hash the password, we add a
+random string called salt. Even if people know the salt
+they would still have to create their own map now (assuming
+that the combination of password and salt is not in the
+rainbow table already, so choose good salts boys) which
+is the same as hacking the password itself (takes days
+for passwords of length 8 or more I think, depends on
+what rules are applied).
+
+Salt is also random for each user so that if one dude for
+some stupid reason leaks his hash and password, the other
+people's passwords won't be leaked since salts are different.
+So anyways, we store a salt close to hashed password in the DB.
+
+Then there is peppering which is a hard coded random constant
+that is also added before hash function is applied. Since it
+is not in the database, hackers must go through code (assuming
+they got access to it) and find this constant when the DB got
+hacked. But that one might also be in the rainbow table, so make
+it big and unique. Again, note that unlike salt, it is the same
+for each user and must be hidden well outside the database.
+
+
+
+--- Conclusion ---
+Hashing is all about reliablity. It can be used in form of
+passwords to authenticate a user (it may be compromised tho).
+If one is compromised, the other one isn't and that is what
+makes hashing a reliable data storage medium.

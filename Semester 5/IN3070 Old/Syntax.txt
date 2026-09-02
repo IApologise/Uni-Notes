@@ -1,0 +1,7 @@
+Atoms and formulae:
+- Small letters
+- p, q, r, ...
+
+Propositional formulae:
+- Big letters
+- A, B, C, ...

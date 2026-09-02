@@ -1,0 +1,44 @@
+Note: "|" is not required, just to make it easier to read.
+Whatever is inside "{}" is to be replaced with arguments.
+"->" Is the output that the command will give.
+
+Also, "*" represents any valid argument. So whatever it is
+that you need to SELECT from the tables and so on.
+
+
+
+Basics:
+Unlike formal methods. SQL saves data not as sets,
+but as multi-sets. So basically duplicates are allowed.
+And so it also returns tables with duplicates. This is
+often used to count the amount of instances, and so on.
+
+Just like in Maude, SQL does not care about whitespaces
+"Space", and line shifts "Enter". It simply ignores
+these. Same for upper and lower case letters, so command
+"SELECT name" is the same as "select name". That is,
+unless the data itself is written with upper/lower case.
+
+Of course presedence is important and just like in Maude
+or any other programming language for that matter parantheses
+are used to fix this issue "(" and ")".
+
+To comment in SQL use "--" first, here is an example:
+| SELECT Name     -- This is a comment
+| FROM Customers  -- So is this aswell
+
+Just like in Muade System, since "Enter" nor "Space"
+identify the end of the command, we need a way to do so.
+In Maude it was ".", here it is ";", a semi-colon.
+
+
+
+Core Instructions:
+| SELECT {Collumn}  ->  Selects data from specified collumn (returns a table)
+| CREATE {Type}  ->  Creates new schemes, tables, etc. depends on {Type} argument
+| INSERT {Values}  ->  Inserts values into the table
+| COPY {Table}  ->  Copies data from a file into a new database table
+| DROP {Target}  ->  Deletes table or a scheme itself
+| DELETE  ->  Deletes data from specified collumn and/or row
+| ALTER {Target}  ->  Changes the data of a collumn, or table
+| UPDATE {Table}  ->  Changes the data of rows

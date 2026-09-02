@@ -1,0 +1,32 @@
+--- Lecture 23.2 ---
+The database security is mostly about these (CIA, just like the normal cybersec is):
+- Confidentiallity: Unauthorized disclosure of confidential information.
+- Integrity: Unauthorized or improper modifications to database information.
+- Availability: Legitimate user can't access the database.
+For a more concrete list of security goals that the database system should uphold check out the "L23.2 - Database
+Security Goals.png".
+
+When it comes to authorization SQL adds roles to users which govern how much of the database they can see, and what
+parts they can edit. DAC which stands for Discretionary Access Control is basically when we grant certain access
+or restrict certain parts per user. MAC which stands for Mandatory Access Control is when we add roles and assign
+these roles to multiple users. These roles have their own accesses and restrictions. Note that both DAC and MAC
+are used simultaneously and can be combined for both flexibility (DAC) and scalability (MAC) (I believe). Also, we
+usually have a "superuser" which is basically an administrator account that has all the privileges and can assign
+and create these roles and privileges to other users. More formally we call this superuser a Database Administrator
+(DBA). Instead of explaining exactly how these roles and grants work (and how views make it precise), just check out
+the screenshots that I've made and what they're called (more like general titles or comments) which explain the
+Access Control part.
+
+Oracle is an example of such a DBMS which uses SQL and restricts users and creates roles. Users must log into their
+accounts to get access to the database, and these accounts each have their own roles and unique privileges. Most of
+it was actually mentioned in the IN2090 which we took.
+
+When it comes to inference control this is when we basically when we use Views in SQL and aggregation so that we
+can only get the total, or average, or data like that without knowing each one individually. It's about privacy
+and confidentiality such that the information that is being used or shown is not tied to any single or a single
+group of relevant users (without consent, with consent it is fine). For an example check out "L23.2 - Inference
+Control.png". We also use Views for a fine grained access control as well by the way.
+
+SQL Injection is (or at least was) a common way to inject own SQL queries into the application to bypass
+authorization and/or do unauthorized actions. This is something that I did in IN2120 so check that out for more.
+

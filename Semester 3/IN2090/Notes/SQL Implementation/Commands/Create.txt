@@ -1,0 +1,104 @@
+This is a continuation of SQL Core file.
+All the syntax rules there also apply here.
+
+
+
+Data Types:
+| SCHEMA {Schema Name}  ->  Creates a schema, it's like a folder where tables are
+| TABLE {Table Name} ({Collumns})  ->  Creates a table with collumns
+|   ->  To create a valid collumn, you need to name them and set a data type.
+|   ->  Check out the example on how collumns are to be created properly.
+| VIEW {View Name}  ->  Creates a shortcut for a concrete type of SELECT requests
+|   ->  that are executed often. Acts very similar to a function in coding. Since
+|   ->  It is a search, it returns a table each time and requires no updates
+| INDEX {Index Name} ON {Table Name}({Collumns})  ->  Creates a B-Tree-Index for
+|   ->  specified collumns in the specified table. If there are multiple collumns,
+|   ->  a single B-Tree-Index is created to traverse between all as effectively
+|   ->  as it can, so not a B-Tree-Index per collumn, but a single one for all.
+|   ->  Also note that the Index might not be a B-Tree-Index, it depends...
+
+
+
+Helper Instructions:
+| CONSTRAINT {Constraint}  ->  Adds a requirement to be able to insert in data
+| REFERENCES {Reference}  ->  References collumns from one table to one in another table
+| MATERIALIZED {View Name}  ->  Materializes a view, meaning that it now becomes an actual table
+|   ->  But now it requires uptading which is done through REFRESH MATERIALIZED VIEW {View Name};
+
+
+
+Constraint Arguments:
+| UNIQUE  ->  Added during collumn creation, does now allow duplicate data
+| NOT NULL  ->  Added during collumn creation, does not allow NULL data
+| PRIMARY KEY  ->  Both UNIQUE and NOT NULL in one
+| CHECK ({Condition})  ->  Custom constraint that must be satisfied (still allows NULL)
+| DEFAULT {Value}  ->  Sets value to {Value} instead of NULL if it is missing
+
+
+
+Data Types (Quick Recap):
+| int  ->  Data represents integers
+| text  ->  Data represents all strings
+| date  ->  Data represents date in form of strings
+|   ->  Note that although date is a string, it can be compared with
+|   ->  <, > operators. Therefore write it in {yyyy-mm-dd} form
+| SERIAL  ->  Data represents int, but specifically made to handle IDs
+|   ->  It is not required to specify the value for it in INSERT (Skipped)
+|   ->  Those values are generated and adjusted automatically
+
+
+
+Instruction Examples:
+|
+| CREATE TABLE Students (
+|     SID int,
+|     StdName text,
+|     StdBirthdate date
+| );
+|
+| CREATE TABLE Students (
+|     SID int PRIMARY KEY,
+|     StdName text NOT NULL,
+|     StdBirthdate date UNIQUE NOT NULL
+| );
+|
+| CREATE TABLE Students (
+|     SID int PRIMARY KEY,
+|     StdName text,
+|     StdBirthdate date UNIQUE,
+|     CONSTRAINT name_birthdate_notnull NOT NULL (StdName, StdBirthdate)
+| );
+|
+| CREATE TABLE observasjon (
+|     observasjons_id int,
+|     timestamp date,
+|     planet text REFERENCES planet (navn),  -- References planet name
+|     kommentar text,
+|     CONSTRAINT obid_pk PRIMARY KEY (observasjons_id)  -- Stands for observasjons_id primary key
+|     CONSTRAINT ts_n_p_nn NOT NULL (timestamp, planet)  -- Stands for timestamp and planet not null
+| );
+|
+| CREATE TABLE personer (
+|     id int PRIMARY KEY
+|     navn text NOT NULL
+|     nationalitet text DEFAULT 'norge'
+| );
+|
+| CREATE TABLE Students (
+|     sid SERIAL PRIMARY KEY,
+|     sname text NOT NULL,
+|     sbirthdate date
+| );
+|
+| CREATE TABLE students (
+|   sid int PRIMARY KEY,
+|   name text NOT NULL,
+|   birthdate date CHECK (birthdate < (now() - interval '18 years')::date)
+| );
+|
+| CREATE VIEW StudentTakesCourse (StudentName text, CourseName text) AS
+| SELECT Students.Name, Courses.Name
+|   FROM Students, Courses, TakesCourses
+|  WHERE Student.ID = TakesCourses.StudentID AND Courses.ID = TakesCourses.CourseID;
+|
+| CREATE INDEX price_index ON products(unit_price);

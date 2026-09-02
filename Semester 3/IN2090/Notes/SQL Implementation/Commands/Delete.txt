@@ -1,0 +1,17 @@
+This is a continuation of SQL Core file.
+All the syntax rules there also apply here.
+
+
+
+Helper Instructions:
+| FROM {Table}  ->  Selects data from specific table
+| WHERE {Collumn} = {Data}  ->  Selects data of specific row
+| CASCADE  ->  Deletes everything related to whatever is being deleted
+
+
+
+Instruction Examples:
+|
+| DELETE
+|   FROM Students
+|  WHERE birthdate > '1990-01-01';

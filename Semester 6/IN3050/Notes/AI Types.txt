@@ -1,0 +1,48 @@
+1. Evolutionary Algorithm:
+This is just like the survival of the fittest. Create a bunch
+of random stuff and watch them compete over some limiting factor.
+Eventually the best survive and the rest die, thus only good are left.
+
+
+
+2. Supervised Learning:
+Assume that you have categories and have data that needs to be
+categorized, this is what supervised learning does. It tries
+to categorize data in clumps as much as it can. So it is a classifier.
+
+
+
+3. Unsupervised Learning:
+This one attempts to split the data into x amount labels
+such that it makes sense, so it also kind of categorizes the
+clumps, but in its own way without knowing if they are actually
+correct in practice, just an estimation.
+
+Assume you want to split a set of natural numbers into two, you
+might split them into odd and even, primes and not primes, etc.
+
+
+
+4. Deep Learning:
+Idk, has more layers I guess where it learns the labels by 
+itself and creates shit too maybe.
+
+
+
+5. Reinforcement Learning:
+This is a type of learning where an AI is learning as it is acting.
+So imagine driving, and as you drive you make mistakes and learn from
+those mistakes so that you move towards perfecting your driving skills.
+
+The AI does something similar, it has an initial state which is the
+starting environment and observations, and uses it to produce an action.
+After it acts the environment picks up on it and gives the next state.
+This goes on until we stop or some goal is achieved where at the end we
+have a list of states called a single episode or epoch where state is
+the environment and AI's actions, so a replay of a simulation / scenario.
+
+To adjust the AI's policy we add a supervisor to the environment, so
+the environment also rewards the AI's actions (or punishes or ignores),
+the agent then looks at those rewards and punishments and tells AI to
+use these actions more often in similar situations or not to. Think of it
+as also a part of AI self-improvement algorithm.

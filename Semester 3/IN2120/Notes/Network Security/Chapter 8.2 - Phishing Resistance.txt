@@ -1,0 +1,48 @@
+--- Passkeys / FIDO / WebAuthn ---
+There are lots of phishing websites that are copycats of actual
+websites. For example, can you see which one of those links is
+real? facebook.com or fаcebook.com. it was the first one because
+the second one has a russian letter a in it which is not the same.
+
+So, instead of having usernames and passwords to log into those
+legit websites, we instead have a private and a public key pair
+for each website stored on browser for example. So, whenever we
+try to visit the legit facebook (domain is part of private key),
+the website sends a random value that we got to sign with a
+private key to make a signature which we then send for facebook
+to verify that we are the real user.
+
+If it were a fake website, we wouldn't use the real website's
+private key, since computers see the difference between the
+fake and real links. It is a map so we don't even know what
+the second (fake) link is in the first place, we see it for
+the first time and create a completely different key pair for
+it which gives the fake website nothing.
+
+Note that since everything is stored on the website or in a
+device, we then authenticate with something biometric like
+a fingerprint, password, face id, etc. so that robbers won't
+get into all of our accounts if the device is robbed. There
+are things like RFID cards which are small cards powered by
+human's magnetic field (ok lol, bad idea), ID-cards which
+can be reverse engineered and fakes created, national pass
+but like cmon (I actually use it though and it is complicated).
+
+Anyways, there is a drawback to this method, since those keys
+are stored in some place like a firefox website on your pc,
+then how do you log in from your phone through google? That
+requires connection and synchronization.
+
+
+
+--- Password Banks ---
+This is also almost how the password banks work (apps in your
+device that store and generate different passwords for the
+accounts you make). This is useful because if one gets leaked,
+and because you are a human thus can't create different unrelated
+passwords for each account you make and memorize them, then the
+rest of your accounts won't get hacked. Yes, all of them are still
+vulnerable if your master password (password for the bank) gets
+leaked, but it basically makes it just like the first example.
+This allows you to make a single hard and long password for you
+to memorize instead of a bunch of unique / random ones.

@@ -1,0 +1,22 @@
+I et smidig lag er et lag av folk som er satt sammen for å utvikle en del av prosjektet (en smidig del). Et lag
+jobber tett sammen og ofte har lignende kunnskap og er styrt av alle like mye (innenfor utviklingsprosessen, ikke
+målet). Hvis en medlem blir syk, så er det ofte noen som kan fortsette med jobben hans.
+
+Når vi fordeler lagene, ofte er det gjort på to måter. Men først vil jeg minne på at smidige prosjekter er delt inn
+i mange små mini-prosjekter med ulik funksjonalitet som skal oppnås og andre forbedringer (ikke-funksjonele), disse
+skal vi referere til som deler. Her er de to måter:
+1. Komponent-team fordeler medlemmer slik at hver ekspert jobber innenfor en del de er best i, sånn som back-end
+   utvikler alltid kommer til å være med i en team som utvikler back-end delen, men på alle prosjekt deler. De også
+   ofte kommuniserer med andre lag som jobber innenfor andre deler av prosjektet (sånn som front-end).
+2. Kryss-funksjonele fordeler medlemmer slik at hver kan komme inn med noen type for unik innsats innen en del av
+   prosjektet som skal utvikles. Fordi at hver lag fokuserer på bare sin del av prosjektet. Siden medlemene er
+   ikke fordelt basert på hvilken felt de er best i, men hvilken er nødvendig, regnes de som full-stack utviklere.
+Sjekk ut "Lag Fordeling.png" for en tegning, men merk at "Item" står for prosjekt del, og "Component" er det
+man spesialiserer seg i (ekseprt innen en felt som nevnt i Komponent-team delen).
+
+Ofte har man daglige møter (stand-up møter) hvor hver man i en team oppsummerer hva de har gjort, jobber med, og
+håper til å bli ferdig med i dag, hver team har egen stand-up møte hvor bare teamets medlemer deltar i (det er ingen
+folk fra andre lag der). Etter at deadline har gått ut bør laget være ferdig med prosjekt delen sin, og da
+gjennomfører laget sin egen retrospektiv møte hvor medlemmer diskuterer hva gikk bra og hva gikk dårlig. Målet er
+å forbedre måten man jobber i et lag i fremtiden. Ofte er det noen som heter for "fasilitator" som styrer denne
+prosessen, fordi at møtet kan ikke være for lang og alle bør være hørt.

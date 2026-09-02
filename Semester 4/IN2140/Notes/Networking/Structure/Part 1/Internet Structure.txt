@@ -1,0 +1,200 @@
+--- Internet ---
+Internet is split into 2 parts, end systems (ES) and intermediate systems (IS). ES are personal computers, phones,
+printers, traffic lights, weather stations, etc. It is basically anything that doesn't re-send the same request
+into other, further systems. So, unlike routers, switches, firewalls, etc. which do re-send the same requests and
+data which makes them the intermediary systems. These intermediary systems is what is the internet, which is where
+the data travels to get from one end system to another, like sending a photo from your computer to your phone, even
+if they are close physically, but even then if there is a shortcut then the internet will make it (probably). In
+fact, these intermediary steps are sometimes clustered closely together, which means that they are in the same subnet having a local IP address and such (i.e. LAN), and these clusters are called nets. So internet is basically
+an inter communication between these nets. These nets are uncontrolled in size, like my appartment having a few
+devices here and there, whilst IFI at UiO has thousands of computers students can access simultaneously and more.
+
+Note that if the two devices are on the same LAN, it does not travel through the internet but to your switch,
+which is most likely your home router (it has switch included in it) and then straight to the target device within
+that LAN of yours (because it made a shortcut unless a LAN IP was used directly at which point it couldn't have
+gone through the whole internet in the first place).
+
+
+
+--- Topologies ---
+Topologies is basically how devices are connected to each other. Like how end-systems are connected to a switch
+through ethernet cables, how switches and routers are connected to each other, how routers are connected to each
+other across the internet, etc. This also includes hardware such as how CPU cores connect to each other or how
+PCIe slots are connected to the motherboard. We've seen them in IN2120, but a reminder is nice, here goes:
+
+Bus - all nodes share a single cable. It is simple and cheap, but it has terrible performance because a single
+collision creates interference, so everyone must wait for everyone. That is why it is mostly historical now.
+
+Radio (ad-hoc wireless) topology - devices connect directly to nearby ones via radio waves without. There is no
+central device here, and the data simply hops between them to reach its destination. Kind of like radio towers or
+bluetooth and such where no fixed topology pattern or infrastructure exists (and wireless of course).
+
+Star - all nodes connect to a single central node. It is used in LAN networks which is where devices connect to a
+central switch or to a router and such. It is easy to manage and a single device failing doesn't affect others,
+unless it is the central one that everyone is connected to...
+
+Tree - a hierarchy of stars, i.e. switches connecting to switches connecting to a root switch/router. This is how
+larger LANs and campus networks are built, like UiO having building-level switches connecting up to a central
+campus router. This is also how PCIe works on motherboards (components branch off a root hub).
+
+Ring - devices form a circle, each connected only to its two neighbors. Used in some older WAN technologies (like
+SONET fiber networks) because a signal can travel either direction around the ring, giving redundancy.
+
+Full mesh - every device connects directly to every other device. No conflicts with others and due to a direct
+connection also fast. Note that Wi-Fi even though it reaches each device it is more like a bus topology, thought
+I needed to clarify that. The number of connections explodes as you add devices though (because mesh) which is
+n(n - 1) / 2 links where n is the number of devices, so it is only practical for small numbers of high-importance
+devices, like core internet routers between major ISPs, or a small number of CPU cores in hardware.
+
+Hypercube - a clever compromise for when full mesh becomes impractical. In a hypercube, each part connects to
+exactly log_2(n) neighboring devices (where n is the total number of parts), arranged so any part can reach any
+other in at most log_2(n) hops. So 8 nodes need only 3 connections each instead of 7. This scales much better than
+full mesh while keeping paths short, which is why supercomputers use it.
+
+Torus - imagine a grid of nodes where the edges wrap around and connect to each other (like a donut shape). Each
+node connects to its 4 neighbors plus the wraparound connections. Used in supercomputers because it gives uniform
+latency between any two nodes without the bottleneck risk of a tree. This is what the AI said basically...
+
+Fat tree - a tree where the links get progressively wider (more bandwidth) toward the root. This solves a
+bottleneck problem with regular trees where many devices competing to send traffic upward overwhelm the root
+links. This one is commonly used in data centers for example.
+
+Anyways, you can check all of these topologies out in the "Net Topologies X.png" where X is a number in the series.
+Note that in the third one (i.e. "Net Topologies 3.png") the top one is the Bus topology, and the bottom one is
+the Radio topology. Also, "Net Topologies 1.png" and "Net Topologies 2.png" have duplicates between them.
+
+That said, supercomputers often use the hypercube structure. Sometimes also fat tree, torus topology, or just full
+mesh. However, when it comes to the communication between the CPU and RAM (not just in supercomputers) it must be
+much faster, and therefore has its own topologies that are being used: "Hypertransport", "QuickPath Interconnect",
+and "Ultra Path Interconnect". One of these uses full mesh because 4 CPU cores are mangeable, but when it is more than that then we use another one which has a hypercube like system. Basically, these topologies are not only found
+in networking, but also inside a devices, data centers, and more... Basically wherever some stuff communicates with
+some other stuff, and not just a single one.
+
+
+
+--- Layers ---
+Each net may have their own solution as to how to communicate between other nets and the choice might also depend
+on their priorities (such as latency being more important than scaling, or reliability and such). Today there are 3
+common communication structures where one of them clearly dominates the rest. Layers is the most common one, then
+there is components, and lastly recursion. We know layers from IN2120 intercommunication "Internet.png". Note that
+each one has their strengths and weaknesses, and to be honest I am not sure how these communication systems talk to
+each other, and whether they even can. And if they do, maybe I misunderstand what it is that we do with them and
+what it is that they actually are.
+
+Anyways, note that the Layers structure is split into two types, "Layers - OSI.png" being the first where OSI is
+short for Open Systems Interconnection, and "TCP/IP.png" being the second which is the same one used in IN2120.
+Layers is a serialized stream of bits where the whole stream is split into parts by its functionality once read.
+So the first layer is the first sequence of bits in a stream of bits that is read by some device. Each layer is
+processed by some device or a software within a device. I.e. it simply does something, or it reads its layer and
+either modifies it and sends it further, or strips it and sends the layers above to the next device/software.
+All of this depends on what layer it actually is.
+
+The layers are broken down as follows based on how they are split (shown in the OSI model):
+1. Physical layer is where we convert Wi-Fi signals (electro magnetic waves of radio frequency), ethernet signals
+   (electricity in wires), optic fiber cables (electro magnetic waves of infra-red frequency), and so on... into
+   bits (0s & 1s). This one is handled by devices such as a Modem, NIC, Wi-Fi Chips, Ethernet Ports, etc. No data
+   is being processed or used in any way yet.
+
+2. Data link layer is where the actual data starts being processed. Who sent it, who should receive it, and check
+   if it is acceptable (not too many errors). The data that is processed is the whole stream of bits that was
+   received. However, this and the other layers ignore the data that isn't meant to be read by it (not that it is
+   important for it...). The data that is ignored is the DATA part which is true for all the layers (except for
+   first and last since the first simply modulates/demodulates stuff and last one simply doesn't ignore anything
+   since that is who the last part this data is meant for). The whole bit stream for this layer looks like this:
+   [SOF, HEADER, DATA, CHK SUM, EOF] where SOF is the pattern of bits that denotes message start and EOF the end,
+   DATA are the bits that are to be sent further and processed by the layers above (i.e. the part that is not to
+   be stripped by the current layer), and CHK SUM is the error correction data. HEADER is the current layer's
+   (layer 2 in this case) specific data which is to be processed, like a source and destination MAC address.
+
+   On this layer we use MAC (Medium Access Control, not MAC address) which is responsible for channel access and
+   framing. What it is and how it is done depends on whether we use Wi-Fi, Ethernet, etc. But basically it
+   determines whose requested data to send first when available. Within Wi-Fi we do it so that the waves don't
+   collide and interfere with each other, and for Ethernet we can send data when the cable is empty and no other
+   data is going through it. Framing also depends, but it helps determine message's start and end (as well as how
+   and when it is to be sent and such), so that is why we need SOF and EOF. MAC also looks at HEADER to figure out
+   which local machine (device in the same LAN) sent the message and who is meant to receive it (within that same
+   LAN using the MAC address that it read in HEADER). Then, the Logical Link Control (LLC) analyzes for errors
+   based on what it reads (the whole bitstream) and in CHK SUM where too many errors may lead to a withdrawal.
+   It also multiplexes (i.e. regulates whose message goes to who). Basically, MAC is the bridge between layer 1 &
+   2, and LLC is between layer 2 & 3. All of this is the data link layer which as the name implies links stuff,
+   i.e. layer 2 is just linking layers 1 and 3.
+   
+   The whole stream of bits that the data link layer received is called a frame (this includes the DATA part too
+   which is what it does not process). Others have their own names such as layer 1 referring to it as "bits", layer
+   3 referring to what is left of the stream after layer 2 stripped its part as "packets", similarly layer 4 calls
+   its "segments". Data Link Layer also has ARP and RARP which is how the MAC <-> IP translation is done, more on
+   it in other notes though. Note that most of what is written here is a general clarification and not just the
+   layer 2 itself. It is said so whenever it is or generalized as "this" or "current" layer.
+
+3. Network layer takes in the DATA part which is what is left after layer 2 stripped its layer (all layers do
+   something similar except for the first one, and the last one simply has nothing to strip). Data link layer is
+   the bridge between layers 1 and 3, but the network layer is what actually finds the next node to send the data
+   to (private/public IP addresses are used here). To do that it considers many paths (think graph theory) and
+   chooses the best it found (if one exists). The path chosen isn't always straightforward, like it being a bad
+   idea to send data through the route whose nodes frame capacity (even if just one) won't be able to handle the
+   one you'll send. Though in reality it just has some table it uses for that and uses the default gateway if it
+   couldn't find out where it should send the message to. In this layer we also get to use firewalls to decide
+   whether to allow or block incoming traffic (just the IP checks, very simple since layers above aren't included
+   yet, which entails ports from layer 4 and application data from layer 7).
+
+4. Transport layer is the "end-to-end message stream" which has data on who the target process within the machine
+   is, i.e. the port. It also maintains the connection between the processes, some more end-to-end error correction
+   (idk what type it is), and it does some extra features to make layer 5's job easier. Like regulating sending
+   speed (or not), deliver packets in order (or not), correct for errors (or not), limit packet size (or not), and
+   whether we do want the connection to be maintaned and established (or not), and more. This includes reassembling
+   the packets back into the correct order, because they may not arrive in the order they were sent in due to how
+   global routing is done. However, the fragmentation (splitting up data into individual packets, sending them, and
+   reading them) is done each time a message is sent or received between the routers (switches and modems just
+   forward what is given to them). Note that the 4th Layer simply orders the received data back, and it is the 3rd
+   Layer that splits the data up and then recombines the pieces (not necessarily ordered).
+
+   So here we got TCP & UDP connection types and others as well. TCP, UDP, etc. all of these are separate protocols
+   all of which have one thing in common: They all mention the source and destination ports. The ports point to a
+   process within a machine (its ID), which is the address to the process within the machine should receive the
+   payload. Ports such as SSH, HTTP, HTTPS, and others including temporary ones that your device's processes create
+   and assigns dynamically are more of a layer 5-7 thin. Once a process receives the port it is the process that
+   decides what to do with it and how, as well as whoever sent it deciding what to send. Concentions are what often
+   ultimately decides what the port means (unless both the user and the server expect something else).
+
+   The Layer 4 is more about getting the message to the device that is listening to this port, and not what will
+   be done with it afterwards nor how it will be interpreted. Also, layer 4 is where we got Firewalls restricting
+   ports and routers doing Port Forwarding (kinda like NAT and firewall for ports). Lastly, TCP orders the
+   fragmented packets received (such is the protocol), whilst UDP does not (though often handled by the application
+   itself to make sure you watch the video in an intended order).
+
+5. Sessions layer is the establishment, maintenance, and termination of the connection between the end-systems. It
+   is adding some data which tells for how long the established connection is to be managed, and what to do if it
+   is temporarily lost. For example still being authenticated mid-transaction if the connection gets lost. Often
+   you don't even notice it. Or like creating checkpoints to continue the download of a file. It also fixes the
+   multi-tasking and forking problems too, like video and sound synchonization and such. It is basically the
+   authorization, synchroniation, and recovery part of this whole communications part.
+
+6. Presentation layer does the data translation (encoding and decoding). It translates the application into an
+   acceptable format to be sent over the internet such as converting a UTF-8 into bits. It also handles the
+   compression of this data for a more efficient sendoff (like with images). Serialization and deserialization
+   are also a key part of it all. Here encryption and decryption is also done. Basically the secure and efficient
+   translation of the Layer 7 (both ways).
+
+   A bit of an important note: Port 443 also known as HTTPS is a convention that the browsers and servers have
+   agreed to use. So whenever you try to connect to YouTube through a port 443 the browser will assume that you
+   want an HTTPS connection (HTTP & TLS). HTTP is the layer 7 thing which is a protocol on how the DATA part must
+   be formatted to be understood by the server (which is what the server expects once you do port 443 or 80). TLS
+   is the layer 6 thing which is what the browser attempts to achieve at this layer once you used port 443.
+   However, I could in theory have my servers listen on port 8080 for any HTTPS requests, or have my servers
+   listen for HTTP on port 443 assuming browsers don't enforce TLS, but they often do and raise an error...
+
+7. Application layer is where the data is applied by a website or whatever the process is (such as a minecraft
+   server) and such. At this level the processes may analyze and recognize what the ports 80 (HTTP) mean and act
+   accordingly (rather than just listening for one which is what Layer 4 grants us). We also get cookies :)
+
+
+
+--- Some of my Personal Comments ---
+All in all internet is messy, and protocols are there to simply make bad and more aggressive programmers to break
+the internet less and make it more secure, efficient, and simplier for all. For the possibilities on how each layer
+contributes and what data it may hold check out the "Hourglass Model.png". Note that if most of these layers aren't
+done correctly the only drawback is that the data simply won't reach its destination or the process won't be able
+to handle it properly (will think it is some gibberish), unless of course it can be exploited if a server is naive
+and doesn't check for what is being sent in a secure way. For example a player sending all enemy's states as dead
+and the server trusting that, instead of the inputs that the user made so that the server may check for itself if
+the user cheated.

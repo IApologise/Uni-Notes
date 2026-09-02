@@ -1,0 +1,137 @@
+Phenotype, Genotype, Gene, Allele, & Locus:
+A genotype is like a DNA of a solution. A single connection like TA or CG
+in DNA is called a single gene. The gene's value is called allele, and its
+position in the DNA sequence is called a locus. The genotype represents
+our solution to the problem, so if we use the genotype to construct it
+the object constructed is called a phenotype, an implementation.
+
+
+
+--- Genotype Types ---
+
+Binary Genotype Representation:
+This is a genotype where in every gene an allele is either of a state A
+or a state B, most often it is either true / false or 1 / 0.
+
+Integer Genotype Representation:
+This is a genotype where in every gene an allele is an integer.
+Often it includes the negatives as well. Integers may also
+represent a string or something of sorts.
+
+Floating Point / Real Genotype Representation:
+This is a genotype where in every gene an allele is a
+floating point or a real value, this includes negatives too.
+
+Permutation Genotype Representation:
+This is like an integer genotype, except that the integers
+are used not as actual numbers, but as indicators or representations.
+This type of genotype is more about order in which these values
+are placed in. This also means that the values all must be unique,
+so no repetitions. Further details of the order is to be determined.
+
+
+
+---Value Crossovers ---
+
+N-Point Crossover:
+N represents the number of cuts/splits we do. So if we have a genotype
+it gets split into multiple genotypes which are then exchanged between
+it and another individual's genotype that is split in the same way.
+So if it is 3-point, then the genotype is split into 4, because 3 cuts.
+
+Discrete Recombination:
+When combining the two genotypes, instead of switching one with another
+we can also take an average of both and thus create an exact copy of both.
+Doesn't work with binary tho, can't take average of "true" and "false".
+
+Intermediate Recombination:
+This one takes a random value and decides how much the first one
+impacts the result, the more the first one impacts, the less the
+other one does, thus the formula for an allele for a new child
+A becomes A = cx + (1 - c)y where x is from parent 1 and y from 2.
+The constant c is a random value, sometimes static (determined).
+
+Simple Arithmetic Crossover:
+This is a combination of discrete and n-point crossovers. You
+basically do some cuts and some of the splits are intersected in
+a way in which the discrete recombination works, rest is ignored.
+
+
+
+--- Permutation Crosssovers ---
+
+Partiall Mapped Crossover (PMX):
+Picks a sequence of length n and same start in both genotypes.
+the sequence from gene a is then put into gene b, the rest is
+then filled in order starting from the end of a sequence. First
+we attempt to copy each gene of the original (since the sequence
+is from a the original is the one being modified, so b) if b's
+gene is a duplicate, then the one look at what that duplicate number
+has replaced in the sequence and repeat this process until one is
+not a duplicate. Also, vice versa for the second child so from b to a.
+
+Example let a = {1, 2, 3, 4, 5, 6, 7, 8, 9} and let
+b = {9, 3, 7, 8, 2, 6, 5, 1, 4}. We choose n = 4 and
+start to be locus number 3 (so number 4 from a). So
+the first child (a to b) becomes {9, 4, 2, 4, 5, 6, 7, 1, 8}.
+
+This type of crossover is said to preserve the adjacency,
+so if gene x was adjacent to y, it probably still is.
+It is possible for none to be after PMC.
+
+Edge Recombination:
+...
+
+Order Crossover:
+...
+
+Cycle Crossover:
+...
+
+
+
+--- Value Mutations ---
+
+Mutations change the values, to a new random value. In the binary
+genotype the values are simply flipped. In the integer and floating
+point there is ususally a range given. The exact sequence in which
+the mutations occur can be different.
+
+Uniform Mutation:
+Mutation that is very, very often used in intger and real value
+representations unless a pre-made start is already given. Like
+mentioned before, a value is chosen from a pre-made range of values.
+
+Non-Uniform Mutations:
+Instead of changing an allele to a random value, we instead
+deviate it by some randomly generated value, so instead of
+changing an allele from 5 to randomly generated 1, we instead
+create a deviation of -1, so 5 - 1 = 4 which is the new value.
+
+Creep Mutation:
+When some values are more favored than the others, so some
+have a higher change of occuring than the rest then the
+mutation is sort of biased and is therefore called creep.
+
+Random Resetting:
+Whenever a whole genotype is reset to some random one, that
+is called a random resetting. We completely randomize the genotype.
+
+
+
+--- Permutation Mutations ---
+
+Swap Mutation:
+Changes the locus of two genes in a genotype. This often
+happens at random, sometimes multiple times or in a sequence.
+
+Insert Mutation:
+Chooses first gene and a second one. The second one is then placed
+to the right (after) the first gene. Sometimes applied multiple times.
+
+Scramble Mutation:
+Picks a sequence of some length n and completely randomizes
+the order of that specific sequence, rest remains the same.
+
+Inverse Mutation:
+Picks a sequence of some length n and flips it, rest is same.

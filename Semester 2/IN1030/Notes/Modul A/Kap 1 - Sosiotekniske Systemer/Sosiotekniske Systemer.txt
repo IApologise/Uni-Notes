@@ -1,0 +1,21 @@
+1. Sosioteknisk = Sosio + Teknisk
+Det vil si at man ser på hvordan teknologi påvirker brukere og samfunnet.
+
+Når man prøver å se samspill mellom interessenter er det viktig å ta hensynn til objekter rundt dem som påvirker dem på ulike måter. I dette tilfellet er vi interessert i teknologien. Derfor, kan man ta en telefon som eksempel. Også: Hvordan telefon påvirker brukeren. Hvilke behov en person har og tilferdistilles av telefonen.
+
+Reel eksempel: Det er en forskjell mellom å ha våpen i hånda enn å ha våpen i skuffen. Vi kan ikke si at folk dreper folk og at det er ikke våpen sin skyld. Det er det delvis. De påvirker folk og gir dem en mulighet og derfor en mulighet å tenke og resonere for å bruke dem.
+
+2. Syntax
+Når man skal tegne et rikt bilde tegner man nåværende situasjon. Så tegner man piler (arrows) for å koble sammen
+interesser og vise sammenheng mellom situasjoner. For å vise en god relasjon er det vanlig å bruke et hjerte over
+pilen. For å vise et konflikt bruker man krysse sverd. Man også tegner tanker i form av skyene (hva interessent er
+interessert i) samt begreper de bruker. Til slutt er det viktig med litt kontekst, og derfor legger man til litt
+info hvis det er viktig (tekst).
+
+3. Hvordan lager man rike bilder?
+Steg 1: Først må man finne ut hvem er interessenter i dette tilfellet, og hva er demmes interesse.
+Steg 2: Så er det å forstå demmes interesse: Hva er problemet, målet, og - eventuelt konsekvenser.
+Steg 3: Hvordan målene blir realisert, hva som kreves og hvem gjør hva og hvordan er det knyttet sammen.
+Steg 4: Hvem som får eller mister hva ut av dette?
+Steg 5: Hvem som har makten til å endre interesse?
+Steg 6: Deretter er det bare å lage et bilde som viser frem alt dette tydelig og strukturert.

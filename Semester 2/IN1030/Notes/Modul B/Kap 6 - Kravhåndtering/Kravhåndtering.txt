@@ -1,0 +1,64 @@
+Når man vil utvikle en system, så må man først spesifisere hva man vil at systemet bør gjøre. Dette heter for
+Brukerkrav og er noe som skal forstås av en vanlig kunde, f.eks. en beskrivelse av en klær nettbutikk. Systemkrav
+derimot er en mer tesknisk og derfor mer spesifikk beskrivelse av systemets funksjoner og egenskaper (usikker om
+hvor detaljert det er, men er ofte brukt i kontrakter). Alt dette heter for kravspesifisering.
+
+Kravspesifikasjon må spesifisere krav, nemlig: Funksjonskrav, som også inneholder design (i.e. ikke bare systemets
+funksjonalitet, men også hvordan den ser ut på nettsiden), og ofte også presisere hva systemen skal ikke kunne
+gjøre eller se ut. I tillegg til det så bør også ikke-funskjonele krav spesifiseres, i.e. hvordan skal systemet
+utvikles, hvilke dependencies bør være brukt, reguleringer som må bli fulgt, optimisering, mulighet å bli brukt
+av forskjellige grupper (handicaps and such), hvor lenge bør den være oppe (accessible by users), sikkerhet, osv.
+Sjekk ut "Ikke-Funskjonele Krav.png" for en mer strukturert representasjon.
+
+Her fokuserer vi på disse ikke-funksjonele krav:
+1. Produktkrav - Basically brukskvalitet og brukervennliget. Hvor enkelt er det å bruke systemet, og hvor mye kan
+   man gjøre med systemt, i.e. hvor mye kontrol man har. Dette er da den universelle utformingen (UU) som vi har
+   snakket om i Modul A. Dette er ikke noe som kan generaliseres, man ofte trenger mer kontekst om systemet. For en
+   eller annen grunn nevnes det også sikkerhet, oppetid, optimisering, osv. Det gir mening, men bare UU er feil da.
+2. Organisasjonskrav - Budsjett, leveransetidspunkt (delivery date), utviklingsmetoder, programmeringsspråk og
+   verktøy, standarter regler og regulering, alt dette er organisasjons krav. Ofte gjør man tester for å se om
+   alt er i orden og alle ønsker ble oppnådd, sånn som "enkelt å bruke og opprettholde systemet".
+
+Disse kravene kan skrives på mange måter og mange formater/strukturer. For noen eksempler se på "Måter å Skrive
+Kravspesifikajsoner På.png", men merk at det finnes standarter for å gjøre det enklere for alle, så følg gjerne
+dem istedet med mindre du har en god grunn til å gjøre annerledes. Når det gjelder selve språket, så betyr "må"
+at noe må være en del av systemets funksjonaliteten, mens "bør" er ofte et et ønske. I tillegg til det så legger
+man til en forklaring eller begrunnelse for hvorfor det er nødvendig eller ønskelig.
+
+
+
+Smidige (Agile) kravspec (a.k.a. kravspesifikasjoner) er en metode ofte brukt i små prosjekter som man har lyst å
+bli ferdig med fort. Der, har man en liste med ønsker som man kan endre på mens man utvikler systemen. Denne
+listen heter backlog, og dise ønsker heter brukerhistorier som er i utgangspunktet (basically) enkelt og kort
+forklarte ønsker, rett frem. Scrum er også brukt her for å evaluere implementasjonens funksjonalitet, ikke
+funksjonele krav, design, osv. Merk at vanlig kravspesifikasjon (i.e. ikke smidig) definerer alle kravene først,
+så utvikles systemen.
+
+Noen ganger prosjekter er for store (disse heter Epics) eller det er for mange forskjellige ønsker som fører til at
+vår smidig prosjekt blir delt inn i små smidige deler (Derfor er Scrum god her). Smidig betyr ofte 1-2 ukers
+arbeid. For en eksempel på en dårlig smidig systemutvikling sjekk ut "Dårlig Smidig Systemutvikling Eksempel.png".
+Grunnen til hvorfor den er dårlig er fordi at alt for lite ble gjort. Ingen funksjonalitet, bare design, laget på
+10 minutt. Som nevnt disse smidige deler ofte tar 1-2 uker (max 1 måned), og fortsett har en stor del
+kravspesifisering og ikke lage en små design uten funksjonalitet.
+
+
+
+Kravhåndteringsprosessen handler om å analysere kravene, validere at all funksjonalitet ble utviklet (i.e. at
+systemet fungerer sånn som beskrevet i kravspec-en), at utviklingsprosessen er organisert. Et eksempel kan være
+en manglende budsjett, fordi at alt koster penger. Dette kan potensielt bli løst ved å kjøpe et eksisterende system
+og tilpasse den (dersom det lønner seg). Denne alternativen også regnes som endring på kravspesifikasjonen. I
+tillegg til det regner man ca. hvor mye noe koster å utvikle, samt risikomomenter (vet ikke hva betyr). Endringene
+i kravspesifikasjoner er som oftest definisjonsendringer (dersom dette er ikke en smidig kravspec), men kan også
+skyldes av nye interessenter, endring i organisasjonen (ny ledelse, reorganisering og sånt), osv.
+
+Alt dette egentlig deles inn i fire deler (aktiviteter): 
+1. Forstudie/målanalyse - Først tenker man hva vil man oppnå, om vi skal lage vår egen system, eller tilpasse oss
+   en, eller kanskje kjøpe en og tilpasse denne litt, samt kostnadd og risikomomenter.
+2. Kravinnsamling og kravanalyse - Denne prosessen handler om å samle inn informasjonen om hvilke krav som man
+   skal ha og vurdere dem. Merk at denne prosessen er alltid før systemet begynner å utvikles, man må presisere
+   kravspec-en først. Dette er da mer systematisk fortsettelse og neste steg etter punkt 1, hvor man gjør ting
+   sånn som å løse konflikter mellom interesentene.
+3. Validering og kravspec - Valider at kundene har forstått kravene og definisjonene. Ellers så blir det dyrt å
+   endre disse kravene mens systemet utvikles.
+4. Håndtering av kravendringer - Endring i kravene kommer alltid, så det er lurt å ha en liste av avhengigheter
+   og hvordan et krav påvirker en annen og sånt for enklere endring, for eksempel bruk av definisjoner.

@@ -1,0 +1,85 @@
+Relation algebra is how we use and extract and modify the
+data from our relations (database). It is like math, precise
+and completely theoretical with a bunch of operations.
+
+
+
+Projection denoted as π is an operation like logarithm
+in math. It takes one argument and type below it, like
+log_2(8) = 3. What π does is different though. Below π
+we type in what keys we want, like ID, Name, etc.
+π_ID,Name(...). Inside the parantheses we type in the
+table to take data from. Here is a full example:
+
+π_Name({
+  (Customers:
+    {ID: int, Name: str, Birthdate: date}
+  ),
+  {
+    {ID: 0, Name: "Justas Simutis", Birthdate: "19-12-2005"},
+    {ID: 1, Name: "Julijus Simutis", Birthdate: "12-1-2007"},
+    {ID: 2, Name: "Jogaila Simutis", Birthdate: "25-1-20011"},
+    {ID: 3, Name: "Vilius Simutis", Birthdate: NULL}
+  }
+}) = {
+  (Customers:
+    {Name: str}
+  ),
+  {
+    {Name: "Justas Simutis"},
+    {Name: "Julijus Simutis"},
+    {Name: "Jogaila Simutis"},
+    {Name: "Vilius Simutis"}
+  }
+}
+
+as you cam see, all the end result doesn't have
+ID or Birthdate, only names, just like we asked.
+
+
+
+Selection denoted as σ also takes in one argument
+and a single equation as subscript that uses comparison
+and logical symbols such as ∧, ∨, ¬, <, >, =, etc.
+Here is a full example on how it is used:
+
+σ_ID<2(Customers) where customers is a table like from
+previous example, returns a table just like in previous
+example of all the relations that have an ID of less than 2.
+
+
+
+Renaming denoted as ρ also takes in one argument
+and a single equation as a subscript that uses arrows,
+-> from attribute to another attribute, like A -> B.
+
+ρ_ID->Number(Customers) where customers is a table like
+from previous example, returns a table just like in previous
+example except for now the signature name ID is renamed
+into Number instead, {Number: int, Name: str, Birthdate: date}.
+
+
+
+Cartesian Product denoted as × takes two arguments like *
+in math. Say we have a table with 3 rows and another one
+with 5 rows. The resulting table will be a table that
+shows all the possible ways we can combine those two rows
+together, so 3 * 5 = 15 row combinations.
+
+
+
+Join denoted as ⨝ is basically the same as this equation:
+σ_Condition(A × B). Write it like A ⨝_Condition B.
+Reason we use this, ultra popular thing to do.
+
+
+
+Natural Join denoted as ⋆ is basically the same as ⨝
+but there is no need to fill the subscript, it is auto
+filled with a condition that keeps only the rows of
+A × B that have the same primary key.
+
+
+
+∪, ∩, and \ act just like normal with sets. We just merge
+the two tables together that have the same titles.

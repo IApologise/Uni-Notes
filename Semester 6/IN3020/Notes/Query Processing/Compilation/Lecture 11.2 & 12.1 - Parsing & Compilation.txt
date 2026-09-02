@@ -1,0 +1,35 @@
+--- Lecture 11.2 ---
+Parsing is basically what I did when I was studying Maude System where we create an object pattern and tell how
+it is built and such. It is surprisingly similar, so just go ahead and get a quick reminder on it from back then.
+The only difference is that we do not tell it how to process anything or how to behave, the equations are part of
+the optimization in SQL which is when it comes in. Parsing is just the definitions part and how it is structured
+or can be divided into part (i.e. syntax validation and categorization of parts). Also, check out the screenshot
+on how it looks if you are interested: "L11 - Parsing.png".
+
+Compilation is basically using the parsed definitions and the definitions of RA and matches them the best it can,
+usually parsing is done to make it intuitive, and the syntax isn't too far off from any of it. So this is often
+a straightforward process. Both parsing and compilation are. However, note parsing is a tree like structure, and
+so is compilation from it to RA in SQL. And it looks similar but also different? Idk, just check out the screenshot
+"L11 - Parsing to Compilation Trees.png".
+
+Compilation gets less straightforward once we are working with sub-queries, which are queries within queries in
+sections like FROM of WHERE in SQL. So like SELECT X FROM (SELECT Y ...) ... kind of situations. But still, by
+looking at it I think I can do it and I believe it won't even be that hard for me. P.S. We will be asked to compile
+a query (i.e. translate SQL query into an equivalent one in RA).
+
+So, sub-queries in FROM sections are manageable, not always straightforward, but often easy to handle still.
+However, sub-queries in the WHERE sections are often more complicated and "hard". However, like I mentioned before,
+I feel like it shouldn't be too hard for me.
+
+--- Lecture 12.1 ---
+When it comes to translation, here are some common patterns. Whenever we are using IN() in SQL, like attribute x
+from table A in table B, it is basically the same as doing a left-semi-join of form A ⋉ π_(B.x -> A.x)(B) where
+the attribute x from table B is what we are using to compare with attribute x from table A (by renaming it).
+Left-anti-join is translated as NOT IN(). And those were the cases for non-correlated subqueries, i.e. where the
+two queries are not related by a foreign key or other types of references directly (I think).
+
+Anyways, I just got that far where I got into the correlated subqueries, and boy it is just the normal stuff,
+didn't see anything hard or even weird/surprising at the first glance. But since I must remind myself, check out
+the screenshot "L12 - Correlated Subqueries Example.png". Basically what we often do is we mention one of the
+outside tables repetitively inside the subquery, and sometimes the other way around (tables inside subqueries get
+outside). That goes for selections, joins, projections, etc.

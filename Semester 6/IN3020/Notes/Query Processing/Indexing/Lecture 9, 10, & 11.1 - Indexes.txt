@@ -1,0 +1,148 @@
+--- Lecture 9 ---
+Next we learn about indexes, and how the database (SQL) optimizes data structures. We want to query it as fast as
+possible, that is our main goal. The secondary priorities are data insertion and deletion speed, can't be anything
+crazy slow even if we sacrifice a little bit of query time. Indexes are tables (other than the tables that store
+data), that help speed up different processes like insertion, query, and deletion. So like address/pointer storage.
+These indexes point to a block in memory where the row of a table is stored more on what blocks are later.
+
+There are 3 types of queries we are often looking for in rows. First is getting the exact value (equals sign), the
+second one is finding the value in an interval (more/less than, range, etc.), and lastly the "multi-attribute"
+search which is basically adding extra conditions through AND or OR and such. These are the areas we will try to
+focus on the most to optimize our data storage around.
+
+Data is stored on secondary storage hardware (HDD, SSD, Flash, etc.) which is the only permanent way to store data
+once the power is off (except for cloud, but they store it the same way). In HDD or SSD and such the data is often
+stored in form of blocks. You can't get a single data from disk, you get a whole block full of data in it. The data
+stored in blocks can be done in 4 ways:
+1. Continuous, Unspanned - The block fits as many rows of data of a table as it can until it can not fit the next
+  row. It is then that the next block takes that next row and continues taking the next ones, and so on.
+2. Continuous, Spanned - The block fits as many rows of data of a table as it can, if the block can not fit the
+  next row, it fits whatever it can and the rest is being given to the next block (use space more sparingly,
+  potentially slower due to load of multiple blocks for a single tuple). Also, we assume that a single row takes up
+  at most a single empty block of memory space.
+3. Linked, Unspanned - Depending on how these blocks are placed in memory, the next block might not have the data
+  of next rows, so all we do is we just reserve a little amount of space for a pointer to the next block.
+4. Linked, Spanned - Similarly to 2. and 3. the block has a pointer to the next block and the rest of unfilled
+  space is filled as much of the next row as possible before filling the rest we couldn't fill to the next block.
+Generally, continuous unspanned also known as option 1 is the default (and I agree that it should be).
+
+As for data structure, keeping blocks sorted (both inside and outside) allows for quick queries using binary
+search. Insertion and deletion both get quite expensive. That is because to keep the whole thing sorted we must
+create space for inserted data in the right place, meaning we must move everything else, similarly for deletion.
+Similarly for indexes, there we may also use a binary search (depends if there is a pattern or not, unlike hash).
+
+Back to indexes (i.e. tables of pointers). There can be multiple indexes of different types which accomplish
+different goals, all of this depends on the data of the data table we are indexing. If we are searching for
+something that can only return a single tuple as a result (i.e. a row with a primary key), then we can do the
+fastest method called Primary Index. If the search can return multiple tuples either due to an interval query or
+narrow search like in case of selecting specific collumns from a table, then the best we can do is what's called a
+Cluster Index. So far both of these were able to be sorted in some way to minimize search, but Secondary Index is
+one that can not be sorted for a single value only, and is often used to optimize for a some specific permutations
+of queries & such. Like if you want to sort to make efficient queries for both attributes A and B of a table, but
+you can never get the optimal one for both A and B, some compromises must be made between the two. Also, I believe
+I forgot to mention that due to the fact that we are using index tables now, we are doing binary search on them
+instead of blocks (because the point was to find the right block, but now we can do it fast and on indexes which
+literally have the pointer to the right block only which save space and can be put more of into a single block,
+which means faster confirmation due to not needing to load more blocks than necessary, but a few extra always
+because the index itself is in a block too).
+
+Primary Index is best when it is "sparse", but it can also be "dense" (thought there is no reason to). Dense is
+basically when we create a table where each value maps to the address pointing to the block where the row of that
+value is in. Sparse is basically the same as Dense, but we do not have value-address maps if there is an another
+value-address map already in the index table which leads to the same block. Keep in mind that both Primary Index
+and inside the blocks, the values and tuples respectively, are sorted, but the blocks themselves are not sorted by
+the values that they have inside (it is redundant). This way we just find the value in that table that is the
+lesser one of: The two values in the index that the query value lies between (or equal to one of them). This is why
+Dense is not used, it is redundant.
+
+Also, when doing deletion we only update that one block where data was deleted, because updating all the blocks
+below is just an absurd thing to do because it is way too expensive (i.e. slow). Besides, we do not need to keep
+the blocks sorted, just their insides, as long as we we have this value-address map implemented it is. Of course we
+are still left with some holes in some blocks that have their space unused at all when deleting tuples from these
+blocks, but we just take the L, and move on. Potential future insertions might fix this problem. Also, make sure
+that the value-address map is sorted for faster queries and insertion, since blocks outside aren't sorted don't
+rely on the neighbouring address blocks to have neighboring value tuples like in the sorted value-address map.
+
+--- Lecture 10 ---
+Cluster Index is same as primary, but the values may repeat in our value-address map. Dense version of clustering
+indexes is similar to primaries indexes. Sparse however has 2 versions for clustering indexes (and I find the
+second to be best, and first to be stupid & situational). First version is that we have a value-address map per
+each different value which points to the first block that has that value. Why I find this stupid is if there is
+another block with the same value, we won't know where that other block is (because blocks are unsorted and values
+may repeat). So this requires blocks to be sorted to each other which is hella expensive, especially on insertion
+and deletion. The second version is to just have value-address per block and not per value instead. This is amazing
+because when searching for a value we just look at the address of a block that is before the one that exceeds this
+value in our value-address map. I.e. if we have 10, 20, and 40, and we need 30: We look at 40, realize that 40 >
+30, go back one step to 20, and get the address of a block that has 20. If we are looking for 40, we still go to 20
+because even if the fourth block starts with 40, the previous block (20) may still have 40 and end with 40 too. But
+we also continue until the next one doesn't have a 40, i.e. strictly higher than 40.
+
+I hope that all of this makes sense, if not just quickly skeem through the lectures 9 and 10 and look at some
+pictures that they have. Also, pay attention on how memory works, it is similar to virtual vs physical memory and
+pages from IN2140, but not identical. Still struggling? Get good I guess...
+
+Anyways, lastly we got Secondary Index which is basically when we are looking for a value, but that value is not
+sorted in the blocks we want. So we can't do any sparse methods, because that requires the data inside the blocks
+to be sorted. So our only choice is to create a dense value-address map for these values (the map itself is
+sorted).
+
+Now that we are done with explaining dense and sparse indexing implementations, as well as primary, cluster, and
+secondary indexes, we can go to multi-level indexes. In practice all of what is mentioned before does save lots of
+memory, but we can do better by creating dense indexes (even on primaries and clusters), and then optimizing it all
+by creating a sparse index of a single block in size for those dense indexes (spacing can be adjusted dynamically,
+but I am not sure if that is efficient on insertion and deletion). In principle, we can have any amount of sparse
+index layers on each other, and yes we do a binary search on these sparse indexes, and their sparse/dense indexes,
+and so on... Note that the depth level depends on how big the table is.
+
+So apparently we can make the amount of levels shrink or grow dynamically, depending on some formula on how many we
+need (depends on how many tuples fit in a block, and how many maps fit in a block too). I am guessing that my idea
+with dynamic spacing of those values mentioned previously must also be implemented. And the insertion and deletion
+is also mentioned to be a problem just like I suspected (it gets slowed down). Anyways, there are 3 algorithms:
+1. B-trees: Similar to B+-trees, but we store the pointer of the value as soon as it is found, else we go deeper
+  down the tree. This basically means that the child nodes will not have that value-address, and will have their
+  own ranges that exlude that value (easy to deal with), but each value in the node has an extra address. Which
+  means less children per parent, but less nodes in total (or at least the same, not sure).
+2. B+-trees: Very similar to the multilevel indexing idea, but we use trees instead, just check out the screenshot
+  "L10 - B+-Trees.png", with this context in mind it should be self-explanatory. By the way, there are some special
+  and smart algorithms that help with insertion and deletion in these B+-trees, I have to research them myself.
+3.1 B*-trees: Too many variations, the professor didn't bother to teach us that (fair enough).
+3.2 Hash-Based Index: Same stuff as multilevel indexing, but sometimes the values are too big in size, so we just
+  hash em and use that as the value reference. Though I don't like it due to collisions that may occur and because
+  we also have to calculate the hash. However, these are just annoyances, the real problem is that interval search
+  becomes really bad now because it is hash... :/ We also have to configure the hash output size, and make sure
+  that it isn't crowding too much either (values are equally distributed), this way we make sure that there will
+  be no cases where some parts are full or nearly full, while others are empty or nearly empty.
+
+These indexes are usually created automatically based on restrictions and such provided when creating a table.
+However, as discussed before sometimes we want to create some manual ones which can be done in PostgreSQL using the
+"CREATE INDEX ..." command. For instructions on how exactly to do the rest just google I guees. However, we usually
+don't get to choose which type of index we are creating (like a B-Tree, B+-Tree, Hash-Based Index, etc.). Some
+programs allow that, but PostgreSQL has B-Trees as the default, so just deal with that. Lastly we get some data on
+how much faster the query on 10 million tuples becomes, spoiler: It became much faster, like 500 times faster.
+
+--- Lecture 11.1 ---
+What if we are searching for a tuple with both values A and B in a table? Assuming that we have an index on both A
+and B, we could search for them separately. But that would mean that we choose too many tuples and thus read too
+many unnecessary blocks that have one of but not both A or B (and we want specific values of both). First thought
+is that before applying those addresses to search for this data in those blocks, we instead do an intersection on
+these addresses to see where the addresses that we got from both A and B are the same, and go there. This is called
+Multi-Dimensional Indexes. However, for that we need a secondary index which means that we need a multi-level
+index. So, one multi-level index for A, and one multi-level index for B.
+
+There are algorithms that allow us to be more efficient like K-D-Trees, Quad-Trees, R-Trees, etc.
+1. K-D-Trees: We basically create a binary tree where each node either has a value or an address. If the current
+  node has a value, then one of its children has either an address or the next attribute type value. Note that
+  this results in us cycling between attribute types with each layer. If the value we are looking for is higher
+  than the current node, then we go to the right, otherwise we go to the left, and we continue until we get an
+  address, then we stop and go to that block. Check out screenshot "L11 - K-D-Trees.png" for a visual example.
+2. Quad-Trees: Here we have a tree where each node has 2^D branches where D is the number of dimensions that w
+  have (i.e. attribute types). We also ask the same question as in K-D-Trees, but we do it all at the same time
+  for each of the attributes. So if attribute no.1 higher and attribute no.2 lower/equal go to node no.3 and such.
+  In the example screenshot "L11 - Quad-Trees.png" we got 2 dimensions, i.e. 2 attributes.
+3. R-Trees: Didn't really understand, but apparently we are allowing duplicate addresses to the block from some
+  value X. It is also "almost logarithmic" in time complexity.
+4. Multidimensional hash-like strucutre: Basically we create a hash function for each attribute type, and use em
+  on their respective attributes when searching to get a value. Each hash value from each hash function is the
+  coordinate in our D-dimensional value-address map (D is the amount of arrtibute types). The downsides are the
+  same as with the Hash-Based Index, i.e. collisions, crowding, and that interval search isn't viable anymore.
+  Basically what we did here is we just generalized and expanded Hash-Based Index to multiple dimensions.

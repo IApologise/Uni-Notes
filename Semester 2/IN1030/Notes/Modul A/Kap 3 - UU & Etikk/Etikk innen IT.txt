@@ -1,0 +1,17 @@
+Ikke bland dette med loven, etikk er ikke nødvendigvis nevnt i loven. Merk at etikk handler om å skylde mellom gode
+og dårlige ting. Hva som er bra og ikke bra er alltid subjektiv, men vi bruker å se på hva regnes som bra fra både
+individets og samfunns perspektivene for å svare på dette spørsmålet, men noen ganger er de helt motsatte. En slik
+eksempel er å hjelpe andre folk man kjenner ikke (og sannsynligvis kommer aldri til å møte), bra for samfunnet men
+ikke til individet. Merk meninger mellom individene kan også være forksjellige...
+
+Etikk kan deles inn i fire former:
+1. Anvendt - Bruk av normativ etikk til å gjøre valg innen et felt sånn som IT.
+2. Normativ - Hva er annerkjent til å være rett og galt, og ikke hva folk faktisk gjør.
+3. Meta etikk - Handler om hva etikk er og alt forskning rundt det.
+4. Deskriptiv - Fokuserer på hva folk faktisk gjør og hvilke etiske valg de gjør.
+De to vi kommer til å fokusere på er nemlig anvendt og derfor også normativ etikk.
+
+Når vi skal gjøre valg (andvendt etikk) så, innen normativ etikk, velger vi en av disse tre retninger:
+1. Konsekvensetikk - Maksimere variabler sånn som lykke og sånt, i.e. best kosekvens.
+2. Deontologi (Pliktsetikk) - Fokusere på regler og prinsipper.
+3. Dydsetikk - Hva er det vi prøvde å gjøre? Hva slags person vil vi være?

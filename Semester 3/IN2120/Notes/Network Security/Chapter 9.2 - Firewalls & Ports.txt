@@ -1,0 +1,74 @@
+--- Firewalls ---
+So firewalls are their own devices (good ones at least). On
+my computer I have a firewall software, that is a firewall as
+well. But usually, when we put a firewall in our architecture
+we mean separate devices whose sole purpose is to be a firewall.
+
+
+
+--- IDS ---
+These devices basically create fake ips that if pinged means
+that someone is mapping or trying to hack into the system.
+These devices monitor such activities and let IT personel
+know if something like that is happening and such.
+
+There are two IDS types, NIDS and HIDS. NIDS looks at the
+local network (can be configured to look from inner firewall
+into outer, but not the other way around), and looks for any
+suspicious activity in networking like what I mentioned before.
+
+HIDS is not a device on its own, but more like an additional
+software that monitors anomaly changes in files and data.
+
+There is also what's called an anomaly based IDS which uses
+machine learning to then figure out what is normal and not
+normal for a network or files to be happening instead of
+creating rules on our own for this.
+
+
+
+--- IPS ---
+This is like a device similar to IDS, but it is more active
+than passive. Whenever there is like a DOS or something
+like that that starts happening, it must be dealt with fast.
+IPS sees that and adds rules automatically to block unwanted
+spam traffic and such.
+
+It is not ideal though and can be used against the organization
+that has it set up. Just spoof (fake ip address) and ping the
+hell out of it so that every single ip address is now blocked
+by the firewall and now no-one can access anything just what
+a DOS attack was trying to achieve.
+
+
+
+--- DMZ ---
+Usually we have the outer firewall, and the inner firewall.
+Outer firewall protects from DDOS attacks, and inner firewall
+from hacks on employee's clients. After outer firewall we
+have the DMZ which is not a device or anything real, just
+a concept. It means that here we have the stuff we want
+users to be able to access from the internet. Think
+Eposts, website servers, DNS, and that's about it.
+
+
+
+--- Honeypotting ---
+This is like a trap, we create a vulnerable device on purpose
+like a fake server outside the firewall and see what the
+attacker was intending to do to it. Maybe the attacker will
+give up if no valuable data is found, we will also get to
+know more about intentions and such. We might even create
+some sort of trap there, who knows? I sure don't.
+
+
+
+--- Ports ---
+Here are a bunch of ports I must know:
+80 - HTTP: Unencrypted TCP, data transfer between website and server
+443 - HTTPS: Encrypted TCP, data transfer between website and server
+23 - Telnet: Unencrypted TCP, authorization and control between devices
+22 - SSH: Encrypted TCP, authorization and control between devices
+21 - FTP: Unencrypted TCP, file transfer between devices
+3389 - RDP: Encrypted TCP, authorization and visual control between windows devices
+53 - DNS: Unencrypted TCP, translates IP addresses into website links

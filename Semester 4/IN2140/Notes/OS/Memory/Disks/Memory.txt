@@ -1,0 +1,157 @@
+--- HDD ---
+HDD - Hard Drive Disk, is a round flat spinning chunk of some sort of metal which gives it magnetic properties.
+There are multiple disks like that inside an HDD. There are disk heads which are mechanical arms that write the
+data on these disks, sometimes just the top/bottom, sometimes on both sides. Depending on precision, the size of
+disk, whether both sides are being written to and read from, and the amount of these disks inside the HDD, we can
+calculate the HDD's potential capacity. HDD is cheaper and can store data for longer than an SSD, but it is like
+10 times slower, so loading data from it to RAM will take much longer. Not all of disks's memory can be used, some
+of it is reserved for error correction.
+
+When reading data, we have 3 things the HDD must do to complete it. 1. Move the disk head to the desired track
+(the radius from the center of the disk). 2. Wait until the block of data we want to read rotates to the disk head.
+3. Start reading the block until we are done (capped by disk rotation speed or by disk head reading speed). The
+time it takes to move the disk head can be calculated by this formula: A + B * sqrt(C) where A is some constant
+amount of time it takes for the operation to start, B is also a constant which is the speed at which the disk head
+can rotate to the right position, and C is the number of tracks it has to go through. (not all radiuses on a disk
+are suitable to store data, and the spacing between them is weird but couldn't be otherwise I assume). When waiting
+for disk to spin until the start of the block of data we want to read, we can't really know how long it will take,
+but the average is about a half of the whole disk (in revolutions, so it depends on RPM). Lastly, the time it takes
+to read after the start is: A * B / C where A is the amount of data to read, B is the RPM, and C is the amount of
+data per track.
+
+You can check out "HDD Memory Read.png" if you wonder how reading from a disk looks like. When it comes to writing,
+it is similar to reading, but we do one additional rotation to read what was written to double check if everything
+that was written is correct.
+
+After second lecture on disks, apparently they got their own cache (or buffer, idk what is the difference). So when
+you tell it to read block X from track Y, it doesn't read just block X, it reads the whole track Y just because it
+can (and because these data can be used in the future) and sends the results into the buffer where the OS picks
+only what is needed, i.e. the block X. Also, just like I suspected, the rotation is slower at the center and the
+amount of data that can be stored there isn't the same per block, so to get it the same size we need to have
+dynamic block splitting (split it up into grids that are more or less the same size). The rotation speed also
+means the speed at which we read data is slower the closer to the center we are. This is also why C-SCAN is the
+faster algorithm.
+
+When choosing where to save data on disk, we can choose to minimize reading/writing time in some cases. Like
+spacing blocks of same files evenly throought the disk to minimize disk arm movement when reading multiple files,
+or no spacing (i.e. continuous) to minimize disk arm movement when reading a single file. But I honestly do not
+understand these because we read the whole track anyways, just go with continuous one. Last is the one that
+actually solves something, which is writing data where it is most likely to be read anyways and put into a buffer.
+It is called an Organ-Pipe, and since disk head accelerates, we multiply the distribution with a logarithmic
+function.
+
+--- OS and Disks ---
+When it comes to reading from disk, be it SSD or an HDD or anything similar to that, the time to fetch data from
+them is not very accurate, and by no means should this process be canceled while it is still in process of reading
+data, that is because mechanical stuff can and will go wrong (or so I am told).
+
+Also, note that when we are doing disk scheduling (scheduling what data we want from the disk), the seeking time
+and reading/writing time and such can be optimized, like if some tracks are close to the current disk head
+position, or some rotation is favoring some block right now. This of course means less response time on average,
+such is the tradeoff when doing this sort of stuff (like with a CPU).
+
+Just like with OS's CPU Scheduling, we got OS's Disk Scheduling algorithms. However, these vary more depending on
+what disk type you use and what your goals are. The main, traditional algorithms are:
+1. FCFS - First Come First Serve: A basic queue which prioritizes those of higher importance (necessary by
+  default). Basically it prioritizes responsiveness over optimal solutions (unlike SSTF).
+2. SSTF - Shortest Seek Time First: Responsiveness is for losers, we use this one to optimize seek time of course.
+  Just kidding I am a responsiveness enjoyer, but of course it all depends on the system we are developing.
+3. Scan (it has lots of variations): Its goal is basically that both response time and optimization is important,
+  so it is basically compromising on both to some degree (which is why so many variations). We are looking at a
+  specific variation of it called "elevator", check out the screenshot "Scan Elevator.png". Basically, it picks a
+  side to go to, and while it is going to that point it reads all the data that it should also read (which are
+  pointed out in the query). Once it read the one it wanted to the first time, it then goes to the next point and
+  repeats the process (could be same side, could be opposite side, depends on where the next data block point is).
+  There is also a "C-Scan", which is basically when we choose a side (does not depend on the data block point, we
+  don't choose any) and start reading everything along the way while we go to the end of that side. Once we are at
+  the end of the side, we go al the way back to the other side (not reading anything in the meantime), and start
+  reading from the same direction (C stands for circular, and that is what we are doing here). It is "quite fast
+  and fair". The reason why has something with the disk head acceleration of an HDD to do (from the formula I had
+  mentioned before). Go check out a screenshot on that if you are a math nerd "Scan vs C-Scan.png".
+4. Look (it too has lots of variations): All I know about that is that C-Look (a variation of Look) is similar to
+  C-Scan (a variation of Scan), the difference being that we do read the data on our way back from one edge to
+  other. There are more than just these, but these are the traditional, more common ones I guess...
+
+When it comes to linux, what is being used right now is NOOP, Deadline I/O, and Completely Fair Queueing (CFQ).
+to be honest, just google about em or ask an AI for more. I am too tired for that right now. When it comes to
+Windows it is FCFS, I/O Prioritizing (not deadline like in Linux), and actually a bunch more which are decided
+dynamically based on what the application needs to do.
+
+When it comes to getting the cache from the buffer, Linux does it straightforward: Check buffer (process has direct
+access to it), if not there request the data to be loaded in and get em. For windows, check out the screenshot
+called "Windows Buffer Caching.png" for details and just read it. The way buffer cache is structured though is it's
+a double linked list with front and end pointers where the start is the least recently used data, and the rear is
+the most recently used one. So the newly cached memory is at the rear, and the oldest one at the start. Once we get
+the new data its pointer is moved to the start, same when a cache hit happens, and the rear one is updated
+accordingly. To make searches faster though, we also have a hashvalue-address table (hash of a file name is used as
+a hashed value) where the address points to where the data of that file is located in the cache.
+
+By this point we know that blocks contain data on files, and that files can consist of multiple blocks. To get the
+right blocks when reading a file, we can either chain them, meaning that each block has a pointer to next block of
+the file's data (bad idea), or have a file-address map where the address points to a yet another address (the first
+block of that file) in a yet another map (but this time a dense table). That yet another address is the address to
+where the first block is. Oh, and I forgot to mention that this yet another address also has a second value stored
+which is a pointer to the next block (like a linked list). So it is similar to chaining, but since it is in a map
+it is much faster cuz we don't need to read the current block to get to the next one. There is also an option to
+split it up into several arrays instead of a single table, where the next pointer has index of current one plus
+one. Alternatively, if we can put the file blocks next to each other, then having a pointer to first and the number
+of blocks the file has on disk would be sufficient enough, small in size, and equally fast. But obviously I would
+rather not depend on that kind of thing, and the other solutions are just more complicated, but equally fast.
+
+The problem with blocks is the same as with pages though (as you can imagine). So the data that is saved in blocks
+might not be file data (if a file is larger than a block, the pointers must be saved there too, not everything
+about all blocks is in cache). If file is modest in size, then a single block full of pointers to blocks that
+contain file data is enough (called "Single indirect"). If a file needs more, then we got "Double indirect" which
+is a block of pointers where each pointer points to a "Single indirect" block of that file. This continues up to
+"Triple indirect".
+
+Lastly I want to point out that we categorize between 3 types of storages:
+1. DAS - The application gets the data from the file system in your PC which stores data on your PC too.
+2. NAS - The application downloads (UDP / TCP) data over network from a server which has the file system and data.
+   Kind of like watching a video from YouTube, it is being streamed online.
+3. SAN - The application gets remote controll of the file system, whenever a request is made the request is
+   processed and is sent over network as a direct command to the storage over cloud, kind of like OneDrive in
+   Windows.
+
+--- Multiple Disks ---
+If we have a streaming server or something like that, we want to send the data as fast as we can to all the
+clients. The problem is that one disk (even if it is a superb one) can't handle 10 clients simultaneously. Even in
+this small scale scenario it will struggle substantially and slow everything down heavily (a bottleneck). So, to
+fix this we get more disks and split up the file's blocks equally between them. This method is called striping, so
+when we get the data we get it X times as fast (X is the number of disks it was divided between). The only drawback
+is that the whole process is bottlenecked by the slowest of the disks during file's data retrieval. This can be the
+case even for the faster disks just because of how the scheduling was done, but that is only if we have a different
+striping method, like one where data is divided between less than all and more than just one disk.
+
+Eventually the scaling doesn't apply anymore. That is because of striping (dividing blocks accross disks) making
+block seeking optimizations less efficient, so it is more of a O(n * log(n)) scaling degradation. To solve this we
+can divide the striping into groups where each client is assigned a group based on certain factors. In the video
+streaming service we can for example divide groups by the video's time frame where each frame can be like 1 minute
+for example. I.e. the video's files are split into 1 minute time frames and each time frame is assigned its own
+group (i.e. some amount of disks per time frame). Then based on where the client is during the video streaming we
+assign it a group to get data from. Note that we split it up this way and not by the user count for example to
+avoid duplicate information storage on our disks. By the way, this method is called interleaving or compound
+striping. Interleaving has a weakness which is that not all disks are being at work at the same time, so if you
+split it up poorly you will be left with only a fraction of disks being used all of which do just stripping (worst
+of both options). So interleaving doesn't solve the core problem, it just helps us to manage it. But if we can
+instead divide groups such that the clients must switch between all and often (optimally), then we got ourselves
+the best of both.
+
+Finally we got RAID - Redundant Array of Inexpensive Disks. It is basically for when a disk fails to fetch data,
+and we don't want the whole process of other disks during interleaving to go to waste, so we do error correction.
+This is also useful for when the disk gets broken and we can restore the lost data (very important and useful).
+RAID has multiple levels, where each level is just better than the previous one (both faster and loss resistant).
+So the older levels are the older versions/algorithms that try to better prevent the data loss in our disks. For
+these levels just check out the screenshot "RAID Levels.png".
+
+So if we look at the RAID level 5 for example what we are doing is we have the parity values which help us restore
+the data of each disk, and these parity values are also scattered across each disk too (so if the disk that has all
+the parity values gets cororupted we will be fine). Note that the parity values that restore disk X can not be
+stored in disk X too, they must be scattered between the other disks. It also makes it so we equally distribute
+the disk writing across all the disks (unlike in RAID 4 where we don't do striping, so all parities are in a single
+disk). RAID level 6 is basically the same as 5, but we got 2 parity blocks per stripe. I.e. 2 extra disks, with 2
+parity value copies, and same distribution as in RAID level 5.
+
+RAID level combinations like 10, and 01 (i.e. 1 + 0, and 0 + 1), are very confusing and I think there are
+combnations that don't even make sense like RAID 55 or RAID 54. I honestly don't understand them and have no idea
+on how they are to be interpreted at this point. Chat bots helped somewhat, but still confusing (and wrong).

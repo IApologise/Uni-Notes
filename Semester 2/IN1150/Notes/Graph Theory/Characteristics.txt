@@ -1,0 +1,159 @@
+Degree: deg(_)
+This is a characteristic of a node. It says
+how many edges are connected to a node. So
+if there are 3 edges coming from a node
+v, then v's degree is 3.
+
+Note that in a looped connection where edge
+is {v, v}, it goes from v twice, so it counts
+as 2 more, not just 1 more.
+
+
+
+Isolated:
+If a node does not have an edge connected
+to it, so deg(v) = 0, then it is said
+to be isolated.
+
+
+
+
+Empty / Null Graph:
+This is a type of graph that does not have
+any edges, just the nodes. So E = {} or Ø.
+
+
+
+Complete Graph:
+If all of the nodes are neighbours to each other,
+then the graph is considered to be complete. A
+complete graph with n nodes is written as K_n.
+
+
+
+Complement Graph:
+This type of graph is like an inverse of an
+arbitrary graph G that was given before. So
+a complement graph G̅ of G is the one that has
+all of its nodes connected by an edge, except
+for the ones that are connected in G. So what
+was not connected in G before, now is in a
+complement of G, namely G̅, and vice versa.
+
+Whenever taking a complement of a graph, some
+graphs are their own complements, meaning that
+if you take a complement of a graph G that is
+its own complement you will get G back. No
+changes would be made in practice.
+
+
+
+Directed / Multi / Pseudo Graphs:
+Normally it is not allowed for an edge to connect
+two of the same nodes, but if we say that an edge
+is a tuple instead of a set, then we can do it.
+Same goes for if we want edges to have a one way
+connection, so a relation again. The loosening of
+such restrictions, and the graphs that adpot these
+modifications are called multigraphs or pseudographs.
+
+
+
+Directed Graphs:
+These graphs use tuples, but the condition is
+such that they are to be used like sets and
+the main definition of a graph, the only new
+rule is that tuples are to be used to show
+direction, from where to where the edge goes.
+So <u, v> is not the same as <v, u> anymore.
+
+Note that sometimes repeating edges and
+looped connections to the same node may
+be permitted by this type of graph.
+
+
+
+Multi Graphs:
+This version does not use tuples, it uses
+multi sets. Multi sets simply allow the
+repetitions of the same set to stay in it.
+So now two nodes {u, v} are still the same
+as {v, u}, but the amount of these connections
+that can be repeated has no limits.
+
+
+
+Pseudo Graphs:
+This is an extension of a multi graph. It
+allows not only the use of mutli sets, but
+also allows these edges to point to one
+and same node, so {u, u} is permited.
+
+
+
+Planar Graph:
+This is a graph that looks like no edges
+cross. So a graph can be pseudo and planar.
+This is pure visual characteristic.
+
+
+
+Connected Graph:
+If there exists a walk that goes through
+all of the nodes of the graph, then it is
+connected. It means that there are no splits,
+so all of the nodes make up a single object.
+
+
+
+Closed Walk:
+A walk where the first and last nodes are the
+same node is called closed, it means that you
+started from the start, and returned back to it.
+
+
+
+Circuit Walk:
+A walk where no edge is being repeated is called
+a circuit. So if not edges repeat <-> circuit path.
+
+
+
+Euler Walk:
+If there is a walk where all of the edges are
+being used, and no edges are repeated (so it
+is a circuit walk as well), then it is called
+an euler walk.
+
+
+
+Euler Circuit:
+If a walk has a property of an euler walk, so
+no edges are repeated and all are used, and if
+it also ends on the same node as the start, then
+it is called an euler circuit.
+
+
+
+Closed / Cycle Path:
+Since paths can not have multiple of the same node,
+for it to be closed we instead require there to be
+an edge that connects the last node to the first.
+This way it is now closed, just like the walk is.
+
+A graph that does not have such property is also
+called acyclic. This means that it is not cyclic.
+
+
+
+Hamiltons's Path:
+This is a path that uses all of the nodes, so it
+is a connected path, but not a closed one.
+
+
+
+Hamilton's Cycle:
+This is a combination of hamilton's and closed paths.
+You must use all the nodes exactly once, and at the end
+you must land at the last to be used node that has an edge
+to the first node, but that hasn't necessarily used it.

@@ -1,0 +1,18 @@
+--- Device Manager ---
+OS doesn't actually know how to handle devices from the I/O (peripherals such as mouse, keyboard, headphones, etc.).
+For that you install drivers, and many come already pre-installed, especially the essentials like keyboard. Driver
+management and such is actually a big part of the whole OS code, about 60% I'd say. We may need different drivers
+because many of the I/O devices are very different, operate at different speeds, and need to be managed in their own
+ways. I think out of 17 (or was it 12) of the Linux's millions lines of code, 7 or so is just drivers. These devices
+often run on kernel level, and are usually provided by the device vendors.
+
+--- UNIX Interfaces ---
+Using command lines only to navigate and do everything on the computer might be confusing, so a user interface called
+UNIX Interface was created. Like everything is displayed on Desktop, and that there are files I can navigate through
+visually on my PC, etc. These are designed to be able to help us navigate the system, and it is called a GUI.
+
+There is also a POSIX API which is used by the applications to be able to utilize the CPU (used in assembly code).
+Of course C is written in assembly (I think), so it translates to assembly code and therefore this API is included
+by default no matter what it is that you are going to do. This API is also called a System Call Interface, this is
+because the OS's POSIX API manages the safety and therefore has its own methods for it which then utilize the
+computer resources properly.

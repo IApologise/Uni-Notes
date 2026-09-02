@@ -1,0 +1,286 @@
+--- Packets & "Switching" ---
+Whenever we want to send data we split it up into packets of some fixed size (measured in bytes). The reason behind
+it is that in Wi-Fi for example the radio waves interfere with each other thus only one or few connections can be
+up at a time due to this limitation. Thus each connection gets its fair share of bytes it can send once its turn
+arrives (that is fairness). With ethernet cables connected between the two devices this is not necessary (legacy
+protocol when Bus topology was in use), but it stayed that way and ethernet cables thus also use packets. Frankly
+almost everything does these days. 
+
+Due to this fairness, the amount of bytes the connections get to send (packet size) is usually the limiter, whereas
+the device's buffer size is the queue size. The maximum size that the packets can be sent over the network is
+called the MTU (Maximum Transmission Unit). Some devices have small buffer capacity, some big, some find 1 KB MTU
+to be fair, some 2 KB.
+
+Splitting up data into packets means splitting up data into pieces that can be handled along the network path's
+worst router (which is the system that is ultimately limiting our MTU). End systems such as phones and computers
+usually adjust the packet size automatically themselves to smaller sizes if the message fails. It receives a
+feedback if it does fail which has to be set up by the device adding a "Don't Fragment" flag to its packet. This
+process is called a PMTUD (Path MTU Discovery). However, fragmentation is possible which is when the router that
+couldn't fit the entire message into a single transmission of the size that it allows (fairness) and instead splits
+it accross several finer packets the size of which it supports. It forwards these as if separate but with the same
+destination and adds its own ordering flags for reconstruction.
+
+Note that MTU is not the speed at which data is being sent, rather just at what size the data can be sent (packet
+sizes). Bandwidth is actually what decides the speed, MTU is what decides the highest packet size without the need
+of fragmentation which is costly and very inefficient. For that reason end devices often set a DF (Don't Fragment)
+flag to True which causes some intermediary system along the network to send back the ICMP (Internet Control
+Message Protocol) which essentially states that the packet size is too large for some intermediary system. The
+correction to the packet size is often done automatically by the end device.
+
+That said, back when we had telephone hubs where people would manually connect phone calls we had a system called
+Circuit Switching in place. Back then we didn't have packets and everything was being delivered as a single stream
+from one device right to another. These days we use Packet Switching which as you know is the use of packets where
+intermediary devices store them in buffers and forward them automatically. This is what creates the opportunity of
+boundless connections (unless the device's CPU and RAM are overwhelmed). In Circuit switching a part of all of the
+devices along the path that are used to establish and keep up the connection between the two devices until it is
+terminated. In Packet Switching the connection is more fluid being able to traverse different paths each time as
+well as not taking up the intermediary device's space and time when there is no message to send/receive.
+
+However, if a circuit switch is desired these days it can be done virtually (i.e. via packets but with certain
+restrictions). Though the benefits that the circuit switching has aren't guaranteed but applied to the best of
+the abilites which are: Minimal risk of congestion & constant transmission time. All of these are achieved by
+reserving some space from all the routers along the path (i.e. requesting dedicated space) during the connection.
+And since all the packets now traverse the same path it is possible to ensure that they arrive ordered. It also
+allows more control overall and certain guarantees such as quality internet speed and connection maintenance
+(i.e. ping, packet loss, and latency). However, as you can imagine it comes with its own drawbacks such as not
+full bandwidth utilization. By the way, the establishment and maintenance protocol for it is called MPLS where
+each router simply looks at the received from label and swaps it with the sended to label without the need to look
+at any routing tables. These labels sit at the layer "2.5" in the OSI model, which really confuses me...
+
+Lastly there is Message Switching which is often used with torrents. It is basically when all the packets are sent
+to the next intermediary device, and once all the file's packets are received only then can the next intermediary
+device sent it to the next one. So the whole thing is sent as a whole through the same path in unity. Also, while
+we are on the topic, the way VPN works is similar to the usual routing. Simply put, it is an end device which acts
+as an intermediary one, simply forwarding the messages back and forth without the receiver server knowing who the
+message is originally from (though it does not apply such a restriction to its users). And since VPN servers are
+well-known, Netflix's servers for example know that some user is using a VPN, but who it is using it exactly it
+can't know. Same goes for intermediary devices between the user and the VPN server, these routers know that the
+user uses a VPN, but what for they don't know. As long as the VPN doesn't get hacked or something like that...
+Note that for a VPN to know where to forward the message to, the user's end-system encapsulates the original
+message, meaning that the whole packet it would have sent to the Netflix's server is the level 7 application DATA
+part including all the headers. So we got [IP Header, TCP Header, HTTP Header, PH, DATA B] where DATA B is the
+[IP Header, TCP Header, HTTP Header, PH, DATA A] where DATA A is the actual DATA that it wanted to send to Netflix.
+Also, Onion Browser basically does the same as the VPN, but the amount of encapsulations is much larger, and they
+are also done by the users that use the browser (such is the agreement of using the browser I believe).
+
+
+
+--- Transport Protocols ---
+UDP is faster than TCP, but has higher packet loss and duplication rates. It is often used in Gaming where latency
+is more important, and video conferences where it isn't that critical. Video streaming is also more desirable due
+to speed, ease of use, better scalability, less memory usage, and less loads on their servers. Something only UDP
+can do is broadcasting which the TCP can not, such as finding out which servers exist and how to work with them
+(port expecting BOOTP protocol). Note that UDP's packets or "datagrams" come unordered, if order is significant
+like watching a YouTube video or a stream with a 5 second delay, then the usually way to solve it is to send the
+future bits of the video (assuming you won't pause) and once they are the application orders them before they are
+shown to you. Also check out "UDP Connection Type.png" for more.
+
+TCP is much more versatile however and offers many more choices and flexibility, though some stuff it may never be
+able to do and it is also slower and less efficient due to its complexity and size. Once TCP sent some packets or
+"messages" to the receiver it waits a few milliseconds for a response in case some packets were lost. If not
+response arrive or an acknowledgment arrives then the next bunch of packets is sent, and if some packets were lost
+then it resends them and waits a bit again. If the receiver has noticed that some packets are missing it will let
+the sender know and wait for the rest to arrive before it continues working with them. Note that the packets arrive
+ordered as well.
+
+TCP is Fully Duplex, meaning that once the connection is established end system A can send messages to and receive
+them from end system B that it connected with. TCP is a connection only between two endpoints (point-to-point), so
+there can't be a third end system connected to the other two via the same connection that they have, only if a
+separate one between each one is done (i.e. to achieve that full mesh like connection will have to be achieved).
+Exactly how TCP establishes a connection you can check out in "TCP State Machine.png" which is used on both user
+and client side. Note that the TCP always starts in the "CLOSED" state, "SYN" is a synchronization request, "ACK"
+is accepting the request, "FIN" is termination request, whilst "Recv" and "Send" are events & actions.
+
+In the "IP & TCP Headers.png" you can see that the TCP header has a piggyback acknowledgement section which is
+basically the sequence number of the next packet that it expects to receive. It is used to keep track of what
+packets and in what sequence the other side has received and which ones it needs (in case some weren't delivered
+which does happen, that is what UDP lacks, as well as the order...). So if receiver got packets of sequence 1,
+2, 4, and 5, but not 3, then it will send a message to the sender that the latest one it received is 2 which will
+prompt it to send 3, as well as resend 4 and 5. Of course both sides may not deliver their messages and thus never
+get a response, so to fix that there is a timeout on how long they wait for the response to their message which
+is the RTT (Round-Trip Time), lookup the terminology section below for more on it. This may happen to an ACK too,
+which will prompt the sender to send a duplicate, this is also handled by the TCP protocol (to ignore it that is
+and resend its acknowledgement too, since it was lost). For timeout examples check out "TCP Timeouts.png". Of
+course the timeout must be larger than the RTT but not too big in order to optimize the communication efficiency:
+"Estimating RTT.png". This RTT is computed and averaged as the communication is going on, starting off with poor
+efficiency but high reliability (i.e. assuming high RTT I believe).
+
+
+
+--- Terminology ---
+Bandwidth has 2 definitions: First is the radio wave frequency that the modems use which is measured in Hz. The
+second one is however more important which is what the course typically refers to, and that is: The rate at which
+data can be transferred between the two end/intermediate systems measured in bits per second.
+
+Sometimes we talk about nominal bandwidth which is like the theoretical bandwidth that the two systems handle
+(because in practice it is always slightly less due to "innefficiencies", which is what regular bandwidth is.
+Available bandwidth is the amount of bandwidth that the application can use right now (so nominal bandwidth -
+bandwidth that is currently in use). Lastly there is bottleneck bandwidth which is the smallest nominal bandwidth
+(i.e. the min) of the whole path. Maybe you remember how routers choose the path to forward the message, and how
+they choose the path that is not only the fastest but also the one that can handle the message's size, well that
+is what bottleneck bandwidth is.
+
+There is also throughput and goodput. Throughput is the rate at which data is received by a system (including
+headers for various layer steps, error checking data, etc.), whilst goodput is only the DATA part that the
+application itself cares about that is received (so just the size if the layer 7 received by the application).
+
+Lastly we got Propagation Delay which is the time it takes for a single bit to arrive from sender to receiver.
+Then there is Latency which is Propagation Delay + Message Size / Bottleneck Bandwidth + Queuing Delay (total
+waiting time during intermediary steps) + Processing Delay (total time it took processing the message, also
+done by the intermediary steps). If Latency is like velocity, then Jitter is like acceleration. Jitter is the
+difference between the latencies basically (i.e. how volatile it is). End-to-End Delay depends on the layer, but
+basically if it is layer 7 then it is the time it takes for a message to be received by the aplication after it
+is sent by an application (i.e. latency), and if it is a layer 3 for example then it is the time between the next
+two routers that is measured (i.e. latency between the next two routers where layer 3 is first used). I hope it
+is clear enough with these examples. Then there is Round-Trip Time (RTT) which is basically the latency between
+a system A the sender and a system B the receiver, plus one more between B and A (i.e. the response).
+
+
+
+--- TCP Flow Control ---
+If the sender is sending packets too fast such that the receiver can't handle them in time there are algorithms
+to solve this issue (TCP only because that is the protocol that is "reliable"). Remember that the issue is not
+only because the receiver's hardware is just that bad, but it might simply be a very popular server that handles
+thousands of senders all at once, just a reminder...
+
+1. Stop-and-Wait: Basically all the packets are sent one by one where before sending the next one the sender waits
+   for an ACK from the receiver. Due to sequence numbers and piggyback acknowledgement we can distinguish whether
+   it is the ACK or the packet that was lost (if it was) and easily resolve this issue by sending a duplicate.
+   The drawback is the wait for acknowledgement or a packet which is basically the same as slowing down the
+   download speed by A LOT. Like instead of 1 GB/s you got 40 MB/s (depends on the routing distance between the
+   sender and receiver, but about a 25x decrease if sending something like 8 KB packets).
+
+2. Sliding Window is a family of 3 similar algorithms (same core idea, used in different circumstances): The core
+   idea is basically instead of sending a single packet like in the Stop-and-Wait algorithm, you send a bunch,
+   and then wait for a bunch of responses. The amount is agreed upon before-hand, and once one out of the
+   bunch is received, the receiver instantly sends an acknowledgement for that one only as well as expecting the
+   same amount (the bunch amount) of packets to receive. So the amount to receive expected doesn't change, and
+   the acknowledgements are sent for each one. Think of the bunch amount as being the amount that the receiver
+   can handle simultaneously (though it may vary based on the amount that was agreed upon). Sender has a similar
+   one where it moves on to the next ones once the acknowledgement for them was received.
+  
+   By the way, these sequence numbers (and piggyback numbers too) can wrap (buffer overflow), both account for
+   that and thus the packet sending can theoretically go indefinitely due to this "feature and not a bug". Due to
+   this we got to keep track of the oldest one that is not acknowledged for in case of a wrap around or loss. All
+   of this tracking is solved by simply keeping track of the Lower Bound (LB) which is the highest sequence that
+   we got ACK response for, and Upper Bound (UB) which is the highest sequence that was sent out. We also use the
+   Window Size (WS, i.e. the bunch amount) with LB and UB to know when it wrapped around and how many more can
+   be sent (or how many are expected to be received, depends on who is the sender/receiver).
+
+- Go-Back-N: Is a variant of the sliding window where once a packet like #1 is received, it sends an ACK for it.
+  But if some packet is lost like packet #2, then the receiver simply ignores the packets #3+ that it receives
+  and simply waits for the sender to timeout packet #2 and resend the next bunch of packets #2+.
+
+- Selective Repeat: However, we may also instead of ignoring the next bunch, keep it in the buffer. So if we
+  received #1 and #3 but not #2, then we send ACK #1 twice which tells the sender at first that it can continue
+  and send the next packet #4 (the second ACK #1 hasn't arrived yet). The next ACK #1s that arrive are ignored,
+  because it already received one, and since ACK #2 never arrives the timeout is triggered and it resends the
+  packet #2. Though I don't understand how by receiving a second ACK #1 it assumes that it received packet #3.
+  In this specific example where WS = 3 it is determinable, but what if WS = 4? By getting the second ACK #1
+  we can't know if it is packet #3 or packet #4 that was delivered successfully (though if we got a third ACK #1
+  then we can, but since we didn't get it yet, and might never get it, we can't know that). P.S. They mention
+  this and explicitly say that it works for when only 1 packet is lost (duh...). This also means that WS can't be
+  more than the half of what both could actually handle (i.e. at most a half of the potentially maximum WS).
+
+- Credit Mechanism: A server for example or a router may need to handle multiple sliding window connections. So,
+  we designate each connection some amount of buffers. The more space designated the bigger the window size can
+  be. This allows the receiver to set the window size to whatever it can handle which is measured in "CREDIT"s.
+  Once the buffers are full, the "CREDIT"s count becomes 0 and the sender is blocked. High throughput means
+  lots of buffers are designated to a sender, low means little amount of buffers designated. So yeah, if the
+  sender requests like 12 buffers, but the receiver can only handle 4, then 4 is what the sender gets. It is
+  always the minimum between the two that is chosen such that both can handle their part. In case a packet gets
+  lost we always together with acknowledgement also send the number of credits that is left to the sender. If
+  the credits are at 0, then the sender just waits until we (the receiver) send another ACK with updated credit
+  count (should be done once the credits count is more than 0, otherwise there is no point...). P.S. This
+  Credit Mechanism still uses either Go-Back-N or Selective Repeat.
+
+
+
+--- TCP Congestion Control ---
+Flow control is about solving end-to-end connections such that the receiver is not overwhelmed with the all the
+data that is being sent to it. Both systems agree on how much they can handle to fix that. Congestion control on
+the other hand is about not overwhelming the whole network (so all the point-to-point connections of the whole
+path going from sender to receiver) with too much data. There are 2 types of congestion:
+1. Persistent Congestion - The router stays congested for a long period of time due to too much traffic going
+   through it which it must process for various reasons (DDOS attacks often show it the most).
+2. Transient Congestion - The router is temporarily overloaded with data, often due to burstiness. This is
+   basically when the sending rate is higher than what the router can handle, but doesn't completely overfill
+   its buffers yet, so this simply creates varying and non-persistent delays which aren't as bad as in the
+   persistent congestion once the buffers fully fill up.
+
+Now then, the idea for congestion control is simple: If there is packet loss, then it most likely is due to
+congestion of a bottleneck, in which case the end systems slow down the rate at which they send the packets (each
+one checks for that and controls it individually, intermediate systems do absolutely nothing about it), so the
+end-systems must unite to achieve this. This is because eveyone working together is overall more efficient rather
+than having each one for themselves due to congestion creating delays and thus latency (bad for everyone, and the
+goal here is to use the intermediary-systems as efficiently as possible). Anyways, if there is no packet loss then
+the sending rate can be increased. AIMD - Is the rate at which the sending is increased/decreased. It is Additively
+Increased, and if a congestion occurs then it Multiplicatively Decreases the sending rate, thus explaining its
+name. As for the TCP algorithms used today (TCP is always in development) check out the "TCP Versions.png" where
+green ones are the relevant ones used today, and the red-bordered are those that don't fix the congestion problem.
+
+Now let's have a look at more terminology:
+1. Congestion Window (cwnd) - This is a term for the largest amount of data (of a connection) that can be in a
+   network at a time, i.e. in flight meaning sent but not yet acknowledged, or sendable. Not sure what that means
+   but I guess it is referring to the WS, i.e. Window Size, just more general I think... To figure out the cwnd we
+   test it by simply sending data as fast as possible with cwnd as large as possible. If cwnd is too large we do
+   AIAD (additive-increase, additive-decrease) or AIMD to find the sweet spot (depends on TCP version), but these
+   are the simpliest.
+
+2. Maximum Segment Size (MSS) - The maximum amount of bytes that the sender can send in a single packet. A TCP
+   Header is at most 60 bytes (with several options and such), and at the minimum 20 bytes in size (essentials).
+
+3. Sending Rate - Basically, sending rate = cwnd / RTT, because cwnd is the max amount of bytes that can be in
+   flight, and after RTT time has passed all of those that were in flight are acknowledged for (most likely).
+   So sending rate is the number of bytes that can be in flight, for the number of packets do cwnd / MSS.
+
+TCP Fairness is something that is achieved if the congestion control is followed by each end-system that uses the
+bottlenecked intermediary-system. If there are N TCP streams (i.e. each TCP connection between end-to-end devices)
+going through a bottleneck (worst router) with C as the bottleneck's total bandwidth, then each of these streams
+get their fair share of bandwidth, so C/N of the total sending rate. We mention bottleneck here specifically
+because that is where we are going to encounter persistent congestion, and if each end-system follows the TCP's
+congestion resolution protocol then all will eventually converge to a point where each one gets their equal share
+of attention from the router. The more similar the RTT between these end-systems is, the more fair it becomes in
+practice, because it usually always fluctuates to try and adjust for the current demand that the bottleneck
+experiences which varies of course.
+
+Note that TCP Fairness is not the same as the MTU fairness described before. Because the router accepts all the
+messages and forwards all of them without discriminating. So if one end-device sends more than the other, it will
+be accepted more frequently (once the buffer is full), and there will be more of it (once the bandwidth is full),
+thus that device message's packets will have a higher sending rate than the rest (not fair to the rest of devices).
+MTU fairness is about the whole message being split into packets such that everyone's messages get their fair
+share of forwarding. TCP fairness is about everyone's packets being picked to forward at the same fair rate.
+
+For an example of some of the congestion resolution protocols check out "CWND & TCP New-Reno Example" which covers
+both how cwnd is being adjusted and how it is done by the TCP New-Reno version which uses AIMD in the congestion
+normalization phase. CUBIC has an algorithm for the increase and decrease of cwnd as follows: It uses slow start
+(i.e. exponential growth) to find out the congestion point. Once the threshold is crossed the cwnd is updated
+as follows: "W(t) = C * (t - K)^3 + W" where W(t) is the current cwnd that we test and apply, C is some linear
+growth multiplier we choose, t is the time elapsed since the previous congestion decrease that we had to do, K is
+the time it took to reach the W, and W itself is the previous congestion limit. So K is basically the previous
+W(t)'s time t, i.e. W's time t. TCP Cubic is better for long-range connections where huge fiber optic cables are
+used, it stays stable longer but also makes it harder for new streams to get their fair share sooner due to this
+which is more of an issue if used in small capacity intermediary-systems.
+
+
+
+--- New Protocol - QUIC ---
+QUIC is a new layer 4 protocol which is done to improve the TLS (security layer of TCP) as well as other TCP's
+problems which you can check out in the "QUIC is Better than TCP.png" and to make UDP be able to order the
+packets. The whole protocol can be checked out in the "QUIC Protocol.png". For the congestion control it uses BBR which is its own method.
+
+The BBR's start is the same (slow start - exponential growth). Now the later phase is different because the
+philosophy changes here slightly. In New-Reno and Cubic the reaction was too late, by the time the TCP takes
+measures against congestion it is already severely congested. BBR instead tries to measure the path's limitations
+(constantly updating it) and predicts how much data it may send. It measures the bottleneck's bandwidth, as well
+as the smallest RTT during the time that it is uncongested (RTTprop). The maximum that the intermediary system can
+handle is the BDP = Bottleneck's Bandwidth * Round-Trip Time, or BDP = BB * RTT for short. This optimal BDP is
+what the BBR is trying to measure constantly to figure out how much it may send.
+
+So the first phase is the slow start, then to uncongest the IS it stops sending and waits until RTT = RTTprop. The
+second phase repeats continuously. Out of 8 cwnds sent, one is sent at 1.25x BB rate to check if more bandwidth is
+available, another is at 0.75x BB rate to uncongest the first packet's probing, and the other 6 are sent at the
+optimal 1x BB rate. Each 8th being the probing one is the frequency that can be tuned, the rest follow the normal
+behaviour. Also, every like 10 seconds BBR recalibrates the RTT by sending a very small cwnd (about 4 packets in
+size) which drains some of the queueing (if there is any) and gets us the precise update to the current RTprop, and
+this draining lasts about 200 miliseconds before returning to the normal second phase behaviour.

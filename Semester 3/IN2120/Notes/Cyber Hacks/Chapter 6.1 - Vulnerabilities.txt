@@ -1,0 +1,62 @@
+--- Malware Detection ---
+Malicious programs are detected mainly in 4 ways:
+
+First, some malware have code structures that are
+totally unique which are exposed once installed.
+Some are simple copies of the original malware.
+These patterns are checked through a database.
+
+The database that is used often is MITRE in USA,
+it is a CVE (Common Vulnerability Enumeration)
+where each malware is registered with unique CVE-ID.
+
+Second method is inspecting program's code to
+check if it tries to access or modify system files
+or gain access or move itself to private folders.
+Really anything that is suspicious to do.
+
+Third method is the same as second, except for we
+check during runtime, whilst the program is still
+active to see if anything weird is happening (again).
+
+There is also a fourth one where AI is being used
+to analyze and assess whether it is a virus or not,
+but this is quite new and who knows how well it is.
+
+
+
+--- Malware Database ---
+Once the malware gets into the device successfully,
+there exists an organization in USA called NIST which
+is an NVD (National Vulnerability Database). Here,
+the known malware from CVE are analyzed and instructions
+are created on how to get rid of them and/or how to
+handle the consequences that are caused by it.
+
+There is also program or something like that named CVSS
+which creates a report (or has a database of evaluations,
+idk) which informs of the risk level that the malware
+has. For more on risks check Chapter 7.
+
+
+
+--- Buffer Overflow ---
+For a detailed example check out the video on it named
+"Buffer Overflow - Practical Example.mp4". In short, we
+find out where the return pointer is and rewrite it with
+something different such as launching a console. If the
+program had admin rights or you could speak to database,
+etc. through the program only, then so will the console.
+
+There are 6 methods to prevent this (or make it harder).
+1. No Execute (NX): Disable the ability to rewrite stacks.
+   Note: Stacks is where local variables and return data is.
+2. Stack Canaries: A random value that is stored some place
+   else which checks whether data was rewritten or not.
+3. ASLR (Address Space Layout Randomization): Randomizes
+   where return pointers and such are saved in memory.
+4. Shadow Stack: Have a duplicate dummy stack whose purpose
+   is to simply be read to check if stack was overwritten.
+5. Use more safe coding languages that don't give enough
+   control for the coder/user or statistical analysis.
+6. Get gud (Professor comment: Built-in security / DevSecOps)

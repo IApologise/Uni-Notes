@@ -1,0 +1,103 @@
+--- Syntax & Semantics ---
+Basically the same as in modal logic, except worlds in this case can be thought of
+as individuals (example in medicine). And just like in Sequent Calculus, we can
+also use the non-closed branch to create a counter model (a model that falsififes A).
+
+Note that worlds in ALC are called "labels" instead. Also, an important note, you
+know how propositional logic is decidable? Well so is ALC as long as TBox is empty,
+because ABox can be treated as a set of propositional logic, like Adult(Joe) = p.
+E.g. we can create a map translating ALC with ABox only to propositional logic.
+
+By the way, some definitions: since worlds are now labels, and formulas with
+constants instead of variables can be considered factual concepts, w : A is a
+"labelled formula". It is like a fact that holds for some individual. Remember
+that those facts are given by an ABox, the world is specified by a constant.
+ 
+TBox on the other hand, is like rules that apply to all the individuals, like
+JuvenileDisease only affecting Juveniles: JuvenileDisease ⊑ Affects.Juvenile.
+So TBox is filled with "accessibility relations" R like wRv, etc. (exactly the
+same as in Modal Logic). TBox basically defines how worlds relate to each other.
+
+I am using words "world", "label", and "individual" interchangeably here, not to
+confuse, but to show that there is no difference in this context. Same goes for
+accessible worlds, a set of relations between worlds wRv, and TBox.
+
+
+
+--- Rules (Mostly Copy-Pasted) ---
+P.S. Read quantifier rules because we assume
+that all assumptions Γ contain w : C_T in them.
+
+
+
+Axioms/Closure:
+
+------------------- axiom
+Γ, w : A ⊢ w : A, ∆
+
+--------- axiom   ---------- axiom
+Γ ⊢ ⊤, ∆          Γ, ⊥ ⊢ ∆
+
+
+
+Left/Right structural rules:
+
+  Γ ⊢ ∆                    Γ ⊢ ∆
+------------- W-left   ------------- W-right
+Γ, w : A ⊢ ∆           Γ ⊢ ∆, w : A
+
+Γ, w : A, w : A ⊢ ∆           Γ ⊢ ∆, w : A, w : A
+------------------- C-left   --------------------- C-right
+  Γ, w : A ⊢ ∆                   Γ ⊢ ∆, w : A
+
+Γ, w : A, v : B ⊢ ∆           Γ ⊢ ∆, w : A, v : B
+-------------------- P-left   -------------------- P-right
+Γ, v : B, w : A ⊢ ∆           Γ ⊢ ∆, v : B, w : A
+
+
+
+Left/Right logical rules:
+
+ Γ ⊢ ∆, w : A            Γ, w : A ⊢ ∆
+-------------- ¬-left   --------------- ¬-right
+Γ, w : ¬A ⊢ ∆           Γ ⊢ ∆, w : ¬A
+
+Γ, w : A, w : B ⊢ ∆          Γ ⊢ w : A, ∆   Γ ⊢ w : B, ∆
+------------------- ⊓-left   ---------------------------- ⊓-right
+ Γ, w : A ⊓ B ⊢ ∆                 Γ ⊢ w : A ⊓ B, ∆
+
+Γ, w : A ⊢ ∆   Γ, w : B ⊢ ∆             Γ ⊢ ∆, w : A, w : B
+----------------------------- ⊔-left   ---------------------- ⊔-right
+Γ, w : A ⊔ B ⊢ ∆                         Γ ⊢ ∆, w : A ⊔ B
+
+
+
+Left/Right quantifier rules:
+
+† stand for the same as in modal logic, □-right † is equivalent to
+∀-right, and ◇-left † is equivalent to ∃-left. Meaning that when we
+substitute on rules with †, we must instantiate variables with a new
+constant, or in our case a new relation R.
+
+What is new is that since we have so many concepts that should hold
+true, we should assume them all, and we can denote it as C_T which
+is like a way to merge them all into a single concept which is a
+conjunction of implications. We usually add it once the new world
+is added in the form w : C_T to show that we assume it for it too
+(we should assume it for all the worlds we assume).
+
+Here is an example where (A_i ⊑ B_i) is a single concept in TBox denoted
+as C_i: ⊤ ⊑ C_0 ⊓ C_1 ⊓ ... ⊓ C_i ⊓ ... ⊓ C_n where C_0 is the first
+concept in a TBox and C_n is the last one. This is usually denoted as
+⊤ ⊑ ∏ C_i, e.g. ⊤ ⊑ ∏ (A_i ⊑ B_i), e.g. ⊤ ⊑ ∏ (¬A_i ⊔ B_i).
+
+All in all, we assume that: Γ already contains w : C_T in all quantifier
+rules, and that Γ already contains v : C_T in ∀-left and ∃-right.
+
+Γ, wRv, v : A, w : ∀R.A ⊢ ∆           Γ, wRv, v : C_T ⊢ ∆, v : A
+---------------------------- ∀-left   --------------------------- ∀-right †
+   Γ, w : ∀R.A ⊢ ∆                         Γ ⊢ ∆, w : ∀R.A
+
+Γ, wRv, v : C_T, v : A ⊢ ∆             Γ, wRv ⊢ ∆, v : A, w : ∃R.A
+-------------------------- ∃-left †   ----------------------------- ∃-right
+ Γ, w : ∃R.A ⊢ ∆                            Γ ⊢ ∆, w : ∃R.A

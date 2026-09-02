@@ -1,0 +1,56 @@
+Datamodelling:
+Databases are often huge and thus to make a good database we need
+to plan out its structure first. This is called datamodelling.
+
+In this course though we will be using a modelling language called ER
+Diagram which stands for an Entity Relationship Diagram. There exist
+others too like UML, ORM, OWL, etc.
+
+To create a database model you ask yourself, what are we interested in first
+(data), and what relations between those interests there can be (data types).
+
+
+
+ER Diagram Concepts:
+| Entity  ->  A concrete object such as Justas, IN2090, or Ole Johan Dahlshus, etc.
+| Entitytype  ->  Entity classification such as Student, Subject, Building, etc.
+|   ->  Those two entity definitions above are used interchangeably.
+|   ->  In our diagram, entity naming is not to be repeated, that is not allowed
+| Attribute  ->  Describes entity's properties such as Name, Size, etc.
+|   ->  Attribute naming is not to be repeated when bound to the same entity
+|   ->  Attributes can be split further such as name into first name and surname
+| Relation  ->  A shared attribute such as hasStage on both Cinema and Stage.
+|   ->  May also relate mutliple entities at the same time, such as 3 or more
+
+ER Diagram Shapes:
+| Rectangle  ->  An entity such as Justas, Student, IN2090, Subject, etc.
+| Oval  ->  An attribute such as name, id, birthdate, etc.
+| Diamond  ->  A relation that connects multiple entities together
+|   ->  Entities and diamonds can not share the same name either
+
+ER Diagram Inner Modifications:
+| Underline  ->  No repetititon, the attribute is unique
+| Double underline  ->  Same as underline, but is also a primary key
+| Square brackets  ->  The attribute data can be a NULL (Not used)
+
+ER Diagram Outer Modifications:
+| Double boundary  ->  An entity may have multiple of this attribute
+| Dashed boundary  ->  Attribute that can be derived from other atributes
+| Double entity and relation boundary & dotted underline ->  Entity's attribute may
+|   ->  be unique based on another entity's scope through a relation. To show that
+|   ->  we make an entity a double boundary, and give an attribute a dotted underline
+
+ER Diagram Connections:
+| Line  ->  Connects two instances with each other, be it attributes with other
+|   ->  other attributes, relations with entities, entities with attributes, and
+|   ->  attributes with relations (for better relation detail)
+| Numbers  ->  Relations can have numbers beside them, this tells
+|   ->  how many of what entities can have relations to, for example
+|   ->  {Subject -N- BelongsTo -1- Institute} means that the institute can
+|   ->  have N subjects, but the subject can belong to only one institute
+| Single/Double Line  ->  Relations can have single or double line connections.
+|   ->  single line means that an entity can relate to 0 or more of the related
+|   ->  entities, and a double line means that it must relate to at least 1
+|   ->  example {Worker -1- Leads =1= Institute} where a worker doesn't need to
+|   ->  lead an institute, but an institute must have at least 1 worker that leads.
+|   ->  Note that the line order is the opposite of that of numbers order

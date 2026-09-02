@@ -1,0 +1,19 @@
+There is an algorithm for humans on how to realize those
+Entity Relation Diagrams into a complete database. But it
+requires us to choose the best course of action sometimes.
+
+The order in which the algorithm tells us to handle the
+parts in an ER Diagram goes like this, from first to last:
+1. Create normal entities (No double borders, etc.)
+2. Create normal and underlined attributes of those entities
+3. Create "weak" attributes (those that relate to other entities).
+   To do so, add the attribute to the target entity, and then
+   reference the primary key of another entity that it relates
+4. For 1-1 relations, you can combine them into 1 entity, reference
+   those entities to each other, or create a new table that does so
+5. With 1-N relations you do the same as with 1-1, but you can't merge
+   them properly, referencing is often the way to go.
+6. M-N relations are often done by creating new tables or smart referencing
+7. Multi-attributes (when an entity may have multiple of one type of attribute)
+   are handled by creating a new table and referencing target entity.
+8. With N-th relations we create a new table and reference those entities

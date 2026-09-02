@@ -1,0 +1,61 @@
+--- Kripke Frame ---
+In modal logic, we create what's called a kripke frame which allows us to
+interpret modal logic denoted as F = (W, R) where W is a world (a state where
+predicates are either considered true or false), and accessibility relation R
+where all the elements in R are also in W x W which is like a set of all the
+possible combinations that W can have with itself. It basically describes which
+worls are connected and accessible from which.
+
+Think of it as F being a graph, W being nodes, and R being edges between those
+nodes. Note that R might not have all the edges that can be made, just can (max).
+
+
+
+--- Modal Interpretation ---
+So to interpret the modal, we have to interpret all the possible states. So we
+basically create a set of interpretations. This tuple is denoted as I_M which
+is equal to (F, T_I) where F is our kripke frame, and T_I is a set of
+interpretations I_w for each world w that is in W which itself is in F.
+
+In those worlds, formulae can be interpreted true or false. So to denote "□p"
+being true in some world w_0 for example, we must have it such that all the
+worlds that can be reached from w_0 must have p true. If it is just possible
+denoted as "◇p" being true in some world like w_0, then there must be at least
+one world where p is true, not necessarily all of them.
+
+This is kind of like □ being a universal quantifier, and ◇ being an existential
+one where worlds are just concrete examples with different interpretations. The
+relations, e.g. the connections between worlds are seen differently depending
+on concrete modal logic type. For example, let's say that we flip a coin, the
+result could be tails or heads, so we create two worlds where one is tails and
+the other came heads.
+
+So let's say that ◇H means that it is possible that the coin flip came up heads.
+We then create a world w_0 where ◇H is true. Now, once we actually flip a coin,
+we get two world, w_1 and w_2. In w_1 we got tails, so H is interpreted false,
+in w_2 we got heads, so H is interpreted true. So we get connections, two edges,
+one from w_0 to w_1, and one from w_0 to w_2.
+
+This was an example of an epistemic logic, there is also temporal where edges
+denote states in time, and not possible situations so ◇ would mean eventually
+instead of possibly. There is also deontic is like promises and obying them/not,
+and there is much more like provability logic and general necessity/possibility.
+
+
+
+--- Forcing Relation ---
+Forcing relation denoted as "⊩" which means that if in our interpretation I,
+of Kripke Frame F, of a world w that is in F, the interpretation (I_w) of some
+formula A returns true, then w ⊩ A read as "w forces A" (or at least I read it
+this way). In other words, if I_w(p) = T, then w ⊩ p.
+
+For negation, if I_w(p) = F, then w ⊩ -p. for conjunction and disjunction, if
+w ⊩ A and w ⊩ B, then w ⊩ A ∧ B, and if w ⊩ A or w ⊩ B, then w ⊩ A ∨ B.
+Similarly for implication and such.
+
+Note that if v ⊩ A for some v in W with (w, v) in R, then w ⊩ ◇A. In other
+words, if there exists a v that forces A, v can be reached from w, then there
+exists a v that forces A from w (which is what w ⊩ ◇A means). Similarly,
+w ⊩ □A if for all (w, v) in R, v ⊩ A and v is in W (and w is too). So all
+the worlds v reachable from w because □A must work for all of them and ◇A
+for at least one.

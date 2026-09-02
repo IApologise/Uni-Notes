@@ -1,0 +1,30 @@
+Whenever we are talking about formulas or set of formulas etc. We often
+want to know if it is valid, satisfiable, falsifiable (invalid), and/or
+contradictory (unsatisfiable). If one of those is the case, we often
+want examples that we can use in practice and such.
+
+An interpretation denoted as I a model that we can create which evaluates
+those formulae based on how it was constructed. It is 2-ary, so I(D, i).
+Note that D represents Domain which is a set of values that variables,
+constants, terms, functions, etc. can be/output, whereas i represents
+that those are interpreted in our model.
+
+So for example, in an interpretation I(D, i) where D = {1, 2}, a^i = 1
+b^i = 2, and f^i = {(1, 1), (2, 1)}, a formula like f(b, a) evaluates
+to ⊤ because I(f(b, a)) = f^i(b^i, a^i) = f^i(2, 1) = ⊤. Note that it
+is ⊤ because (2, 1) exists in the set that defines how f is interpreted.
+So if we had I(f(a, b)) it would evaluate to ⊥ because (1, 2) is not in f.
+
+Whenever we are asked to create a counter model, this is what we want. We
+want an interpretation (which we may define ourselves) that falsifies
+whatever it is that we want to create a counter model for. When we want
+to give an example to show satisfiability, we may simply create a model
+that satisfies the atomic-formulae, no need for all this D and i, etc.
+We can denote it as I(p) ⊨ ⊤, I(q) ⊨ ⊥, etc. (This is just an example).
+
+Important note, whenever we are asked to interpret something, we interpret
+the whole thing with a single interpretation. So for example, a set of
+formulae that must be interpreted like A = {p, ¬p} is interpreted by one
+and the same interpretation I, so I(p) and I(¬p). In this case for example
+we will never be able to make A satisfiable, because we can't satisfy all
+the formulae in A simultaneously (so p and ¬p at the same time).

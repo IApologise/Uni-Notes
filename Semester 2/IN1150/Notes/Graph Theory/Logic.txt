@@ -1,0 +1,12 @@
+Degree: deg(_)
+To get the node's degree count use deg(v).
+What it does is it counts the amount of
+edges that are connected to the node.
+
+If you try to sum up all of the degrees
+of a graph, the amount is always double
+the amount of edges in a graph. So
+Σ deg(v) where v ∈ V = 2|E|.
+
+A more on the topic can be found in
+Characteristics section of this folder.

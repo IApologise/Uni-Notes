@@ -1,0 +1,11 @@
+P.S. If some of these answers are not explained deeply enough open "Logs.txt".
+ 1. "Mew".
+ 2. Requires secure communication for safe establishment which is its purpose in the first place.
+ 3. "Tiramisu".
+ 4. MD5. Not secure due to poor collision resistance.
+ 5. "Doomguy93" & "MegaScorpion222".
+ 6. Determenistic, irreversible, collision-resistant, fixed-length output.
+ 7. "... ved ifi-dammen ved midnatt".
+ 8. Vigenere cipher. Vulnerable to a combination of the kasiski examination and the frequency analysis.
+ 9. Open "Proof.png" located in the same folder.
+10. Public key. Because it can not be the alternative since "private key" is called "private" because it is surprise-surprise: Private.

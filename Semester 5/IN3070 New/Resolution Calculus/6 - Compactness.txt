@@ -1,0 +1,26 @@
+Resolution calculus works even on clause sets of infinite size.
+The reason for this is related to proof of completeness, but
+basically, if a set of clauses S is unsatisfiable, then there
+exists a closed "semantic tree" which results in a smaller
+"semantic tree". So we are zooming in on the answer. This, and
+the fact that we don't need to use all of S.
+
+The fact that the this closed tree is always finite is what's
+called Konig's Lemma, which states that we only need a finite
+amount of S' sets where all the elements in S' are also in S.
+Once all the clauses that were used are collected into a single
+clause set S_0, S_0 is finite and unsatisfiable (and so is S).
+
+For example, let's say that we got ∃x -p(x), p(a), p(fa), p(ffa),
+... Although this one is infinite, let's say that we got an
+interpretation I that falsifies I(p(t), so as long as p has any
+input, it is false. Therefore, I ⊨ ∃x -p(x), so it is satisfiable.
+
+There is some weird case with natural numbers N where we are wrongly
+saying that it is satisfiable even though it is not. So I assume that
+this method is not sound, or at least it isn't because apparently to
+reason about N requires more than just first-order logic, in other
+words, N is not a compact domain for our model.
+
+I hope I will not have to explain it, and if I will, I will get an
+easy task and won't have to create an example myself or anything alike.

@@ -1,0 +1,100 @@
+Database or DB for short:
+A place where data is stored. For example
+HDs (Hard Drives) and SSDs (Solid State Drives)
+
+The point of databases is to store data efficiently
+and such that it can be read and written to by more
+than just one programming language, so universally.
+Also, make sure it is easy to scale, etc.
+
+
+
+Imperative Coding:
+In an imperative variant you tell the code
+how to do the instructions to get what you want.
+Example: Python and Java.
+
+Declarative Coding:
+In a declarative variant you explain the code
+what it is that you want it to get you.
+Example: Maude, SQL.
+
+
+
+Databasesystem or DBMS for short:
+Is a program that allows interacting with the database,
+like a user interface (UI). This is the tool that you
+use to write to or extract information from the database.
+
+Metadata:
+This represents the structure of the database.
+So what goes where and in what way, etc.
+
+
+
+Types of databases (DBs):
+1. Document DBs which focus on fast search of strings and substrings.
+2. Key-Value Stores which are like HashMap in Java or JSON.
+3. Graph DBs which are more about finding paths and fast.
+4. Relational DBs are more like excel spreadhseets (a set of tuples).
+
+
+
+A database is primarily made like a table. This table
+is called a relation model. A relation model is made
+of a signature (categories & data types), and relations
+(data rows & collumns).
+
+Here is an example: We create a database table which
+we choose to call "Customers". Thus, our relation model
+is now {Customers: (Ø, Ø)}.
+
+Next we create a signature, which dictates the structure
+of our data, to be {ID: int, Name: str, Birthdate: date}.
+These are like titles for our collumns.
+
+At last we now can add data in form of relations to our DB.
+Remember that {Title: (Signature, Relation)}. So a new
+relation must follow the structure of a signature. Example:
+(ID: 5, Name: Justas Simutis, Birthdate: 19-12-2005).
+
+Note: In case a part of data is missing we
+simply use NULL as a placeholder instead.
+
+Here is a full example:
+{Customers:
+  ({ID: int, Name: str, Birthdate: date},
+   {
+      (ID: 0, Name: "Justas Simutis", Birthdate: "19-12-2005"),
+      (ID: 1, Name: "Julijus Simutis", Birthdate: "12-1-2007"),
+      (ID: 2, Name: "Jogaila Simutis", Birthdate: "25-1-20011"),
+      (ID: 3, Name: "Vilius Simutis", Birthdate: NULL)
+    }
+  )
+}
+
+
+
+In databases we often want to be able to split relation models
+into multiple smaller relation models such that we don't have
+to repeat the same information multiple times.
+
+We also want to be able to identify each unique data row. The
+identifier is called a "super key". It can be an ID, a username,
+a combination of both name and birthdate, etc.
+
+What we aim for is to not have too many super keys. We want the
+least amount we need. Such keys we call "candidate keys". So,
+whenever we have a combination of super keys such as ID, name,
+and birthdate, it is not a candidate key, because we can remove
+ID, or both name and birthdate and still have a candidate key.
+
+There may be multiple candidate keys, the one the database uses
+mostly (the main key) is called a "primary key". Usually we choose
+the one that gets changed the least over time. The one that needs
+least maintenance to keep up.
+
+If we have identical primary key in multiple relation models, then
+that key is called a "foreign key" ("fremmednøkkel"). How these
+keys are related is often shown with arrows, here is an example:
+Grade(Student) -> Student(Username).

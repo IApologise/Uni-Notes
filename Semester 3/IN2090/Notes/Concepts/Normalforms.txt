@@ -1,0 +1,51 @@
+When creating databases we want to repeat the same data as rarely
+as possible. This makes SELECT, UPDATE, and lots of other commands
+much faster for SQL to handle since it has to go through less data.
+To define formally what is a good and a bad database we use what's
+called normalforms which are like rules for relation evaluation.
+There are four normalforms: 1NF, 2NF, 3NF, and BCNF.
+
+The higher the grade, the less frequently data is repeated in our
+database. Often this means more tables and thus more joins that we
+need to use and the more complicated the SEARCH query becomes and
+such, but it also becomes faster (often times). Our whole database's
+normalform grade is that of the lowest table's normalform grade.
+
+
+
+1NF: Usually all the tables are considered to be in 1NF already.
+If a table has repeating rows, then it is not in 1NF. Same for
+if there is an array anywhere in it and such since tables are
+supposed to be arrays themselves and not matrixes.
+
+So it basically does not allow repetitions in our relation table
+and does not allow turning a row into a table (through arrays).
+
+2NF: First, satisfy 1NF. Next, there is no non-key attribute
+(collumn) that depends only on a part of a candidate key.
+Example: check 07-03.mp4 from 3:56 to 5:06.
+
+So it basically does not allow partial dependencies in our table.
+
+3NF: As long as it satisfies the previous 2NF, and all non-key
+attributes depend only on a candidate key the relation table is
+in third normalform. Example: 07-03.mp4 from 6:28 to 7:46.
+
+So it basically does not allow transitive dependencies in our table.
+
+BCNF: As long as NF3 is satisfied, and all attributes depend only
+on one candidate key, then the relation table is in BCNF. Example:
+from 8:46 to 10:11. Meme at: 8:30 - 8:45.
+
+Use to idenfity edge-case scenarios for tables that are in 3NF.
+
+
+
+To identify those normal forms you can use an algorithm, for that
+check "Normalform Identification Algorithm.png".
+
+You can decompose any realtion table of any normalform into multiple 
+BCNF tables. Simply make sure that everything can come back together
+using natural joins, if so then we don't lose any information.
+
+For the algorithm, check "Converting Relation To BCNF.png".

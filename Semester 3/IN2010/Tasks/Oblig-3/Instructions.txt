@@ -1,0 +1,11 @@
+--- Instructions ---
+First make sure that you have data, graph, and node folders
+all in the same folder as Main.java (It should already be).
+
+Now, run cmd or whatever and compile Main.java with the
+following command: "javac Main.java". Then run the file
+with command "java Main". That's it.
+
+Also, check out the comments and changelog since this is
+a second version. I did not update the last task since I
+didn't think this was necessary (looking at the feedback).

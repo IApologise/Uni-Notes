@@ -1,0 +1,63 @@
+--- Biometry ---
+We already have talked about using biometry here and there, and so on.
+But we never defined it clearly, basically it is something that can
+be used to identify someone. There are 3 types, first is something that
+you know, second is something that you have, third is something you do.
+
+For example, passwords are something that you know, fingerprints is
+something that you have, and the way you type on your keyboard is
+something that you do. However, it is not always secure. Passwords
+can be leaked, and your possessions (or you) might be stolen, AI
+can analyze and simulate your actions, etc.
+
+To create a biometrical system it must be 1: Something that everyone
+has. 2: Something that everyone is different at. 3: Something that
+can not be changed on its own without the system knowing that. 4:
+Something that can be measured and differentiated reliably. 5:
+Something that is easy and fast (can't have xray machines at home
+and such, duh). 6: something people are willing to accept. and
+lastly 7: something that is hard to fake / steal, etc.
+
+Note that when choosing authentication method, make sure that it
+is convenient and isn't costly because for example 2-factor
+authentication code generation costs penies but it is used often
+so much so that money is lost, alot of it in fact, so be vary.
+This is usually where risk analysis comes in to check risk is
+worth it or not (ROI, Return on Investment).
+
+
+
+--- Reliability ---
+When creating an authentication method we must always test whether
+it is reliable. There must be many True Positives (e.g. actual
+users get to access their accounts), many True Negatives (e.g.
+fake users don't access user accounts) as well as little False
+Positives (e.g. fakes can't access user accounts), and little
+False Negative (e.g. actual users can't access their own accounts).
+
+
+
+--- Regulations ---
+There exists a popular classification and authentication standards
+that are used which define how secure vs how costly the authentication
+methods are (that they mention). Usually classified into 3 types, low,
+substantial, and high guarantee (e.g. security and cost level).
+
+SP 800-63-4 by NIST is the newest one (2025). Then there are also one
+from eIDAS 2.0 from EU (2024). Also one from Norway called DigDir
+which is from 2022 and is based on eIDAS 1.0. Note that although it
+is outdated, small municipalities often prefer norwegian ones. And
+then there is a very old one by ISO/IEC from 2013 named IS 29115
+which is not used at all (especially because there are 4 levels where
+the least secure level is never really used, lol).
+
+Back to the best model there is by NIST from 2025, there are 3 levels.
+1st one is normal authentication using passwords or other biometry
+such as fingerprints or face id. 2nd is where 2FA (2 Factor Authentication)
+comes into play as well as making sure passwords are hard to crack, and
+that cryptographical methods used are strong and stuff like phishing
+resistance are implemented. 3rd is the highest of them all which is where
+stuff like ID-portals are used and/or legal contract are implemented.
+
+Remember that all of this is to make sure that we are confident in
+whether it is the actual user or the fake that is trying to log in.

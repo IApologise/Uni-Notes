@@ -1,0 +1,26 @@
+When pentesting you must first have a document signed by the highest authority of the one you are hacking saying "yes, you can hack it, but not harm the system" which is called a "get out of the jail free card" and is a must have.
+
+There are also 3 types of pentesting depending on how much information you have about the system you are trying to get into: white-, gray-, and black box: White box is when you get all the relevant information about the website and how it is coded in. Gray box is when you are given some information about it. Black box is when none is given and it is as if you are a normal user trying to get in.
+
+There are also different types of hackers depending on their skill and goals which are classified by calling them {color} hat. There are white, gray, and black hats. White hats are the ethical hackers that hack only when given permision in order to improve system security. Black hats are the malicious hackers that hack to achieve own goals and satisfaction. Gray hat hackers are somewhere inbetween. There are also hackers such as script kiddies that simply copy-paste some stuff they found online which often pose no threat. There also are vengeful hackers that simply hack whoever hackes them and vigilant hackers that are like white hat hackers but they hack without getting permision to do so.
+
+When hacking ethically always write down the steps you are doing, in the end you always write a report on it that you will then present to the company or the one you were hacking. Often you will also write down tips on what not to do and how to fix it.
+
+Also, when hacking, first write down a plan of what is it that the company is most scared of losing access to and what they definitely do not want to be exploited. Write down what you should and should not get access to as a normal user.
+
+In addition to that, if you are going black or gray box then gather some more intelligence first. This method is called OSINT where you find out everything relevant about what you are hacking such as if you are hacking a database and you went to company's linkedin and see that they hired an Oracle expert (database) now you suddenly know what kind of database they have and such.
+
+When checking which devices you can reach use "nmap" which can be used in powershell, in python, etc. You may also use a portscanner to see which servers are open and how many devices there are. Remember that services that contain ports may run from other devices later and/or the port may change and so may ip although ip is still static.
+If you are able to, try and get as much info as possible as a man in the middle through Tcpdump and Wireshark before doing anything reckless, stay hidden.
+
+If you use nmap to scout the ports and ips first, there might be ssh, https, and most importantly an ftp port. An ftp port we can log into "ftp {IP}" as a guest and then check which files exist there and such.
+
+You can also try to bruteforce guess a username and password using Hydra program to get into the "ssh {IP}" and find something important there too. Usually more valuable than an ftp too. However, if you can check the password policy first since you can lock proper users out which gives away that there is someone (and you won't get in).
+
+Always check the rights that you have, use sudo and try to get the root access. Check what you can use on a linux machine too such as "cat", so if you can read files. To do so, write "sudo -l" which prints out the current user that you are and your rights. If you can read with cat then you are likely to be able to read password hashes in "passwd" file that linux has. Also try using Mimikatz to get the password hashes of all the machines, but it also requires debug/admin rights.
+
+Hashes can also be exploited this way. Say that you got a hash of an account, and other accounts use the same password (company policy or whatever). This means that we can log in using hash itself without knowing that the password actually is using programs like Impacket and Psexec.
+
+Metasploit is also a program that knows lots of exploits and has lots of uses (and free) but it is often detected by anti-virus programs which remove it instantly.
+
+Another method to hack is called fuzzing. It is basically like trying a bunch of stuff. Let's say that the system requires you to type in an 8 digit number password, but what if I type an "a", "0", "1_000_000_000", "-5", etc. We basically try to break it and maybe even inject code, who knows how it was coded?

@@ -1,0 +1,110 @@
+This is a continuation of SQL Core file.
+All the syntax rules there also apply here.
+
+
+
+Join Patterns: Solutions for common requests
+| Cross-Join -> Merges all data in all possible combinations
+|   SELECT *
+|     FROM {Table A}, {Table B};
+|
+| Equi-Join  ->  Merges data assuming that collumn A and B in both tables is comparable
+|   SELECT *
+|     FROM {Table A}, {Table B}
+|    WHERE {Table A}.{Collumn A} = {Table B}.{Collumn B};
+|
+| Theta-Join  ->  Equi-Join, but more general. It may use any relation, not just equals
+|   SELECT *
+|     FROM {Table A}, {Table B}
+|    WHERE {Table A}.{Collumn A} {Comparison Logic} {Table B}.{Collumn B};
+| Example of such relations: "<", ">", "=", "!=", "LIKE", "SIMILAR TO", etc.
+|
+| Self-Join  ->  A theta-join, but on the same table, here is a concrete example
+|   SELECT P2.Name, P2.Price
+|     FROM Product AS P1, Product as P2
+|    WHERE P1.Name = 'Laptop 2.5GHz' AND
+|          P1.Price < P2.Price;
+| It is often used to compare and find data of the same table
+|
+| Inner-Join  ->  Cross-Join, Equi-Join, and Theta-Join, etc. are all Inner-Joins.
+|   SELECT *
+|     FROM {Table A} INNER JOIN {Table B}
+|          ON ({Comparison Logic});
+
+To Come:
+| Semi-Join
+|
+| Outer-Join  ->  Same as Inner-Join, except it keeps rows that don't match, either left, right,
+|   -> or both of the collumns. This depends on whether LEFT OUTER JOIN, RIGHT OUTER JOIN, or
+|   -> FULL OUTER JOIN is used. So the rows that are kept have their values replaced with a NULL.
+|   -> To clarify, if we for example use LEFT OUTER JOIN, and for some row the comparison logic
+|   -> evaluated to False, thus not adding it to the output table, if that row's part which came
+|   -> from the left table is not in the output table, then we add it and all the info that was
+|   -> supposed to be provided by the right table is filled with NULLs. Similar work for RIGHT
+|   -> OUTER JOIN. FULL OUTER JOIN is both LEFT OUTER JOIN and RIGHT OUTER JOIN.
+| SELECT *
+|   FROM {Table A} FULL OUTER JOIN {Table B}
+|        ON ({Comparison Logic});
+|
+| Anti-Join  ->  Specific type of Outer-Join where one of the keys is NULL (like "\" operation in logic)
+|   ->  note that key in this context depends on Condition, so in p.id = o.id, p.id and o.id are keys.
+| SELECT *
+|   FROM {Table A} {LEFT/RIGHT/FULL} OUTER JOIN {Table B}
+|        ON ({Condition})
+|  WHERE {Table A}.{Key A} = NULL {AND/XOR}
+|        {Table B}.{Key B} = NULL;
+|
+| Natural-Join
+
+
+
+Join commands:
+| INNER {JOIN}  ->  Cross-Join, Equi-Join, and Theta-Join, etc. are all Inner-Joins
+| NATURAL {JOIN}  ->  Equi-Join from same and other tables in the same schema as well
+| JOIN {Table}  ->  Performs the join on a selected table
+| ON ({Condition})  ->  What to join with what (when to join)
+| USING ({Collumn})  ->  Same as ON({Table A}{Collumn} = {Table B}{Collumn})
+
+
+
+This is the example of using INNER JOIN and ON commands to make a join.
+As you can see, all it does is moves the conditions from WHERE to FROM.
+
+If you join during WHERE, then it is called an implicit join.
+If you join during FROM, then it is called an explicit join.
+
+Also, note that it is made of 3 commands, INNER, JOIN and ON.
+I am not sure if JOIN must be accompanied by a specification
+such as INNER, but whether ON is a part of INNER or JOIN or
+even required is required at all.
+
+
+
+Join Examples:
+| SELECT p.product_name, u.company_name
+|   FROM categories AS c
+|        INNER JOIN products AS p
+|        ON (c.category_id = p.category_id)
+|        INNER JOIN order_details AS d
+|        ON (p.product_id = d.product_id)
+|        INNER JOIN orders AS o
+|        ON (d.order_id = o.order_id)
+|        INNER JOIN customers AS u
+|        ON (u.customer_id = o.customer_id)
+|  WHERE c.category_name = 'Beverages';
+|
+| SELECT p.product_name, u.company_name
+|   FROM categories AS c
+|        INNER JOIN products AS p USING (category_id)
+|        INNER JOIN order_details AS d USING (product_id)
+|        INNER JOIN orders AS o USING (order_id)
+|        INNER JOIN customers AS u USING (customer_id)
+|  WHERE c.category_name = 'Beverages';
+|
+| SELECT product_name
+|   FROM categories NATURAL JOIN products
+|  WHERE category_name = 'Beverages';
+
+Note that the first, second and third examples are equivalent.
+Natural-Join is more precise and convenient, but confusing (to me).
+

@@ -1,0 +1,34 @@
+For a system to be secure, the keys should:
+- Be significant in size
+- Implement strong and secure algorithms
+- Correctly integrated into software and hardware
+- Not be misused and revealed
+
+It is also recommended to create multiple private keys,
+such that if one is compromised, everything isn't. Only
+a small part of your data may be. Keys are also switched
+somewhat often. Its frequency is called a Crypto Period.
+
+The Crypto Period does split into two: Security Period,
+and Processing Period. The first is when a data is to
+be encrypted and/or digital signature is generated. The
+second is decryption and/or signature validation. Even
+
+though Security Period is the most important, the Crypto
+Period is decided by the one that lasts the longest. This
+means that you may still be using a private key when it
+technically has expired and is now considered under risk
+of getting hacked with a decent certainty.
+
+The size of the cypher in bits that is acceptable today is
+112. However, it is gonna be discontinued after 2030 because
+computers are improving and brute forcing gets faster. Today,
+128, 192, and 256 are the standards and safe bets.
+
+Quantum Computers pose threat to assymetrical cryptography.
+I am not sure if that is true or just wide spread confusion.
+We might also need a hash that is double in size (512 bits).
+
+When generating private keys, generation must be done without
+any apps or external programs being able to modify its contents
+or copy and get their hands on it in a bad way.

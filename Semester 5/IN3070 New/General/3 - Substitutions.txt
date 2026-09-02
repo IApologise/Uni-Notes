@@ -1,0 +1,110 @@
+Whenever we got quantifiers involved we also have variables
+that represent states that validify quantifier requirement.
+For example ∀x p(x). However, sometimes it complicates stuff.
+For that we have substitutions which allow us to merge
+situations or look at more narrow scenarios where looking
+at everything at once isn't required/desirable.
+
+To denote a substitution we often use symbols σ and τ
+such as σ = {x\t} or τ = {y\f(a)}. As you can see in
+{x\t} we substitute a term t for every free occurence
+of the variable x as long as our substitution value t
+is not already within the quantifier's scope. In τ
+we substitute variable y with a specific f(a) case.
+
+Note that substitutions can also be denoted using square
+brackets instead of curly brackets. But I don't know what
+the difference is (P.S. there is none apparently).
+
+If we want to denote where the substitution took place
+simply write σ(A) where A is a formula. If we have A equal
+to say ∀x (p(x) ∨ q(x) ∧ p(a)) for example, then we get:
+σ(A) = σ(∀x (p(x) ∨ q(x) ∧ p(a))) = ∀x (p(σ(x)) ∨ q(σ(x)) ∧
+∧ p(σ(a))) = ∀x (p(t) ∨ q(t) ∧ p(a)) = p(t) ∨ q(t) ∧ p(a).
+
+
+
+Here is another example for substitutions. Since ∀x means
+true for all, then it must also be true for some arbitrary
+term t, so if we have a formula A like ∀x (p(x)) ∨ ¬p(t),
+and we substitute with σ[x\t] we get σ(A) = p(t) ∨ ¬p(t).
+Suddenly we can now reason about it more precisely and see
+that A is always valid (because t was arbitrarily chosen).
+
+We can also have multiple substitutions at the same time
+in order to unify two different quantifiers to prove
+the validity and such. A unifier of a function f(x) and
+f(y) could be σ[x\a] and τ[y\a] denoted as τσ or στ. We
+can also unify with σ[x\y] to get f(y) in both of them.
+
+Note that the order of substitution matters, so τσ is
+not the same as στ unless there is no overlap. Also, to
+clarify, (στ)(A) means σ(τ(A)), so the substitution τ
+is applied on some formula A first, and then σ is.
+
+To calculate στ just take τ and apply σ to it. Do not
+compute it all, just the surface level because the answer
+might be wrong in the end if we do it all. So for example,
+if we compute στ all the way where τ = [x\y, y\z] and
+σ = [y\x] we might get στ = [x\y, y\z] = [x\z, y\z] which
+when we apply σ afterwards changes nothing. This is wrong.
+Instead the right answer is στ = [x\σ(y), y\z] = [y\z].
+
+Note that we removed x because when we substitute y using
+σ we get x\x which is the same as doing no substitution.
+
+
+
+Remeber that we can only substitute variables and not functions
+or constants and such. So there can't be one for f(x), a, etc.
+only x. But we can substitute variables (such as x) with anything
+that is at most a term. So we can substitute x with a, f(a), f(x),
+y, etc. (as long as y is not bound by a quantifier).
+
+Note that f(x) and g(x) or g(y), etc. can not be unified either
+because we can only replace variables with whatever. We can try
+to replace x with f(g(x)) and such, but since these two disagree
+at the highest level they can never be unified.
+
+Example like f(x, x) and f(a, b) also can not be unified because
+whenever we apply a substitution on x we replace both x'es with
+a, same for b. So it can never be done. (No we can't apply
+substitutions on constants, they aren't variables...)
+
+Note that we can not substitute free variables with bound ones.
+So in example like ∀x p(x, y) we can not replace y with x, f(x),
+or anything else that introduces x since y wasn't bound by ∀.
+
+
+
+Often there can be infinitely many combinations of unifier
+substitutions that we can do. For that we define the more
+general unifier σ_1 such that all the other unifiers like
+σ_2, σ_3, etc. can be constructed from σ_1. It is defined
+as σ_n = τ_n(σ) with σ being the most general unifier (mgu)
+and τ_n some unifier that gets us σ_n from σ.
+
+For example, if we want to unify x and f(y), σ_1 = [x\f(y)]
+is more general than σ_2 = [x\f(a), y\a] because there exists
+τ, namely τ = [y\a] such that σ_2 = τσ_1 : [x\f(a), y\a] =
+= [x\f(y)][y\a]. But, [x\f(a), y\a] is not more general than
+[x\f(y)] because a substitution τ that gets us [x\f(y)] from
+[x\f(a), y\a] does not exist since we can not substitute a
+constant "a" with a variable "y". It simply has more restictions.
+
+However, we often want the most general unifier (mgu).
+There can exist multiple most general unifiers due to
+renaming. So we can check with a renaming substitution
+η which is defined as one 1. where η(x) is a variable
+for all x ∈ V where V is a set of all the variables
+and 2. where η(x) ≠ η(y) for all x, y ∈ V with x ≠ y.
+
+Now we can check with η where σ_1 and σ_2 are both
+the most general unifiers if there exists a η such
+that ησ_1 = σ_2. Also, here are some examples of η:
+η_1 = [x\y, y\z, z\x] is correct, but η_2 = [x\y, y\z]
+and η_3 = [x\y, y\z, z\x, a\b] are not. η_2 is not
+because η_2(y) = η_2(z) which shouldn't be the same,
+but in η_1 we can substitute back from η_1(z) to η_1(y)
+and get η_1(y) = η_1(y) which doesn't violate second rule.
+In η_3 though we obviously can't rename a constant.

@@ -1,0 +1,19 @@
+--- Changelog ---
+
+Additions:
+- Wrote instructions on how to use the program
+- Created a node package and separated nodes from graphs (rewrote the code)
+- Created Node class which is extended by Movie and Actor
+- Created a private mapEdges() method in Graph to improve readability
+- Created static path printing method in Graph to improve readability
+
+Deletions:
+- Got rid of deprecated methods
+- Got rid of custom Logic package and its dependency
+
+Improvements:
+- Graph edgeCount() method is now in O(1)
+- Unified Movie and Actor sets into a Node set
+- Improved graph component getter method (Implemented DFS)
+- Improved graph getPath method (Implemented BFS)
+- Improved graph getChillestPath method (Implemented Djikstra's)

@@ -1,0 +1,67 @@
+--- New Explanation (Probably Incomplete) ---
+In Sequent Calculus LK we try to find a branch that falsifies the
+formula. If it fails, then it is valid. It is different in the
+Resolution Calculus which tries to prove that the formula can not
+be satisfied (contradictory, unsatisfiable) by deriving an empty clause.
+
+This is because an empty clause is unsatisfiable, and when we combine
+clauses, we look at what gets irrelevant to satisfy the problem. So for
+example, in {{a}, {-a}} we can combine {a} and {-a} through \ operator
+into Ø, so an empty clause. This action does not change formula's innitial
+satisfiability. Yet, Ø is impossible to satisfy (since a & -a is), so
+{a & -a & Ø} is not satisfiable, so this proves unsatisfiability.
+
+We look at what we can add through an & operator such that nothing in
+the formula changes that makes it more or less satisfiable. This way
+we simplify the resolution further, and once we get ... & Ø (same as
+{..., {}} or {..., Ø}, then it is unsatisfiable.
+
+From an example {{a, b}, {-a, -b}} we can perform \ operator (which is
+only used on a single one of those two by the way), and get either a new
+{a, -a}, or {b, -b}. Since all we did was simplify it, the satisfiability
+of this clause set did not change, but it is important to note that {a, -a}
+or {b, -b} do not help us with anything. I mention this because getting
+{x, -x} does not prove satisfiability which can be seen in this example:
+{{a}, {-a}, {b, -b}} where we can derive Ø but it contains {b, -b}.
+
+
+
+--- Old Explanation ---
+To work with resolution calculus we must first convert a formula
+into a set (clausal form). From the clausal form we get resolvents
+depending on how the set is. The more splits there are, the more
+resolvents there will be.
+
+Resolvents are kind of like clues. For example, if we have a set
+{{p}, {¬p}} which as you can see is a formula in a clausal form, then
+the resolvents will be 1. p and 2. ¬p.
+
+Note that those are considered as separate and independent formulas
+now, this also applies to quantifiers and their substitutions, the
+variables bound by those quantifiers are no longer the same.
+
+As you can see in the example we got p and ¬p which are what we call
+complementary, meaning that they are the opposite of each other. We
+can eliminate complementary literals through merging resolvents which
+is basically the same as using a union ∪ operator between the two.
+So, {p} ∪ {¬p} becomes a resolvent 3. □, and like that we are done.
+
+That said, we can use the same resolvent 1. and 2. further as well
+as the resulting resolvent 3. from 1. and 2. in case we haven't
+finished and gotten to the □ resolvent.
+
+When we end up with a □ we are done and prove the unsatisfiability.
+Even with we have something left over, it does not matter. We only
+need to get at least once to any resolvent containing □ to be done.
+If the formula converted to a clausal form was a complementary, then
+the original one is valid, whilst the complementary one is unsatisfiable.
+
+Note that the resolvent of {p, q} ∪ {¬p, ¬q} will not become □.
+We can only eliminate one complementary at a time, so the resolvent
+of that one would actually be either {q, ¬q} or {p, ¬p}, both are
+a tautology so this one is actually satisfiable.
+
+Because of that quirk, if we apply a union between two clauses and
+end up with two complementaries then it will always result in a
+tautology and therefore there is no point to go further, we simply
+disregard it and check other resolution combinations (if any left).

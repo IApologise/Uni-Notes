@@ -1,0 +1,31 @@
+These are the most important goals to keep track of.
+All of those goals are to be integrated into the system:
+1. Confidentiality
+2. Integrity
+3. Accessability
+4. Traceability
+5. Reliability
+
+
+
+Confidentiality:
+It is about keeping user data confidential, so that only
+those that should access the data, can access the data.
+
+Integrity:
+This is about making sure that data can not be modified
+or altered in any way by unauthorized users of processes.
+
+Accessability:
+The data that should be accessed must be available
+at all times as the user wishes to.
+
+Traceability:
+In case of breach of integrity the culprits / actors
+are to be traced down by the logs, or some other methods.
+
+Reliability:
+In case of breach or poor implementation of some parts
+the overall system must not budge and stay vigilant.
+Meaning, if part A fails, part B of the system should
+not be affected and work as usual without problems.

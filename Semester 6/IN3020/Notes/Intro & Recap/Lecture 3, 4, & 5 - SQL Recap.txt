@@ -1,0 +1,52 @@
+--- Lecture 3 ---
+SQL is not a 100% accurate representation of the relational datamodel that we know from theory, so theory in this
+case doesn't translate to practice directly. For example, SQL has a NULL value, and the outputs that SQL gives us
+might have the same rows (repetitions), note that this only applies to outputs from the queries that we get.
+
+To allow repetitions in our relational datamodel, we can simply redefine the relation schema to consist of not
+sets, but finite "bags". Bags basically allow duplications, but the order still does not matter. Bags are written
+as double curly brackets, e.g. {{a, a, b, c}} or {{a, b, a, c}}. Note that both are equal, but not to {{a, b, c}}.
+By the way, if we are using primary keys, then we can not be using bags (due to repetitions), only sets.
+
+It is important to note that SQL makes order matter due to ORDERED BY command which sorts stuff lexicographicly.
+Our current description so far doesn't account for that, and we won't because "it is rare in practice and
+complicates everything substantially", and "every constraint added restricts the optimizations that we can do". SQL
+solves this by having a hybrid model, so when order matters, it switches to the less efficient model. Sometimes it
+is best to keep the current model and just add special cases to these situations, but that would require lots of
+work and repetition to cover all the special cases, so it is often not done.
+
+Something I did not mention before, is that SQL is divided into 4 parts: DDL, DML, DQL, and DCL. DDL is the part of
+SQL that manages table create, alter, and drop commands. DML handles the population of the table with data provided
+by the insert and delete commands. DQL handles queries, so the select command. And DCL handles user access to
+different commands by handling grant and revoke commands. There might be more than 4, but they are not mentioned.
+
+--- Lecture 4 ---
+SQL is not turing complete, meaning that there are things we can not express (do) that a turing machine can. So
+languages like Python, Java, C++, all of these are turing complete and can do things SQL can't. For SQL it is good,
+because it some problems it wasn't designed to do. It was made to solve some specific tasks, and limiting SQL's
+expressiveness allows more room for optimization under the hood. Similarly for HTML, for other tasks you combine
+and use these other more expressive languages.
+
+However, SQL can become turing complete with the use of recursive queries, e.g. queries that call themselves, kind
+of like recursive methods in Java. I won't go into the detail of how it is done (Google if interested), but the
+idea is that it can be done, just shouldn't since it is much less optimal than doing something like that through
+Java or C++. You can check out an example of when it might be useful in "Recursive SQL Example.png". Note that some
+recursive queries might never halt, but this one always does because it either adds a new city to the list on next
+iteration, or it doesn't. The moment it doesn't is when we halt, and since the input database is finite, the time
+it will take to halt is too.
+
+By the way, when it comes to NULLs there is a command called COALESCE({a}, {b}, ...) which returns the first thing
+that isn't a NULL from these inputs. Typically used as COALESCE(Table.Address, "not given") for missing data.
+
+--- Lecture 5 ---
+We repeat on how aggregation works, e.g. counting methods like count(), max(), min(), etc. Important note, when we
+translate our SQL query from user input to relational algebra, the WHERE and HAVING become identical operations, so
+basically there is no difference between the two, it is simply "conventional and convenient to use".
+
+Also a reminder, count({collumn}) counts how many rows where the collumn doesn't have a NOT NULL value, where as
+count(*) doesn't care about the values, just the amount of rows that exist, so NULLs are accepted, even if the
+whole row is filled with just NULLs, it doesn't matter.
+
+Also, check out "This Course's Definition of Algebra.png" which is basically describes what algebra is in this
+course, and that it actually stands for "Algebraic Structure". There are some more stuff we should know about like
+Regular Expressions from IN2080, and equivalences (also known as Algebraic Laws) from IN1150. But we know that.

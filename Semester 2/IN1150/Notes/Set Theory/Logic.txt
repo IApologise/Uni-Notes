@@ -1,0 +1,87 @@
+Note before start: _ represents inputs, their total count is arity.
+
+
+
+Union: _ ∪ _
+Combines two sets S and M into one set. All the elements are
+added to this merged set from both S and M, duplicates ignored.
+
+So for example let S = {1, 2} and M = {2, 3}.
+In this case, S ∪ M = {1, 2} ∪ {2, 3} = {1, 2, 3}.
+
+
+
+Intersection: _ ∩ _
+Combines two sets S and M into one set. A single instance
+of all the duplicate elements is added into the merged set.
+The rest are ignored and are not in the merged set.
+
+So for example let S = {1, 2} and M = {2, 3}.
+In this case, S ∩ M = {1, 2} ∩ {2, 3} = {2}.
+
+
+
+Difference: _ \ _
+Removes all the elements of a set M on the right from a set S
+on the left. This gives us the resulting set.
+
+So for example let S = {1, 2} and M = {2, 3}.
+In this case, S \ M = {1, 2} \ {2, 3} = {1}.
+
+Note that the symbol \ is used in many contexts and can mean
+many different things, you will see a duplicate in here as
+well and its definition later in the same text file.
+
+
+
+Element of / In: _ ∈ _
+This is a relation operator which says that an element x
+on the left is included in a set M on the right.
+
+
+
+Strict Subset: _ ⊂ _
+This is a relation operator which says that all of the
+element x from a set S on the left are included in a set
+M on the right. So like a x_1 ∈ M and ... and x_n ∈ M.
+However, S is not M, so M is strictly greater than S.
+
+
+
+Subset: _ ⊆ _
+This one is like a strict subset, except for the
+strictly greater rule which is not included here.
+So either S ⊂ M or S = M.
+
+
+
+Builder / Set Builder: _ | _
+This is a special type of function where on the left side variables
+are declared and on the right some conditions that when satisfied
+add those as elements to a new set which is its end output result.
+
+
+
+Complement: _ \ _
+This function takes two sets, U and S, as input and uses the
+set on the left as a universal set. Then it creates a new set
+S̅ which is the opposite of S. S̅ has none of the elements that
+S has, but S̅ has all of the elements that S doesn't have. This
+is the reason a universal set had to be provided as input.
+Thus, S̅ is a complement of S and vice versa.
+
+
+
+Refinement: _ ⩽ _
+is basically a relation that has an arity of 2 and says that a
+partition on the left is "finer" than the partition on the right.
+It is denoted as follows: X ⩽ Y where X and Y are partitions of M.
+
+To determine if a partition X is finer than partition Y we look
+at whether more elements of X are in subsets of Y than Y's elements
+are in subsets of X.
+
+So for example X = {{1}, {2}, {3}} and Y = {{1}, {2, 3}}. In that
+case X is finer than Y because more elements in Y are a subset of
+X than X's elements in Y. Namely: {1} ⊆ {1} is true on both sides.
+However, {2} ⊆ {2, 3}, but {2, 3} ⊄ {2}, same goes for {3}.

@@ -1,0 +1,80 @@
+--- Intro ---
+There are 3 types of facts, the difference between them is moslty the magnitude and depth of its use in proofs:
+- Theorem: A major result that is considered important in its own right.
+- Lemma: A supporting result used primarily to prove a theorem or another result.
+- Corollary: A result that follows relatively directly from a theorem.
+P.S. The examples below assume that you know what SAT and 3SAT are.
+
+
+
+--- Theorem Example ---
+Here is an example Theorem, which we will also prove as a concrete example of how to prove that a problem is NP-
+Complete without reusing any other NP-Complete problem (i.e. TM). We will be proving SAT, and to do that we need
+to prove that SAT is NP, and that an arbitrarily chosen language A that is also in NP is p-reducable to SAT.
+
+To prove that SAT is in NP we simply create a Verifier M_SATV which takes in the input w_SAT and an interpretation
+i. So such turing machine M_SATV takes in <w_SAT, i> (sometimes written as just <φ>) and may work as follows:
+...
+
+Next we argue why the verifier is in P ...
+
+P.S. Unfortunately I will not be including that and let't just assume that SAT is in NP.
+
+Now we must show that A is p-reducable to SAT, but first let's refer to w_A as just w, and an interpretation i of
+w_SAT as just φ. Now we will show that φ is satisfiable <=> M_A accepts w. Since A is in NP, it is a non-
+determenistic TM, and thus whenever M_A accepts w it means that there exists a series of configurations C_c that
+end up in an accept state which we will call a tableaux. Now let's construct a unique φ for each unique tableaux
+where for each configuration C_i in tableuax and each cell P_j in C_i we create a group of variables X_(i,j) for
+each possible symbol S_k (i.e. M_A's domain) as X_(i,j,k). Now, if at C_i's P_j we read S_k, then in our group we
+set variable at X_(i,j,k) to True, and the rest of the variables (those with other symbols) to False. These groups
+are to be merged for each variable, each cell, and each configuration in any way such that whenever M_A accepts
+M_SAT accepts. But, we have to give a concrete example to prove that it is possible.
+
+So, here is how we do it: We define φ consisting of 4 parts where φ = φ_cell ∧ φ_start ∧ φ_move ∧ φ_accept. To be
+honest I'd recommend watching screenshots of the formal logic on how they are define instead of my explanation.
+Perhaps the lecture recodring which is "v20-nr9-del2" in Panopto.
+1. φ_cell = ⋀_(i,j)[ ⋁_k[X_(i,j,k)] ∧ ⋀_(k,l,k!=l)[¬(X_(i,j,k) ∧ X_(i,j,l))] ]. Note that ⋀ and ⋁ mean
+   conjunctions and disjunctions between all that are created during iteration in square brackets, and that just
+   like k iterates over variables X_(i,j) so does l, but I must mention that we ignore adding the right conjunction
+   iteration whenever k != l. Essentially what φ_cell means is that within each group X_(i,j) one of X_(i,j,k) is
+   True and the rest are False, though I don't understand how more than 1 cell can be True simultaneously within a
+   group... I guess whenever we translate from SAT to A to show equisatisfiability between φ and w being in A.
+2. φ_start = ⋀_(j,s)[X_(1,j,s)] where X_(i,j,s) refers to the variable with symbol s that is in C_i position P_j.
+   P.S. I forgot to mention that the variables also include the state & pointer variable (cuz configuration).
+3. φ_move = Not defined properly, cuz "very complicated". So here is the vague idea: φ_move is satisfiable if
+   for ecah configuration C_i we can reach C_(i + 1) in 1 move, meaning that it is bound by the size constant c
+   and the size of the A_M itself.
+4. φ_accept = ⋁_(i,j)[X_(i,j,q_a)] where q_a is the accept state. This means that if M_A accepts its input w, then
+   there is a configuration that has a q_a in it and one of the variables X_(i,j,q_a) will be set to True.
+
+As you can see we construct φ such that whenever it is satisfiable M_A accepts w, and vice versa. Note that the
+size of φ (number of variables), i.e. |φ|, becomes at most |φ_cell| + |φ_start| + |φ_move| + |φ_accept| where
+1. |φ_cell| = |Γ| * (|w|^c)^2 where c is the number of configurations used to reach an accept state by M_A.
+2. |φ_start| = |Γ| * |w|^c, since we are looking at just a single configuration.
+3. |φ_move| = k where k is some constant size (I just trust the professor cuz he didn't explain φ_move properly).
+4. |φ_accept| = |w|^c, since we got just the varialbe for whether accept state is or isn't in a config C_i.
+As you can see, it is at most a classical polynomial time complexity O(n^m) where m is a constant, and since we
+define f to output φ from w, i.e. f(w) = φ, we got everything we need for the conclusion.
+
+Since φ is satisfiable <=> M_A accepts w, and f(w) = φ, we've shown that w ∈ A <=> f(w) ∈ SAT. And since f is
+computable in polynomial time, we've completed the proof that A ≤_p SAT, i.e. that A is p-reducable to SAT. Since
+A was arbitrarily chosen, we've thus shown that all the NP problems are p-reducable to SAT, and since SAT is also
+in NP, we've completed the proof that SAT is NP-Complete - Q.E.D.
+
+P.S. The trust in my professor is done, in my proof I said that |φ_move| is some constant and we shouldn't worry
+about it because professor said so, but he was wrong and that was actually the reason for the biggest O that we
+had to show was polynomial. I do not plan to change the proof so just keep that in mind, alright?
+
+
+
+--- Corollary Example ---
+Here is an example Corollary, which is also an example of how p-reducability is to be done reusing some NP-Complete
+problem. We will be proving 3SAT via SAT which is NP-Complete. The example here is simple to due encoding
+similarities, i.e. requiring just a few tweaks.
+
+m-reducability too? maybe it is more complex sometimes? ...
+
+
+
+--- Lemma Example ---
+Pumping lemma?

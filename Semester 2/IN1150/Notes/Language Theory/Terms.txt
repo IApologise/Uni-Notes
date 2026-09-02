@@ -1,0 +1,13 @@
+Alphabet:
+A set that contains the symbols which
+can be used to create a string.
+
+
+
+String:
+A sequence of symbols found in the alphabet.
+
+
+
+Language:
+A set of strings.

@@ -1,0 +1,70 @@
+load nat1.maude
+
+fmod LIST-NAT1 is 
+  protecting LIKHET .     protecting BOOLEAN .
+  sort List .
+  op nil : -> List [ctor] .
+  op __ : List Nat -> List [ctor] .
+  op length : List -> Nat .           *** No of elements in a list
+  op concat : List List -> List .     *** Concatenate two lists
+  op insertFront : Nat List -> List . *** Insert element first in the list
+  ops first last : List -> Nat .      *** First/last element in a list
+  op empty? : List -> Boolean .
+  op rest : List -> List .            *** Remove first element.
+  op reverse : List -> List .         *** Reverse list
+  op _occursIn_ : Nat List -> Boolean .
+  
+  *** More specifcally for lists on totally ordered underlying domains:
+  op max : List -> Nat .              *** Largest element in list
+  op isSorted : List -> Boolean .     *** Is the list sorted (increasing order)
+
+  vars N N' : Nat .
+  vars L L' : List .
+
+  eq length(nil) = 0 .
+  eq length(L N) = s(length(L)) .
+  eq concat(L, nil) = L .
+  eq concat(L, L' N) = concat(L, L') N .
+  eq insertFront(N, nil) = nil N .
+  eq insertFront(N, L N') = insertFront(N, L) N' .
+  eq first(nil) = 0 .                 *** Default/error value
+  eq first(nil N) = N .
+  eq first(L N N') = first(L N) .
+endfm
+
+*** To avoid too much writing when testing, we just define three constants
+*** list1, list2, and list3 and test them out.
+
+fmod TEST-LIST-NAT1 is
+  protecting LIST-NAT1 .
+  ops list1 list2 list3 : -> List .
+  eq list1 = (nil s(0) s(s(0)) s(s(s(0))) s(s(s(s(0))))) .
+  eq list2 = (nil s(0) s(s(0)) s(s(s(0))) s(s(0)) s(s(s(s(0))))) .
+  eq list3 = nil s(s(0)) .
+endfm
+
+*** Some test commands:
+***(   Commented out ...
+red length(list1) .
+red length(list2) .
+red length(list3) .
+red length(nil) .
+red concat(list1, list2) .
+red insertFront(0, list1) .
+red insertFront(0, nil) .
+red first(list1) .
+red first(list3) .
+red last(list1) .
+red last(list3) .
+red rest(list1) .
+red rest(list3) .
+red reverse(list1) .
+red reverse(list3) .
+red 0 occursIn list1 .
+red s(s(0)) occursIn list2 .
+red max(list1) .
+red max(list2) .
+red max(list3) .
+red isSorted(list1) .
+red isSorted(list2) .
+)***

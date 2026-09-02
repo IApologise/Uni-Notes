@@ -1,0 +1,86 @@
+--- Routing Tables & Optimization vs Fairness ---
+Routers on a CAN network scale or below usually got a tree like topology, a hierarchy or routers. But with MANs and
+higher the topology changes to more of a partial mesh topology. In LANs and CANs default gateways were used more
+often than the routing tables (both are essential for routers to work), but with change in topology routing tables
+become more frequently used than the other. These tables are basically a map of Destination IP -> MAC Address which
+is basically what decides the next hop. If an entry is not in such a table then default gateway is still used.
+
+Routing tables basically are there to simplify and make the forwarding faster. However, a common clash between the
+two interests is fairness vs optimization here, because by adding fairness we reduce the speed at which the network
+operates (not necessarily a single router though). That is because if a packet A has to go through multiple
+routers, and some other packet B only through one router, then packet A uses more of the network's resources than
+packet B to get to its destination (cuz packet A uses more routers than B). So the goal here is often fairness and
+a way to minimize the total number of hops done, which is where the graph theory and routing tables come in.
+
+
+
+--- Routing Algorithm Classes & Cost ---
+While we are on the topic, a funny routing algorithm is called Hot Potato Routing which all it does is once it gets
+a packet to forward it simply chooses some random router and basically tries to get rid of it as quickly as it can.
+The reason why it works is because other routers don't have this algorithm and they will be the ones to figure out
+where the packet should go to.
+
+Anyways, there are two classes of routing algorithms, Adaptive & Non-Adaptive. Non-Adaptive don't consider the
+total load of the network and thus don't optimize and adapt its routing tables for it. This means that if some
+packets from some device A were decided by the router A to be forwarded to router B, then even if router B is
+fully loaded B is the router it will forward to even if there is a router C that is not fully loaded. This also
+requires the precise knowledge of the whole network's topology to utilize these class of algorithms more
+efficiently. If the topology is unknown then Flooding (forwarding to all) is the way to go. Adaptive however does
+consider the whole network, it estimates its topology and traffic volume for efficiency.
+
+How do we measure which path is better than the other? For that we introduce a cost which is summed up at each hop.
+The cost can be the number of hops itself, it may be geopraphical distance, bandwidth, delay in queues, etc. It
+may even be some complicated formula such as the relation to geographical distance, bandwidth & queue delay.
+
+
+
+-- Routing Algorithms Themselves ---
+Non-Adaptive Algoritmhs:
+1. Sink Tree - Is an algorithm where each edge has the same cost. The total path is measured in the number of
+   routers (therefore the same cost). The way each routing table is filled is we first choose some central router
+   A, and starting from it each neighbour that can reach A gets A added to their routing table with cost 1 (cuz
+   neighbour). Routers that have connection to some A's neighbour B but not A itself add router B and cost of path
+   from B to A + 1 to their routing table. Each router's table measures the cost to reach A and who to forward to
+   in order to do so. To reach for example router B from some other router C, one could use A if B is along the
+   path to A from C, but otherwise we are removing some shortcuts and force all paths to go through A. This is
+   fine if that is truly the case for all, but that is basically exactly what default gateway does... Unless we
+   decide to have multiple of such sink trees over the same network for multiple popular destinations or sources.
+
+2. Dijkstra's Shortest Path Routing - This is an algorithm we know from IN2010. Here each router finds out the
+   shortest path from it to any other node in the network and the cost function can be anything that you decide.
+   For an explanation on how Dijkstra's algorithm works check out IN2010 notes, Wikipedia, or lecture recordings.
+
+Adaptive Algoritmhs:
+1. Link State Routing - Is where each IS does the following: It measures the delay between all the ISes it is
+   directly connected to, and then uses Flooding to send all the information it acquired (and all that it got from
+   others too) to all these ISes. This is done right away by the newly connected ISes as well as by the old ISes
+   too in order to update the delay values (cuz they change). Once these routers receive an update they of course
+   update their tables and forward this update to the rest that it itself is conncted to, if nothing changes in
+   its routing table then it still forwards it. The delay can be the bandwidth or bandwidth + latency, this
+   depends on what we want to measure and thus whether the "Hello" message gets to "sneak itself" into the queue's
+   highest priority section (or perhaps a dedicated buffer for this type of stuff instead). Note that the updates
+   by the old ISes isn't always done and might just be updated only by the new ISes (because of mass Flooding...).
+   Once the IS shutsdown the only way to know if it is gone by the other routers is by looking at how old the
+   information it got from it is in the Age section that they include when they share their ISes. If Age gets
+   too small the router forgets it as a connection unless that router sends it a "Hello" or something like that.
+   Note that multiple versions of routing table updates can cascade over the network where Age usually helps.
+   Once the flooded information gets back to the router which it knows it already has seen it simply discards it
+   and doesn't forward it either. Also all of this was just to get the map of the network and the costs between
+   ISes, after that routers usually use Dijkstra's Shortest Path Routing to update their tables.
+
+2. Distance Vector Routing - Here the routers also have a routing table with all the other routers it knows
+   about as well as the estimated distance (our cost) and which neighbouring router to forward the packets to
+   in order to reach that destination router. Note that the distance is not a geographical one, but usually the
+   number of hops (but can also be the bandwidth and delay or a combination of all of these). It is essentially
+   the same as Link State Routing, but the only difference is how the information gathering & sharing is done.
+   So here the routers share their entire routing tables with their neighbours only (which may cascade I believe).
+   It doesn't mean that it knows the exact topology, it only knows the values of who is the better candidate. The
+   routers themselves also do measurements with just their neighbours just like in the Link State Routing, but
+   the routing info shared doesn't get flooded. It gets shared once and isn't forwarded (but again, may cascade).
+   By the way it compares the table data shared with its own to see which entries are better via Bellman-Ford.
+
+Note that Link State Routing is a general algorithm, there are actually 2 protocols that do it slightly
+differently and those are IS-IS (Intermediate System-Intermediate System) and OSPF (Open Shortest Path First). I
+am not told exactly how they are different and how they work, so that's that. Same goes for Distance Vector Routing
+which has a protocol RIP (Routing Information Protocol), and maybe also EIGRP (idk what it is nor stands for). I
+am also not told which is used more often or when as well as how they work either.

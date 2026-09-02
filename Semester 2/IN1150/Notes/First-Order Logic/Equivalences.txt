@@ -1,0 +1,10 @@
+Equivalences:
+1. ¬∀xPx ≡ ∃x¬Px
+2. ¬∃xPx ≡ ∀x¬Px
+
+3. ∀x(Px ∧ Qx) ≡ ∀xPx ∧ ∀xQx
+4. ∃x(Px ∨ Qx) ≡ ∃xPx ∨ ∃xQx
+
+Negations:
+1. ∃x(Px ∧ Qx) ≡ ∀x(Px ⇒ ¬Qx)
+2. ∀x(Px ∨ Qx) ≡ ∃x(Px ⇒ ¬Qx)

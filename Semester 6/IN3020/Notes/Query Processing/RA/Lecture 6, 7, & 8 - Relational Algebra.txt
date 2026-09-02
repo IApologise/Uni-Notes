@@ -1,0 +1,81 @@
+--- Lecture 6 ---
+So we are basically getting a reminder of the relational algebra (also know as RA) operations. Like the inputs are
+always the names of the tables (acting like a FROM in SQL). Then there is selection operation (sigma) which acts as
+a WHERE in SQL. Similar to the selection which selects rows, we got projection which selects collumns instead
+denoted with a pi symbol (acts as a SELECT in SQL). Finally there is a naming operation which just renames the
+table or names the output table (similarly to AS in SQL). As we know already, the attributes that we want to choose
+are denoted below the method before the parantheses: π_name(σ_id=5(Customers)) where Customers table has attributes
+name and id.
+
+Also, let's not forget about cross products also known as joins from SQL in RA denoted as a cross ×. Anyways, for
+best summary and a detailed one check out what I had written in my notes back when I was studying IN2090 (I have
+nice notes which I had when preparing for an exam from back then). But anyways, these 4 operations mentioned thus
+far and 2 more are the most fundamental operators: selection, projection, renaming, cartesian product, union, and
+difference.
+
+Important definition: "Simpler" in this course means what is expected to run faster, not what is actually easier to
+understand, but this isn't always what the professor means during his talks, sometimes it does mean something that
+is quite intuitive and easy to understand when explaining stuff.
+
+In the end he also menitioned commutativity, associativity, idempotency, etc. which is probably important for when
+we will need to use equivalences to optimize everything and translate to a simpler query. For a full list of laws
+just check the Lecture 6 slides and you will find them somewhere past the second half of the presentation (likely).
+Also, note that some laws do not always apply and are more like tricks for specific cases. This is useful for when
+we have analyzed the contents of the tables we are applying these operations and laws on to query data faster.
+
+By the way, intersection can be expressed using difference like T1 ∩ T2 ≡ T1 \ (T1 \ T2). Natural join can also be
+defined using just these fundamental operators, but it is much more complicated, and I will not write it down here,
+just check out the end to the lecture 6 yourself, and simply know what it is.
+
+--- Lecture 7 ---
+We are using cartesian product to define the natural join in this course, but usually it is very inefficient and
+therefore we define natural join natively instead. Note that the language does not become less expressive.
+
+Anyways, when it comes to other joins, we define them as follows: Left Semi-Join denoted as R ⋉ S is equivalent to
+π_R_attributes(R ⋈ S), similarly for the right one it is π_S_attributes(R ⋈ S). When it comes to Anti-Joins, it is
+denoted as R ▷ S and is equivalent to R \ (R ⋉ S). Note that R ▷ S is equivalent to S ◁ R (so it is symmetric),
+and that R ◁ S is equivalent to S \ (S ⋉ R).
+
+A little note on division operator, it is basically supposed to be the opposite of the cartesian product, e.g.
+(R × S) ÷ S = R, but note that the way we define the division operator may not result in (R ÷ S) × S being R. The
+way we define the division operator is also quite complicated (a mediocre formula size, not short but not too
+long). Anyways, it is not really all that useful, so I would rather spare the details on this one.
+
+In the end we talk about how we can generalize the projection operator. We basically do that by allowing renaming
+and mathematical operators to be used in the parameters section. Renaming is done via "->" symbol, old to new, and
+math is done as usual. This also requires a renaming of the answer that we got to prevent collisions and to project
+only the unchanged attributes. So if we do "ID + 5 -> IDPlus", then in that same projection operator (to retain the
+rest of the unchanged data) we mention the rest of the unchanged attributes to also be included, so all except the
+"ID". Once the renaming is done, whatever was renamed is automatically assumed to be included in the result.
+
+We also talk about outer joins which require constant NULL to work. We add it to our RA just like we did with the
+general projection operator to allow us to define these outer joins. It is also mentioned some more characteristics
+that these operators have like idempotency, commutativity, associativity, etc. May not apply to all, didn't check.
+
+--- Lecture 8 ---
+Here we are reminded of bags (I think I have gone through it before already). Anyways, we talk about how we will
+have to do some minor changes for most operations (no biggie), but for these two: Union & Projection, we will have
+to redefine completely simply because we allow for duplicates now, so even if the inputs are sets just like before,
+the outputs now suddenly might be bags. So it becomes like UNION ALL from SQL instead of just UNION. Projection
+keeps the duplicates of rows, even if they weren't really duplicates before, but they became due to stripping some
+collumns which caused collisions between these rows.
+
+For core operations, here is how we change them: Difference between R and S only removes the common rows between R
+and S the amount of times that they are present in S. So if R has 5 identical rows, but S has only 2 of those rows,
+then the result will have 3 remaining, and not 0. It also can't have less than 0. Selection doesn't care if the row
+already exists in the answer, it adds it anyways. The join also doesn't care, it produces the duplicates too and
+joins betweem the duplicates too.
+
+To adjust our RA so far to include bags, we have several new operators, but for now just 2 are shown: Duplicate
+Elimination δ which basically converts bags into sets, and Grouping & Aggregation γ which is basically projection,
+but some of the rows are merged when an aggregation operator like SUM() or COUNT() is used on that collumn denoted
+as "->", so like "γ_(Student, COUNT(Subjects) -> SubjectCount)", which renames and repurposes the Subject collumn.
+
+In the end, we have a look at how to do constraints on our tables, e.g. UNIQUE, PRIMARY KEY, REFERENCES, NOT NULL,
+etc. For PRIMARY KEY we simply do a natural join on itself (with renaming), and see if there are any rows that have
+the second part of the row not identical to the first part, formally: σ_C(R ⋈ ρ_N(R)) = Ø is true, where N are all
+the attributes that are not part of the primary key being renamed into something different that is not in R
+originally, and C is the constraint that looks at each renamed attribute and compares it with the original one, if
+they are not the same it is added to the result table. As you can see, the result must be empty. As for foreign
+keys, e.g. REFERENCES we check if one table's combination of attributes equals the other table's combination of
+attributes. Formally: δ(π_(R_attributes)(R)) ⊆ δ(π_(S_attributes)(S)) is true.

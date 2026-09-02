@@ -1,0 +1,7 @@
+combining turing machines is basically done by combining them (usually with union like for
+alphabets & such) except for the input, which is the same.
+
+When coding something we write <A> as you already know, but for multiple codings we write
+<A, B, ..., N> which is a short hand form of a more formal way, i.e. <[<A>, <B>, ..., <N>]>.
+This means that "[" and "]" become the part of its input alphabet. Like when a turing machine
+M takes in <M', w> and simulates it. So always a single coding.

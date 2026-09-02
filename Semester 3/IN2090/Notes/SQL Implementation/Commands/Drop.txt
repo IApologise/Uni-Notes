@@ -1,0 +1,23 @@
+This is a continuation of SQL Core file.
+All the syntax rules there also apply here.
+
+
+
+Data Types:
+| SCHEMA {Scheme Name}  ->  Deletes a scheme
+| TABLE {Table Name}  ->  Deletes a table
+
+
+
+Helper Instructions:
+| CASCADE  ->  Deletes everything related to whatever is being deleted
+
+
+
+Instruction Examples:
+|
+| DROP TABLE Students;
+|
+| DROP SCHEMA northwind;
+|
+| DROP TABLE Students CASCADE;

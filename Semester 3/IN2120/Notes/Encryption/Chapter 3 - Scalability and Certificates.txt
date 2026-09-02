@@ -1,0 +1,118 @@
+There is a lot of stuff that we actually do
+in practice instead. Asymmetrical is the way
+to go, but it is slowest and most impractical.
+
+Why use 4 keys when you can use 2 that are the
+same? That is why we first do an asymmetrical
+method just to send the symmetrical keys safely.
+Boom, problem solved (hybrid method).
+
+However, the amount of keys each pc and server
+must have went from 2n(n - 1) to n(n - 1). Still
+bad, which is why we instead create a root which
+uses an asymmetrical method and acts as interpreter.
+
+Now the computers don't need to keep track of it
+all individually, only the server has to which
+simplifies it all a ton. Here it goes:
+
+All users have their own private keys like usual.
+And all of them send their public keys to the root.
+The root sends its public key to all the users and
+has its own private key as well. The setup is done.
+
+Now, the users use the root's public key to encrypt
+data and send it to the root (only 1 key was needed).
+The root then decrypts it using its private key, and
+encrypts it back but this time with the second user's
+public key that should get the data from first user.
+And then sends it, done. Data received and authenticly.
+
+Thus, all users need O(1) distributions (just the root),
+and root O(n) for lots of public keys to keep track of.
+This method is called PKI (Public-Key Infrastructure).
+
+
+
+By the way, since there is only 1 key, the root public
+key, the message sending must be verified for authenticity.
+How else would we know who sent it? The target the message
+is sent to is not done through specifying the target user's
+public key though, it actually depends on the application
+like @gmail.com for Gmail, etc.
+
+Anyways, if the hacker were to compromise the public key data
+in the database, it would wreak havoc on the whole system. Now
+since the public key can be replaced to the hacker's key, it
+would grant him the power to make only his messages authentic,
+and only him to be able to decrypt all that are sent because
+his is now the new "authentic" key that the root system accepts.
+
+Alice - user 1, Bob - user 2, Eve - hacker. All in all, since
+Eve has replaced Alice's public key with its own in the root,
+Alice lost ability to send message to Bob since it is no longer
+authentic. All data that is now sent from Bob to Alice is now
+sent to Eve instead with Eve's public key as well.
+
+This setup causes Man in the Middle Attack to be possible, since
+if Eve stores Alice's public key, Eve can now receive and decrypt
+messages that Bob aimed to send Alice. Then, make a duplicate of it,
+and encrypt it with Alice's public key. Finally, Eve sends the
+duplicate message to Alice. Masking traces is still needed such as
+IPv4, and perhaps much more that I am currently unaware of.
+
+Eve can also control what messages are actually duplicated and sent
+as well as be able to edit them herself by adding suspicious links.
+Although like I said, making it authentic as if the server sent it
+is a whole another trouble I am not sure how is tackled.
+
+
+
+Also, check out X509 Official Key Certificates picture
+for more details on what signatures require to be valid.
+
+Signatures require authority allowance. What authority?
+Not sure. First is Root-CA which grants Rot Certificates.
+These certificates are self signed by some browser or idk.
+
+Anyways, then there is Inbetween CA which is signed and
+certified by a Root-CA key. Why it exists? Again, not sure...
+
+Lastly there is Subject (User, Website) which generates
+a Subject Certificate which work with the key that CA has.
+
+
+
+P.S. This is used as a way to show the users that the site
+is secure denoted by HTTPS. HTTPS is using TLS to be secure
+which is where certificates come into action. They are used
+in TLS which verifies that the website is indeed an HTTPS.
+
+HTTP means that the communication channel is not encrypted
+or the website is not to be trusted yet. It is totally open
+and anyone can get hold of what you are sending over internet.
+
+It is CA and Root-CA that are seen as trusted, especially when
+multiple are acquired. CAs are given out by browsers, and Root-CA
+by governments to browsers (maybe more but I am not sure there).
+CAs are given to websites since they are the ones that store lots
+of public keys and are responsible for safe connection.
+
+Lastly, Subject Certificates are created by Users and Servers to
+ensure authenticity. Whether they are to be trusted is decided
+by CAs that are possessed. And for CAs it is Root-CAs. This system
+doesn't guarantee trust, but it does guarantee authenticity.
+
+
+
+To sum it all up, digital certificates ensure authenticity and
+integrity by making sure that the data was not tampered with.
+
+We also got MAC addresses which are basically labels to tell
+the sender which device the data was sent from. Note that it
+is about traceability and not integrity or authenticity.
+
+However, do not confuse MAC Address and MAC. MAC is like a
+digital signature, the difference is the key used. DigSig
+uses private key to sign and public to verify, MAC uses
+symmetrical keys to voth sign and verify, that's it.

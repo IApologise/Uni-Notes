@@ -1,0 +1,30 @@
+To work with a resolution calculus we first must convert
+a formula into its clausal form which is made up of a set
+of literals such as {{p, ¬q}, {¬p, q}} which represents
+(p ∨ ¬q) ∧ (¬p ∨ q) in this case.
+
+A unit clause is a clause that consists of only one literal,
+be it in a basic or negated form such as {p}, {¬q}, etc.
+
+An empty clause is denoted by a □ symbol which basically is
+the same as {} or Ø. We make a separate symbol for it as to
+not confuse unit clause with an empty set of clauses Ø.
+
+To transform any propositional formula into its clausal form
+we simply apply the rules until we are left with either NNF,
+CNF, or PCNF. Then, ∨ is used to split clauses, so p ∨ q would
+be {{p}, {q}}. ∧ is used to see what should go together such as
+p ∧ q becoming {{p, q}}. We keep negation so ¬p becomes {{¬p}}.
+
+Note that to validate a formula in resolution calculus what
+we do is we prove unsatisfiability of its negated form. So
+if we have formula A that we want to prove valid, we transform
+¬A into a clausal form and use resolution calculus to prove
+that it ends with an empty clause □.
+
+When we transform quantifiers into clausal forms it is more
+complicated than that. First, a universal quantifier can not
+be in front of an existential quantifier. To fix that we use
+Skolemization where we transform the formula into another one.
+Note that Skolemization does not make it equivalent, but only
+equisatisfiable which is all we need in this case though.

@@ -1,0 +1,125 @@
+--- Some Naming ---
+Remember the OSI model from the networking structures section? Well, the two cases shown there were the specific
+cases, and there is actually a general terminology for layers. Check out the "OSI Layers in General.png" because I
+am too lazy to mention it here... Just note that peer entities means hardware or software or separate devices that
+are supposed to achieve the same thing, but probably do so through different methods (due to protocols not being
+standard enough). Speaking of protocols, check out "Protocol Definition.png" which points out exactly what a
+protocol is in this context. Note that PDU is a general term for any type of message datatype, like a frame, a
+packet, etc.
+
+
+
+--- Switching & Routing in Detail ---
+LAN (Local Area Netowrk) is the connection between the end-devices and the router. This router might be connected
+to another router which also has its own LAN making this router's LAN a sub-LAN. For example, UiO has a LAN and a
+bunch of sub-LANs some of which have their own sub-LANs and so on... Anyways, each of the devices within this LAN
+have a local IP, so the global IP is the top router that is the host of the LAN and all the sub-LANs, i.e.
+home/main routers. Local IPs are assigned by each router separately through what's called a DHCP (Dynamic Host
+Configuration Protocol) which are not recognized by anyone outside of the router's LAN. Global IPs are recognized
+by every router out there, but they also are clueless as to any of the devices that exist within other router's
+LANs and actually reach them because of the NAT (Network Address Translation) which is a map of Local IP:Port.A <->
+Port.B which the router has to both send the data on the local device's behalf, and to send the data received to
+the correct local device within its network.
+
+P.S. I don't like the naming for IP address categorizing which are private and public, I prefer to call them local
+and global respectively. That is because private IP address isn't private, and is well known by others in its LAN.
+Global has a good synergy with local and is also exactly on point with what it means (unlike public, duh...).
+
+We have all of it this way for a reason: And that is because we ran out of IPv4s long time ago... So, we invented
+local IPv4s that the router's DHCP assigns and NAT which sends and receives the data on the local device's behalf.
+So, when your device wants to send a message to someone that is in your LAN, the source and destination IP in layer
+3 is a local one, such as from 192.168.1.10 to 192.168.1.3. If your LAN has multiple switches and routers, then it
+traverses them using the MAC address from layer 2 and a Local IP address from layer 3, possibly with multiple NATs
+involved since multiple routers within the LAN have their own LANs (i.e. sub-LANs). So the layer 2 decides the next
+hop between the devices within a LAN, and the IP is the source and final destination, either within a sub-LAN,
+within a LAN (same as within the sub-LANs), or between LANs (i.e. within the internet).
+
+You might wonder if the internet is basically a huge LAN with lots of sub-LANs, but that is not accurate. That is
+because this would imply a single router being in control of all the other routers, which is not the case. It is
+not a star topology, but more like the partial mesh topology. Mostly because there are multiple central figures
+all of which connect to each other through some business agreements (1. Transit, 2. Peering, or 3. IXPs).
+
+So, the whole thing is only built on trust and that is where BGP protocol comes in. Basically each AS (some central
+figure) asks each of its connections (other ASes) whether they know someone with an IP X that they wonder about.
+Since it is only built on trust this also creates a vulnerability called BGP Hijacking where some trusted AS with
+its IP X announces that is has some IP Y that it doesn't actually have. This allows it to drop the packet to
+prevent the actual AS with IP Y from reaching it, intercepted and read if the security is bad, and maybe even
+modify it (also if the security is bad).
+
+That said, MAC address changes with each hop (to point to the next), but the layer 3 IP address never does. To hop
+we need to know the next target's MAC address, that is when ARP comes in. ARP (Address Resolution Protocol) is
+basically a process where we ask the neighbours who has the IP we want. To ask everyone we broadcast this message
+to all using MAC address FF:FF:FF:FF:FF:FF which means send to all. Only the device which knows the next hop to the
+IP that we want responds telling its MAC address to us, then we save it into our IP <-> MAC entries map in case we need it later (each entry usually lasts 1-5 minutes). If the network is too large, and there is like a router in
+between, then that router usually re-sends the ARP request and the response that it got back aswell. Sometimes it
+is a separate device of its own called a proxy ARP. Also, if a device doesn't know the IP it got assigned, it can
+do what's called a reversed ARP or (RARP), which works similarly.
+
+However, if the destination IP is a global one, then the source IP is that of the LAN's host router and not your
+device's local IP instead. That is because your local IP doesn't really exist globally, there are too many similar
+ones so nobody outside the LAN can know who you really are and where you are. So the process of using your router's
+global IP instead is what we do (NAT, already mentioned before). Even if the destination still is in your LAN, it
+might still traverse the whole internet, that is because your router might not have an updated list of these
+networks or know where it is. Thus, the router in question assumes that the next provider knows where to send the
+data to and thus forwards it to an another router that it believes knows better. The chosen router's IP is called
+the default gateway, i.e. send messages to this IP if you can't find the IP address in your local area network.
+Note that the default gateway is usually chosen to be a larger and/or more popular routing complex until some
+central figure is reached which is when BGP is at play instead.
+
+Lastly, when sending messages there is a limit to how many routers it can traverse before being automatically
+discarded (we assume that it will never reach its target). This is done to prevent gibberish messages filling the
+internet as well as to reduce router load and such.
+
+
+
+--- Ports and Such ---
+4th layer is the port which also decides the TCP/UDP connection and such. Layers 5-7 are the metadata that the
+process/application itself is interested in. The application data sent is sometimes encrypted which depends on the
+port used (HTTP vs HTTPS for example). Port is basically answering which process within a device should receive the
+data which the router keeps track of as well using good old NAT (so yeah, not just IP translation).
+
+Moving on, UDP connection is basically just 64-bit data line, i.e. 8 bytes, where the first 2 bytes say where the
+data came from (port), and the next 2 bytes where and who the data is supposed to be sent to (port), then the next
+2 bytes after that are the packet's length (including the data), and the rest 2 bytes is the checksum, i.e. the
+error identification data, the rest of the buffer (after these 8 bytes) is the application data itself. Other layer
+4 protocols like IP and TCP are larger than the UDP and more complicated... Check out the "Layer 4 - IPv4 & IPv6
+Protocols.png".
+
+That's why we have global IP and Port combinations, IP is which machine the data goes to, and port is the process
+ID within that machine. We also need to open ports, which means that we let the data to come to this specific
+process within the machine and this data to be processed by the process (which we choose how) through a firewall
+(which can be its own device or a software inside one, both with their advantages and disadvantages).
+
+
+
+--- Formatting and Little & Big Endians ---
+We always separate everything by bytes in size (and not by bits), i.e. 36 is written as 00100100 because it is 1
+byte in size, unlike 100100 which is technically the same, takes less space, but because it does not have byte as
+a factor when it comes to its size, it is not optimized for and isn't standardized by protocols either. Also, there
+are two ways that we can represent number 4 for example. 1st is as little endian format where we write 4 as
+00100000, 2nd is as big endian format where we write 4 as 00000100, notice the reversed order. Little endians are
+faster when working with CPUs, big endiands are faster in networking where we read and right away can send the
+packet further as well as being able to read the first enveloped layer and not the last (naturally). Why little
+endians are faster in CPUs I don't know unfortunately... With big endian we can identify the layer as we read the
+buffer without needing to know nor analyze what the rest of the message is. So, the first bits in big endian are
+therefore called the most significant bits because these are used the most at first around the globe to find the
+shortest path to the local routers where the rest of the bits are used within the local area's network. So these
+last bits are called the least significant, the significance is decided by the global router load and speed
+optimization, so priority & scale.
+
+We know that little endians is how CPUs format the data (sometimes, depends on machine). So, do we need to convert
+the data from little endians to big endians manually before sending the data in C? The answer is no, not manually
+at least, that is because for some reason the data is still stored as little endians in memory in those machines.
+So, what we do is we use htonX(message) and ntohX(message) where hton transforms to big endian, and ntoh to little
+or whatever is local on the machine. Note that the X stands for message length, like htons() is for uint16_t,
+htonl() is for uint32_t, and htonll() is for uint64_t, similarly for ntohs(), ntohl(), and ntohll(). Not sure if
+one for chars exists, but I assume not since mirroring 1 byte by bytes will result in the exact same result...
+
+MAC addresses are split by byte into a total of 6 bytes. The first 3 bytes either explain whether the address is
+special, or whether the address is owned by someone like a corporation (whatever that means), whilst the rest 3
+are the network card's unique id. This type of split is standardized by IANA and IEEE. So a MAC Address has a
+global and a local part. The local part is the unique id of each of the local machines in LAN connected by Ethernet
+cables, or a Wi-Fi. Both look exactly the same, here is an example of one in Ethernet 4c:cc:6a:dc:22:8b, and one in
+Wi-Fi 9c:b6:d0:19:1b:87. For the difference in network connection types, check out the videos I found on YouTube
+for more... Also, note that the MAC addresses are unique for each network card (NIC) made, but it is possible to
+spoof it (i.e. lie when asked what MAC address you got).

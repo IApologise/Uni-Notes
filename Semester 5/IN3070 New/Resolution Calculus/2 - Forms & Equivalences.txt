@@ -1,0 +1,78 @@
+NNF:
+A formula is in NNF (Negation Normal Form) if it contains
+no implications and all negations are in front of literals.
+
+So, p → q, ¬(p ∧ q), etc. are not in NNF. But, formulas such
+as ¬p ∨ q, ∃x p(x) ∧ ¬q, ∀x ¬p(x) ∨ q, etc. are in NNF. We
+can convert non NNF formulae into NNF formulae though.
+
+Here is a list of equivalences to transform a formula into NNF:
+1. ¬(¬A) ≡ A            2.  A → B ≡ ¬A ∨ B
+3. ¬(A ∧ B) ≡ ¬A ∨ ¬B   4. ¬(A ∨ B) ≡ ¬A ∧ ¬B
+5. ¬(A ∧ ¬B) ≡ ¬A ∨ B   6. ¬(¬A ∧ B) ≡ A ∨ ¬B
+
+
+
+CNF:
+A formula is in CNF (Conjuctive Normal Form) if it is made of
+conjuncting (∧) formulas consisting of literals like p, q, etc.,
+negations of literals like ¬p, ¬q, etc., and disjunctions like
+p ∨ q, ¬p ∨ q, p ∨ ¬q, ¬p ∨ ¬q, etc.
+
+However, although formulas like (p ∨ q) ∧ (p ∨ r), etc. are in
+CNF, formulas like (p ∨ q) ∧ (p ∨ (r ∧ r)) are not because after
+a disjunction a conjunction (in this case) is not allowed, as
+mentioned before, only literals, negated literals, and disjunctions
+are allowed to follow each other, the rest can be split properly.
+
+All the formulae in propositional logic can be transformed into a CNF.
+To transform a formula into a CNF we either transform the formula
+into an NNF or use the equivalence A ∧ (B ∨ C) ≡ (A ∨ B) ∧ (A ∨ C)
+in any combination necessary such that conditions are satisfied.
+
+
+
+PCNF:
+A formula is in PCNF (Prenex Conjuctive Normal Form) if it a
+CNF where all the quantifiers are on the left of it. So a formula
+like ∀x (p(x) ∨ ∃y q(y)) is not in PCNF and thus can not be
+converted into a clausal form, but ∀x ∃y (p(x) ∨ q(y)) is.
+Note that those two are not equivalent to each other.
+
+Here are the conversion rules for quantifiers:
+1. ¬(∀x A) ≡ ∃x ¬A            2. ¬(∃x A) ≡ ∀x ¬A
+3. ∀x (A ∧ B) ≡ ∀x A ∧ ∀x B   4. ∃x (A ∨ B) ≡ ∃x A ∨ ∃x B
+
+After that the form is transformed into a clausal form where
+the variables are implicit. So ∀x ∀y (p(x) ∨ q(y)) will become
+1. {p(x)} and 2. {q(y)}. For existential quantifiers and how
+to handle those check Skolemization where we transform variables
+into constants and functions.
+
+Also, note that if we have a formula like ∀x (p(x) ∨ q(x)), then
+we get 1. {p(x)} and 2. {q(x)}, but the x variable is not the same.
+What it actually is is that those variables are bound like this:
+∀x_1 p(x_1) and ∀x_2 q(x_2) and not like ∀x p(x) and ∀x q(x). We
+could also rename it into ∀x p(x) and ∀y q(y) assuming that y
+is not mentioned before. Remember that each clause is treated as
+a separate formula now and thus different substitutions apply.
+
+This is because we kind of split ∀x (p(x) ∨ q(x)) into
+∀x_1 p(x_1) ∨ ∀x_2 q(x_2) which is still in PCNF I guess, but
+this isn't specified anywhere yet that is what is happening.
+Anyways, this is directly translate into a clausal form then..
+
+
+
+Skolemization:
+This is the process of converting one formula into another. Note
+that it does not preserve equivalence, only equisatisfiability denoted
+as A ≈ A'. This means that if formula A' is satisfiable, so is A.
+
+This is really all we need in resolution calculus when working with it.
+The rule works as follows: For every existential quantifier that is in
+front of a universal quantifier, replace variables with a new function
+with the same variable as input, so ∀x ∃y A(x, y) will become ∀x A(x, f(x))
+where f is a new function. For every existential quantifier that is outside
+unviversal quantifier's scope (behind it), such as ∃x ∀y A(x, y) we must
+replace it with a new constant instead. Since a is new, we can do ∀y A(a, y).

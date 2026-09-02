@@ -1,0 +1,10 @@
+Oppgave 1
+
+b) Hvis filen eksisterer ikke eller brukeren vil endre/legge til noe først
+   eller vil ikke å jobbe med filmer som er i txt filen i det hele tatt.
+
+c) Float som kan representere dager og lignende -> Ingen forskjell.
+   Streng med heltall -> Må konvertere til int/float for >, ==, og <.
+   Streng med heltall og dato -> Samme som forrige + mer kompleksitet.
+   Liste med heltall -> [År, Måned, Dag, etc.] Litt mer avansert
+   ...

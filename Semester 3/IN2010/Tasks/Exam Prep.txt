@@ -1,0 +1,70 @@
+--- Complexity ---
+
+Time Complexity:
+- Time Complexity Analysis & Notion
+- P, NP, NP-Hard, NP-Complete
+- Polynomial Reduction Introduction
+
+Complexity Analysis:
+- Determening Sorting Algorithm Time Complexity
+- Determening Graph Algorithm Time Complexity
+
+
+
+--- Sorting Algorithms ---
+
+O(n^2) Sorting Algorithms:
+- Bubble Sort
+- Insertion Sort
+- Selection Sort
+
+O(n * log(n)) Sorting Algorithms:
+- Merge Sort
+- Quicksort
+- Bucket Sort
+- Radix Sort
+
+
+Trees & Balancing:
+- Definitions and Terms
+- AVL & Red-Black Trees
+- Left, Right, & Double Rotations
+
+
+
+--- Encoding ---
+
+File Compression:
+- Heaps & Heap Sorting
+- Huffman Coding (Binary Tree)
+
+Hashing:
+- Core Properties
+- Separate Chaining
+- Linear Probing
+
+
+
+--- Graphs ---
+
+General:
+- Characteristics
+- Topological Order
+
+Unweighted Graphs:
+- Depth First Search (DFS)
+- Breadth First Search (BFS)
+
+Weighted Graphs:
+- Dijkstra's Algorithm
+- Bellman-Ford Algorithm
+- DAG Algorithm & TopSort
+
+Graph Creation:
+- Prims Algorithm
+- Kruskal's Algorithm
+- Boruvkas Algorithm
+
+Strongly Coherent Components:
+- Tarjan's Algorithm
+- Kosajaru Algorithm

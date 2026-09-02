@@ -1,0 +1,58 @@
+--- Definitions ---
+Program: A set of instructions to be done, like a recipe.
+Process: The execution part of those instructions, like a person following a recipe.
+Thread: Similar to process, but the data is shared (memory addresses instead of duplicates). Also they have their
+  own states, stacks, registers, and counters, which make them slightly faster to switch between than processes.
+Context switch: The process of switching from one running process to another, apparently it is slow for processes,
+  but not for threads for reasons stated before.
+Scheduler: A built-in OS process that decides when and on what to do context switch.
+Dispatcher: A part of the scheduler that dispatches (e.g. moves) the selected process to the CPU.
+
+--- Commands ---
+fork(): A process can call a copy of itself which runs in parallel. It isn't an exact copy though, some things are
+  not inherited and for example the PID (Program ID) of a parent is the return value of a child process, and that
+  of a child is always 0.
+clone(): Similar but not identical to fork.
+vfork(): Similar but not identical to fork.
+execve(char *filePath, char *params[], char *envp[]): The process executes another program in a given environment.
+wait(int *status): The parent process waits until any of the child processes finishes to continue which. It returns
+  the "pid_t" datatype which is the PID of the finished child process, and its status into the given address.
+exit(int status): Exits the process prematurely and returns the status value "kill(pid_t PID, int signal)" which
+  tells the target process to terminate itself.
+
+--- Scheduling Algorithms ---
+FIFO - First In First Out: Basically the same as a queue. For example, it prioritizes game logic over I/O.
+SJF -  Shortest Job First: Basically a min priority queue. Similar example, it prioritizes I/O over game logic.
+RR - Round Robin: Same as FIFO but can't work on the same process for X time (like 10 miliseconds). Slower due to
+  context switching, but is necessary for imitating parallel processing if there are too many processes / threads.
+  Programs might take longer to finish on average, but wait time is incredibly short. Everything is seamless.
+RM - Rate Monotonic: A priority queue for periodic real-time systems. So processors that are runned every now and
+  then - periodic, and must finish until some deadline - real-time. Tasks that run more often get higher priority,
+  and that priority is static, meaning that it is defined once for all the future processors doing this task.
+EDF - Earliest Deadline First: A priority queue which has a dynamic way to define priorities. The closer scheduled
+  process is to its deadline, the higher priority it gets.
+
+--- Caveats ---
+Due to these differences in return values, we can make the parent and child processes do different stuff. Fork
+doesn't copy the memory addresses of a parent to a child, it creates duplicates instead with their own addresses.
+
+Whenever using RR we must decide how often we do context switching which depends on how much time the processes
+need CPU for to complete and how much they use Disk for. But I fail to understand why and how it relates. Perhaps
+disk has its own scheduling and too high time between context switches bottlenecks it, not sure. Anyways if that is
+the case and the disk usage is low, and if it is due to the bottleneck I described earlier, then lowering the time
+between these context switches should reduce the bottleneck and cause a higher disk usage (good in this case). Note
+that context switches aren't the fastest, and doing switches too often bottlenecks the CPU.
+
+When designing the scheduler, think about what is the most important. Some processes are more important than the
+others and must finish their work right away. This is called a preemptive classification, e.g. when a more
+important process doesn't wait. But, if the current less important process is about to finish, it might be a good
+idea to let it do that. This is called non-preemtive classification. Of course all of this applies to time frames
+below what RR has set as the running limit (if RR was our choice).
+
+Some processes are not equally as important as the real time processes, but are supposed to be more interactive
+nonetheless, and for that we got priorities. These priorities are often pre-determined (static), but this might
+change depending on how much time they take, and how little time they need (dynamic). However, this dynamic
+behavior depends on the way the OS scheduler works and how it evaluates that. Static is obviously faster, but
+having a dynamic system in place helps with interaction. Again, it is our goals that determine the way the OS
+should be. In the end, there is often an idle priority scheduler which is basically what the device should do once
+there are no tasks to be done left. So like creating backups I guess, or clearing unused memory?

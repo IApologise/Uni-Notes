@@ -1,0 +1,169 @@
+Statement:
+Something that is said, it can be true or false.
+Like for example: "I am a cat" is a statemenet.
+Whether it is true or false is not important.
+
+
+
+Existential Statement:
+This is a specific type of statemenet. It is caregorized
+as a statement that talks about the existence of something.
+Not if "I am a cat", but "A cat exists". After all, there is
+no point in talking about whether "I am a cat" or not if the
+said "cat" doesn't even exist.
+
+
+
+Conjecture:
+This is something that we believed, or currently have a feeling
+for, is true. A statement that was not formally proven, but is
+thought to be true, yet not proven to be so.
+
+
+
+Arbitrary:
+When it is said that we choose an arbitrary element, it doesn't
+mean one at random, it means that whatever choice we make, we
+can take another one instead. So it is not one random that we take,
+but it is all randoms that we take and, except that we look at
+one at a time. We still can choose a different random element.
+
+
+
+Trivial:
+If something is obviously true or it's truth is completely
+independent of the premises/assumptions before it. For
+example: If it is raining, then 2 + 2 = 4. This is trivially
+true, not because there is a connection between the rain and
+math we did, but because 2 + 2 = 4 is true on its own. So
+the condition has nothing to do with it, and since no condition
+has anything to do with it in this example, it is trivially
+true that 2 + 2 = 4 because 2 + 2 is indeed 4.
+
+
+
+Direct Proof:
+If we know that proving one of the sub-statements will
+prove the other sub-statements, then by proving one of
+the sub-statements we can prove the statemenet as a whole.
+
+This is quite confusing because it is hard to explain.
+Here is an example: Let's say that if A, then B, and we
+want to prove A ∧ B. Well if we know that A, then we
+know B, and if we know A and we know B, we know A ∧ B.
+
+
+
+Existential Proof:
+These types of proofs usually require a simple singular
+example or some logical steps to accomplish. So if we
+for example want to know whether cats from a set C
+exist, we only need to find one cat to prove C.
+
+
+
+Proof by Cases / Exhaustion:
+Lets say we have sets S = {1, 2}, B = {1, 2, 3, 4}, and
+now we want to prove that S ⊆ B. Well, you could just
+prove each case separately. So like, is 1 ∈ B? is 2 ∈ B?
+We accounted for all of the cases, thus an exhaustion proof.
+
+
+
+Contrapositive Proof:
+Say we have a statement if F then G where F and G are some
+arbitrary statements. Proving F which would then prove G is
+not always as easy. We can instead prove ¬G which would
+prove ¬F. So instead of trying to prove F, if F is actually
+not the case, then proving ¬F was the way to go. So instead
+of trying to prove your statement, you disprove it.
+
+
+
+Proof by Contradiction:
+Let's say that we want to prove that the statement is true.
+This may be hard, so what we can do instead is to prove that
+it is impossible for it to be false. This is a proof by
+contradiction. We assume that the statement is false instead,
+and we work our way to a contradiction which says that
+falsifiability can not happen, thus it must be a tautology.
+This of course was just an example.
+
+
+
+Constructive Proofs:
+This is a type of proofs that show the truthfulness or
+falsehood directly. If there is life on Mars for example,
+and let's say there is, then a constructive proof would
+require the sample of live organisms from Mars.
+
+
+
+Non-Constructive Proofs:
+This is a type of proofs that work their way backwards.
+If there is life on Mars, and let's say that there is,
+then a non-constructive proof would require a data of
+Mars's history and its current state and data prediction
+model that says if a planet X has a these characteristics,
+then it is 100% guaranteed to have live organisms to be true.
+
+This is just a fabricated example, hope it makes sense.
+Basically, a contradictive proof is non-constructive, but
+a proof by cases for example is construtive. Hope that helps.
+
+
+
+Example:
+Something that attempts to give a more direct showcase
+of a concept that was attempted to be explained. Giving
+an example for your proof of existence is all that is required.
+Giving all the examples for exhaustion proof is too. Cat is
+an example of the existence of cats.
+
+
+
+Counter Example:
+This is an example that instead of aiding the statement,
+does the opposite. This is an example that shows that the
+statement does not hold in a fabricated case. Nothing is
+a counter example of a cat, but 5 + 3 = 7 is a counter
+example of for all x and for all y, x + y = 7.
+
+
+
+Soundness:
+If a model or a system is said to be sound,
+then everything that is provable is true.
+
+
+
+Completeness:
+If a model or a system is said to be complete,
+then everything that is true is provable.
+
+
+
+Logical consequence: —
+If a set of premises or in other words assumptions A are
+given and we know that from those we can come to a
+conclusion B, B is the logical consequence of A.
+
+So for example if we know that if A is true then B is true, then
+that is the logical consequence right there. Logical consequence
+can be denoted with a turnstile and a double turnstile to be
+more precise with syntatic and semantic consequences.
+
+
+
+Syntatic consequence: ⊢
+In a given model, from it the consequences can be
+derived, so they may be either true or false, but the
+important fact is that it is possible to figure it out.
+
+
+
+Semantic consequence: ⊨
+In a model where the premises are true the conclusions
+are also true. This way the truth is preserved. But
+there is no guarantee that all the conclusions can
+be derived to be true from a given model.

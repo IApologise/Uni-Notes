@@ -1,0 +1,25 @@
+Just like there are languages that can not be described by a DFA, an NFA, a Regex, and a GNFA, there are languages
+that can not be recognized by a PDA (PushDown Automata), i.e. the one that can not be described by a CFG (Context
+Free Grammar). These are called Non-Context-Free Languages or NCFL for short. And just like before we will be using
+Pumping Lemma (PL) to show that.
+
+With CFLs, the pumping lemma is slightly larger and it goes as follows: If we have a CFL "A" then we also have a
+pumping length "p" which can divide any word "w" into 5 parts where w = uvxyz (a concatenation of these) such that
+all these 3 statements about this word must be true for the language A to accept a word w:
+1. u(v^i)x(y^i)z is a word in A for all integers i >= 0.
+2. |vy| > 0, i.e. the length of the concatenation of v and y is more than 0.
+3. |vxy| <= p, i.e. the length of the concatenation of v, x, and y is less than or equal to the pumping length p.
+
+Just like with the pumping lemma for RL (Regular Languages), we first define a language that we construct through
+set theory. Then we construct a word using same operators, and prove that these words can not be accepted by any DFA
+for RLs (or PDA for CFLs). Note, we pick the word that is in the language A, we just prove that the language A isn't
+regular/context-free. We do this by pointing to dissatisfaction of some of the pumping lemma statements, these must
+always hold which creates a contradiction. Remember, failure to prove the contradiction doesn't mean that the
+language is regular/context-free, because it can also mean that we just aren't smart enough to construct one.
+
+Lastly, check out the two screenshots, one for whether the set theory operators are closed on CFGs: "CFG
+Closure.png", and the Chomsky-Hierarchy of the languages we've seen (and haven't yet) so far: "Chomsky
+Hierarchy.png".
+
+P.S. I did not really understand the proof of why PL works and is the way it is for CFLs, and I am not sure if I have
+looked at the proof of why PL works and is the way it is for the RLs either, so I would revisit it all to be honest.

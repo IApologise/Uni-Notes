@@ -1,0 +1,33 @@
+Universel utforming er viktig slik at alle kan bli med. Vi alle er kjent med en bell curve (normal distribution).
+Men folk flest er ikke i den snitt delen (fordi at distribusjon er veldig lav og sjukk), faktisk så finnes det ikke
+en "gjennomsnittlig" bruker, bare de som er i snittet og de som er ikke det. Det vil si at hvis vi lager appen bare
+til den gjennomsnittlige menneske så ekskluderer vi en stor del. For eksempel en små knapp i en app er ok både for
+barna og voksne, men ikke for gamle og de med dårlig synn, samt situasjoner når det er dprlig sollys og sånt.
+
+Når det gjelder appens og nettsidens UI design, så finnes det mål som bør være oppnådd. Disse målene er laget for
+utviklere og er der for å representere de vanlige brukerne (og de med funksjonsnedsettelser) slik at alle kan få
+lov til å bruke appen (så lenge alle bør være mulig til å bruke den, i.e. login pages er ok). De inneholder tips
+og mål for utviklere slik at brukerne får enkel tilgang til appen. Den nyeste versjonen er WCAG (jeg tror).
+
+For å inkludere folk flest må vi se på hva problemene mellom løsningen vår (system) og brukernes manglende
+funksjonevner er. Vi beskriver hva vi anser som et problem og hvordan vi løser denne problemen ved bruk av modeller:
+1. Gap modellen - Her, problemet er det gapet mellom hvilke brukerens funksjonevner systemet krever, spesielt når det
+   gjelder de funksjonevner brukeren mangler. Her løsningen vår er å enten tilpasse systemet til brukeren, eller
+   behandle/rehabilitere selve brukeren så godt vi kan. En eksempel problem er når rullestolbruker møter en trapp.
+   Slike problemer løses ved en eksplisitt løsning sånn som å inkludere en heis i byggeplanen.
+2. Medisinsk modell - Her, individet (i.e. brukeren) er et problem som vi behandler og ikke systemet vi har utviklet.
+   En eksempel problem er en person med nedsatt syn som da løses ved å bruke briller og ikke ved å "fikse" systemet.
+3. Sosial modell - Her, vi skylder selve miljøet og system design. Vi løser problemet ved å tilpasse selve miljøet
+   til brukeren sånn som vi gjorde i gap modellen (uten behandlings- og rehabiliterings delen) hvor vi inkluderte
+   en heis i byggeplanen for å løse rullestolbruker versus bygnings trappene problemet.
+
+Vi kategoriserer etter antall mennesker vi bør tilpase systemet til i en slags brukbarhetspyramid hvor det laveste
+nivået betyr at systemet dekker folk flest. Jo høyere nivået er, jo mindre folk vi dekker med løsningene våre:
+Nivå 1: Universell utforming - Systemet vår trenger ikke å tilpases for at folk flest kan bruke den. Dette kan også
+        forklares slik: Kan alle bruke systemet uten hjelp?
+Nivå 2: Tilrettelegging for grupper - Systemet bør tilpases individuelt for hver gruppe, i.e. kan en gruppe bruke
+        systemet via en felles løsning?
+Nivå 3: Individuel tilrettelegging - Systemet bør tilpases individuelt for hver person, i.e. bør systemet tilpases
+        for en person?
+Nivå 4: Personlig assistanse - Det trengs menneskelig hjelp av noen som kan utnytte systemet for at en annen kan
+        også det, i.e. trengs det en annen person for noen å hjelpe med å utnytte systemet?

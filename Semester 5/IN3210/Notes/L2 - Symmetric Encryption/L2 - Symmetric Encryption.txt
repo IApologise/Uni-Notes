@@ -1,0 +1,160 @@
+--- Cypher Algorithm Types ---
+We got 2 types of cyphers, those that use the same key - i.e. symmetric, and those that use different keys - i.e.
+assymetric. With symmetric keys we got Stream and Block cyphers. Note that symmetric keys are often established
+once the communication is already secure often done via assymetric encryption via public and private keys. The
+reason for establishing symmetric communication after the assymetric one has been established is mainly to use a
+smaller and less complicated key (less math and logic heavy) for more lightweight and faster message transmission.
+
+P.S. Note how all the cyphers are symmetric here, all the cyphers described here will be like that!
+
+
+
+--- Symmetric Cyphers ---
+One-Time Pad cyphers: Vernam
+Vernam is a cypher where the key is as long as the plain text itself and it uses an encryption & decryption
+functions that create a 1:1 mapping from plain text to cypher text, thus each cypher is unique based on plain text.
+We can't even do a frequency analysis on it because each actual sentence, word, letter, etc. of length n can be
+attained. We say it is a one time cypher mechanism because once you know some plain text (without necessarily
+knowing the key), if the key was reused you can through that plain text get any other cypher text that was
+encrypted with the same key.
+
+Here is how it is done: Plain texts are P1 and P2 which we don't know yet. A cypher text Cn = K xor Pn where K is
+the key we reuse (bad). Now then, assume that we got a plain text P1 and thus its cypher text C1 as well. Either
+because it was meant for us, or because it was leaked, or hacked, etc. And the second message C2 was sent to
+someone else. We can do C1 xor C2 xor P1 = (K xor P1) xor (K xor P2) xor P1 = K xor K xor P1 xor P1 xor P2 = P2
+since the xor operator is idempotent. Note how C1 xor C2 = (K xor P1) xor (K xor P2) = K xor K xor P1 xor P2 = P1
+xor P2 = ??? since the xor of two plain texts is really just a bunch of gibberish, unless P1 = P2 or some similar
+words like "the" are in the same place in both and such which isn't that uncommon, but doesn't give us much...
+
+Also, note how cyphers like these do not provide authenticity or integrity! That is mostly the job of signatures.
+It's job is to simply let the other end system know if the message has been tampered with along the way, and that
+the message did come from the one it was meant to receive the message from, i.e. no spoofing or message alteration
+during MiTM, though sniffing & package replayability are unaffected.
+
+
+
+Stream cyphers: RC4 & ChaCha20
+These are functions with key acting as a seed for a pseudo-random generator. This generator is then creating a
+pseudo random bit of a key for each bit of text, we call it creating a keystream for a plain text stream. Note that
+if we have a pseudo random generator whose values aren't uniform, or independent, or unpredictable, then the cypher
+text may be cracked way faster through brute-forcing and similar methods in which hash tables are broken. Unlike
+block cyphers, stream cyphers are really useful for real-time transmissions (having a delay changes things though).
+
+P.S. You can check some screenshots on RC4 for exact code.
+- In RC4 we first define a list {S} which starts out as a list 0-255 (i.e. max keylength), and {T} where {T[i]} is
+  {K[i mod keylength]} where K is our keystream and T is is a list 0-K's length that loops around when above K's
+  length. After that we shuffle {S} as follows: we have temporary value {j} that we reuse for complex shuffling and
+  do {j = (j + S[i] + T[i]) mod 256} where 256 is the char size. Then {j} is used to swap {S[i]} and {S[j]}, i.e.
+  {temp = S[i]; S[i] = S[j]; S[j] = temp}. Now, {S} is our secret keystream generator which changes itself as it
+  encrypts/decrypts each character in the text. Both sides get exact same changes because both encryption and
+  decryption use same number of iterations in same order (cyphertext's length is same as plaintext's).
+
+Notes on RC4:
+1. Note that if a packet loss happens then we'll need to change S back somehow. That is networking's layer 4 problem,
+   and idk how that is solved, but I think it is like coppying S and adding a "nonce" which is like the iteration.
+2. Also, just like with One-Time Pads reusing the same iteration of a stream cypher makes it hackable (same reason).
+3. The longer the keylength is the more key permutations the attacker must brute-force through. However 256 is the
+   cap because S is instantiated with 256 entries because each entry is 8 bits in size (2^8 = 256), and that is
+   because each character is 8 bits in size. Higher keylength will not add more security due to the modulo not
+   looping back, and increasing the modulo from 256 will not make sense since extra bits past the ones that define
+   the character id (256 possible chars pc can draw) will not be xored with anything and thus considered garbage.
+4. RC4 is obsolete and should not be used these days. It's just an example of how stream ciphers work in detail.
+
+- In ChaCha20 ...
+
+Notes on ChaCha20:
+1. ...
+
+
+
+Block cyphers: AES
+Unlike stream cyphers which encrypt/decrypt each character before changing, block cyphers use the whole keystream
+of fixed length to encrypt same fixed size part of plaintext (also via XOR). If the plaintext is bigger than the
+keystream then we create next keystream for next plaintext encryption. We divide plaintext up to the sizes our
+keystream can handle, and those are called blocks. The next keystream may be the same as the previous one, or
+totally different, all of it depends on the "mode of operation", i.e. how we decide it should be handled. Generally
+there are 8: ECB, CBC, CFB, OFB, CTR, GCM, CCM, and XTS, but not all are taught and not all are used today.
+
+- AES is a block cypher that comes in various sizes, namely: 128, 192, and 256 (maybe more, idk). The size is that of
+  each block in bits. Also, instead of a single keystream that encrypts a block, we instead split or "expand" the key
+  into multiple keys that perform a simple scrambling algorithm. So in AES-128 we have 10 rounds, meaning we have 10
+  keystreams, which are used one after another in a sequence where each one scrambles the block in some way. In AES
+  each round uses its round key to first: Substitute bytes, then Shift rows, and finally Mix columns. Then comes the
+  next round, its key, and same 3 operations. Decyphering uses their inverse functions in the opposite order of
+  encryption of course. Anyways, in AES-128 the blocks are divided into a 4x4 matrix each one 1 byte in size for a
+  total of 128 bytes (hence AES-128). It is best to check out the sreenshot on that. Substitute bytes uses some
+  mapping that AES has hardcoded which it uses to swap each byte with some other one within the same block. This is
+  done for each byte. Shift rows basically rotates the matrix 45 degrees clockwise. Mix columns then takes each
+  column and based on which bytes the column has modifies each byte into some new byte. Again, for better
+  visualiation and understanding please refer to the screenshots (S-box isn't explained there though).
+
+Notes on AES:
+1. For AES-128 we got 10 rounds, for AES-196 we got 12, and for AES-256 we got 14.
+2. AES-128 has 2^128 possible keys, similarly AES-192 has 2^198 and AES-256 has 2^256.
+3. IV is a constant of pseudo-randomly generated bits used for initial encryption steps that rely on previous steps.
+
+Block cypher modes:
+- ECB mode simply applies the same key to each block in the exactly the same way, thus it is insecure and can easily
+  be cracked. Because of scrambling each block the same way, the bigger pattern is still obvious and thus it also
+  often doesn't scramble the data enough, i.e. it can still be viewed (especially clear with pictures).
+- CBC is simply first doing {C_(n - 1) XOR P_n} and then encrypting that to get {C_n}. For the first block encryption
+  though there is no {C_-1} so we use {IV} instead which stands for a randomly generated value. In this case it must
+  be unpredictable but not necessarily a secret.
+- CTR makes our block cypher act as a stream cypher. The way it works is we have a counter that starts with IV. First
+  block has the instantiated counter, i.e. IV. Next block has counter IV + 1. And instead of encrypting the plaintext
+  our block cypher encrypts these counters, thus they become keystreams. So as we are getting the plaintext, each
+  character is XORed with the keystream. It's like a pre-made stream cypher keystream but generated by the block
+  cypher. We then simply use it on the plaintext (by XORing as shown). This also makes the decryption the same as
+  encryption, we simply XOR the cyphertext with that same keystream recreated by the receiver. This also allows for
+  parallel encryption to be possible (since there really is no chaining), but same drawbacks of using stream cyphers
+  are also here (i.e. reusing the key).
+- OFB is like a CTR in the sense that it is a stream cypher too, but instead of incrementing IV by 1 we reuse the
+  keystream_0 generated from the Block_0 & IV for Block_1. Naturally Block_2 reuses the keystream_1 generated by
+  Block_1 & keystream_0, and so on... So it's like a CTR but with an idea of chaining that CBC has. This means that
+  encrypting and decrypting is done just like in CTR, but it must be done in the correct order like with CBC.
+- GCM is like CTR in the sense that we have an IV and counters that are used as keystreams. After we use keystream
+  {K_n} on plaintext {P_n} we get {C_n}, i.e. {C_n = P_n XOR K_n}, that becomes our cyphertext which as you can see
+  was made exactly like CTR does it. However, at the end we also add an authentication tag (process is called GMAC).
+  This process works as follows and what the screenshot is showing: We have a keystream generated by the IV where
+  {Counter_0 = IV}, and because {K_0 = Counter_1} for simplicity let's call this first keystream K_IV. Anyways,
+  we start with the data we want to use as our authentication id, so like the Application Layer of Networking or
+  whatever it is you want to use. That is what the Auth data 1 is, and this part is not encrypted but is used to
+  encrypt the rest of data thus providing unique result at the end. The result is now calculated as such: We define
+  a new variable I call {H} and {R}. {H = AES_K(0^128)}, where AES_K is generating a keystream from the key K from a
+  block filled with 0-es (128 of them for AES-128 in my case, thus the 0^128). {R_0 = (C_0 XOR Auth Data 1) * H},
+  and {R_n = (R_(n - 1) XOR C_n) * H}. The last block {f} is the one that is our Auth Tag (block that verifies
+  integrity and authenticity), the older ones were simply used to get this last one. So the Auth Tag becomes:
+  {Auth Tag = ((R_f XOR (|All Auth Datas| + |All Cyphertexts|)) * H) XOR K_IV}.
+
+Notes on cypher modes:
+1. ECB is never to be used, it is an example of how a block cypher shouldn't be!
+2. CTR is mostly used to emitate stream cyphering for situations like live video streaming, and for parallelarism.
+3. GCM is used in TLS and IPSec today because it also solves integrity, thus works as an authentication method.
+
+
+
+--- Cryptographic Security Notions ---
+We categorize these secure communication algorithms based on how well the confidentiality is upheld:
+A. Unconditional security - The communication channel can not be broken even with infinite computational resources.
+   This applies to the one-time pad Vernam cypher as we've shown.
+B. Computational security - Breaking the cypher is practically impossible due to the amount of computational power
+   required to break it by the best algorithms at the time. This applies to both AES & ChaCha20, but idk about the
+   rest described above though...
+C. Provable security - Breaking the system is equivalent to solving a difficult problem such as factoring used in
+   assymetric keys like RSA for example. It is proven to be hard (I think that's what this category is about, idk).
+
+Cryptography may be attacked by:
+1. Brute-forcing all the possible key combinations. On average only half have to be tried (to get 50% chance).
+2. Cryptanalysis which is basically finding weaknesses in the method, i.e. disprove that it works well such as
+   finding out that the pseudo-random generator that the cypher relies on is not independent which is what the
+   cypher might have relied on to work.
+3. Attacks on implementation like side channel attacks based on variations in power consumption, timing, or
+   emanations which may give a clue on how the cyphering and key-generation is being done by the device.
+4. Attacks on key management or the environment like circumventing encryption by exploiting vulnerabilities in the
+   end-user operating systems, databases, or servers/clients & such.
+
+Cryptanalytic hypothetical attack scenarios: Kinda like white, gray, and black boxes in penetration testing
+1. Attacker only has the cyphertext and is trying to get the key.
+2. Attacker knows both the plaintext and cyphertext and is trying to get the key.
+3. Attacker chooses a plaintext and gets the wanted cyphertext.
+4. Attacker chooses a cyphertext and gets the wanted plaintext.

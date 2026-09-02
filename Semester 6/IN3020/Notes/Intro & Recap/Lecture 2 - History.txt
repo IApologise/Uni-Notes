@@ -1,0 +1,41 @@
+Declarative programming language is "Get me object X", and procedural is "Do this and that and show me the result".
+SQL as we know is a declarative programming language. It is also a relational type of database invented by Codd.
+However, relational databases aren't always the best. Sometimes there are simpler and slightly more efficient
+models such as a hierarchical model where data is connected like a tree like in XML, or a network model (RDF) where
+data is connected in a graph like in Knowledge Graphs. For example, the Big Data, which is big amount of data that
+can not be related to each other in a meaningful way, might be best organized and represented by an RDF.
+
+Domain is like the domain in logic, e.g. what values are defined and allowed. each value that is saved in a row is
+an atomic value, e.g. it can not be broken down into something more fundamental than what it already is. So the
+attributes (collumns) have their atomic values saved in form of rows. Attributes are the domain. To get the collumn's
+domain we denote it as dom({attribute}) where {attribute} is the name of the collumn. For example, all the natural
+numbers can be the domain of ID in our database denoted as dom(ID).
+
+A relation talbe R is denoted as R[A_1, ..., A_n] where A_n is the n'th attribute (collumn) that the table
+contains. The amount of attributes that R has is called its arity, and yes it can have an arity of 0, but not less
+than 0, nor equal to or more than infinite.
+
+To assign values to rows, you can try to describe every element that can be found in R[A_1, ..., A_n] or with domains
+like x → A_1, ..., y → A_n or x ∈ dom(A_1) × ... × y ∈ dom(A_n). Sometimes we write R<x, ..., y> for short or even
+<x, ..., y> if the relation table is implicit. Note that all the values in a row must be filled when creating this
+tuple, leaving it empty does not imply a NULL or anything like that. You also can't have more than the collumns
+available or less basically. So for example, in R[A, B, C], <x, y> is not valid, <x, y, z> is valid, and <x, y, z, u>
+is not valid. We also assume that those are in the attribute's (collumn's) domain once added.
+
+Whenever we want to refer to a specific value x of a row (tuple) t that can be found in a collumn (attribute) A of a
+table (relation schema) R, we we just write t.A where R can actually be any relation schema of our choice (implicit).
+So, t.A is x. e.g. t.A = x. However, what if we don't know the row? Well all the rows are stored in the predefined
+set I which is also implicit. Sure you can't point to a row t specifically, but you may assume one because we always
+assume I and I contains t. It can be assumed by denoting it as I ⊆ dom(A_1) × ... × dom(A_n).
+
+By the way, the relation schema arity can also be denoted as R^n where R is the relation schema and n is the arity.
+Also, sometimes we define the tables to "What can be found in the table is assumed to be a fact (so true).", or
+sometimes "What can not be found in the table is assumed to be false". Note that these two are not the same.
+
+when it comes to denoting restrictions like super keys in a row, we can basically denote it like t_1.X ≠ t_2.X or
+t_1[X] ≠ t_2[X]. The primary key can also be denoted by using an underline on the attribute when creating a table.
+To denote a foreign key we use a naming convention, e.g. relation schema R's name + ID at the end. So if we have a
+talbe like Students[A, B, ...] and want to reference it in an another table Universities, we simply name one of the
+attributes in the Universities table StudentsID, like Universities[StudentsID, X, Y, ...]. Formally this can be
+defined as there existing some tuple (row) in Universities that may always reference a tuple inside Students. So
+this is basically what we assume to be true whenever we want there to be a foreign key, we just assume there is one.

@@ -1,0 +1,4 @@
+Combinatorics is a word for counting where we count all
+of the unique and all sorts of possibilities that can occur.
+It answers questions like the time complexity of a program
+and it gives us the tools to optimize them.

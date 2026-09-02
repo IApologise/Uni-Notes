@@ -1,0 +1,74 @@
+--- Systems ---
+With computers there is obviously the IOs (Inputs / Outputs),
+there is memory (RAM, DRAM, etc.), disk (SSD, HDD, etc.),
+Micro processors and such (CPU, GPU, etc.), LAN-Network and
+Wi-Fi, but all of that we already know a bunch about.
+
+However, there is also UEFI also known as Bios, and TPM.
+UEFI is responsible for lauching the OS and setting up
+everything when pc is launched (VMs and secure boot). TPM
+is also responsible for secure boot, but it is also doing
+disk encryption, and proves to other connected servers
+that the device can be trusted e.g. it has no malware.
+
+There is also something called TEE (Trusted Execution
+Environment) which basically makes sure that the machine
+code inside the pc are "protected", which means that they
+definitely can not be altered after one's desires. One such
+example is Intel SGX (Software Guard Extension).
+
+There are also devices that can detect an attacker attempt
+to get some classified data such as private encryption keys
+physically which then forces the device to auto-delete all
+of those keys forever. IBM 4765 Secure Coprocessor (example).
+
+You can also check out how the UEFI starts the computer.
+For that, check out "UEFI Start.png" file which illustrates
+everything perfectly (and I was too lazy to copy it).
+
+
+
+--- Rings ---
+You already know that there are rings of privilige, ring
+3 is used for applications, rings 2 and 1 aren't really
+used at all, ring 0 is kernel level (Total control over
+CPU operations available and OS, higher access than admin),
+ring -1 is a VM (Virtual Machine, Hypervisor), UEFI is -2.
+
+Also, in a CPU there are cores (which are micro-processors)
+and modern CPUs (after 2015) now also include a small built
+in microcontroller called IME (Intel Management Engine)
+which handles system updates, power control, and system
+management for enterprise IT. What is interesting is that
+it works even when pc is powered off as long as the device
+is plugged in (has access to electricity) and it also has
+its own operative system called MINIX which means that it
+sits at ring level -3. Since it manages enterprise IT, it
+has access to internet and it also has access to the whole
+device as well which is a huge deal. But I am not sure if
+TPM (encryption device found inside your PC) is still a
+problem. I suspect that it isn't though. I mean it is used
+by IT personel in enterprises to update stuff and manage
+stuff on devices remotely (even turning the pc on remotely
+by what's called a Wake-on-LAN), so this access makes sense.
+
+
+
+--- VM (Virtual Machine) ---
+Virtual machines are on a ring level -1 which means that it
+is in control over the operating system that is simulated in
+it (and all the apps and files that are there).
+
+There are 2 VM types, native and host-based. Native means that
+first there is UEFI that runs first, then the VM Hypermode
+which consists of multiple VMs each with their own OS and apps.
+For example Windows's Hyper-V. Host-based is when the system has
+a native OS, and from that OS we create the VM Hypermode. Thus,
+the native OS is above the VM Hypermode in this scenario, but
+the Systems and OS simulated on the VM Hypermode are not (duh).
+
+There is also docker which creates a VM for a single app where
+only the bare minimum functionalities for the app to work exist.
+I've already used docker, and created a linux Host-based VM.
+Also, note that when you log in as different users, you are
+kind of using the native VM or something like that I think.

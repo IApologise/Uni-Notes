@@ -1,0 +1,6 @@
+First-Order logic is a subset of Predicate logic. It is also an
+extension of the propositional logic. Think of it as propositional
+logic, but with the addition of Predicates and Quantifiers. This also
+means that it comes with some extra constants, variables, terms,
+functions, and relations. Predicates are like statements or relations.
+Quantifiers are what specify to what extend a predicate is true.

@@ -1,0 +1,125 @@
+Vertices / Nodes: V
+A vertex or a node is a point to which we can
+draw connections to. Vertices V is a set of such
+nodes, so V = {1, 2, 3} is a set of nodes. So we
+got |V| = 3 nodes which we can connect to (or not).
+
+
+
+Edges: E
+An edge is a set that holds precisely two elements.
+These two elements must be different nodes. This way
+we can connect the nodes to each other. So it is
+a line that we draw that connects two nodes. E is a
+set of such edges, E = {{1, 2}, {2, 3}}, here we
+connect two nodes 1 and 2, and another two, 2 and 3.
+
+Whenever an edge is made sometimes it is said
+that the two nodes chosen, v and u for example,
+E = {u, v} lay incident to u and v and these
+nodes can also be called adjacent / neighbours.
+
+
+
+Graph: G
+A graph consists of a non-endless, non-empty vertices
+V accompanied by a set of edges E. So in total it shall
+have 2 sets, V and E. A set of edges E can be empty, but
+it can not be endless because then V would have to be too
+and that is not allowed here.
+
+If you want to get the nodes V and/or Edges E from
+a graph, then you can write V(G) or E(G) respectively
+to show that you look at nodes or edges of a graph G.
+
+
+
+Walk / Tour:
+It is a sequence that starts with a node v, and
+continues by adding an edge e and another node u.
+This another node can also be the same node v.
+This pattern continues until end at which point
+our walk is done.
+
+So an example of one is as such: V = {A, B, C, D},
+E = {e, f, g}, our walk becomes AeBfCgD, it can
+also be something else, CeDgAfB. The first one
+means that we start from a node A, then go to
+node B by using edge e, etc.
+
+The length of a walk is the amount of edges
+used in it. So on our previous example AeBfCgD,
+the length is 3, because 3 edges are used.
+
+
+
+Path:
+This is a type of walk where no nodes are
+repeated, so there is no AeBeA, because A
+is repeated twice in this example.
+
+
+
+Trail:
+This is a type of walk where no edges are
+repeated, so there is no AeBeA, because e
+is repeated twice in this example.
+
+
+
+Handshaking Lemma:
+Whenever counting amount of degrees a node
+has, if a node has an odd number of degrees,
+then it is added to our set S. The total
+amount of elements or nodes in a set S is
+always even, so |S| is even. This is what
+the Handshaking Lemma says, and it is true.
+
+Handshaking comes from the concept that was
+explained. Lemma comes from the fact that
+it is not very interesting on its own, but
+is used in many places to assist in proofs.
+
+
+
+Isomorphy:
+If we have a graph G, and it has the same
+form as another graph H, i.e. If we switch
+up the way we look at it, not change its
+structure, then G is an isomoprhy of H,
+and vice versa. You can look at the picture in
+this folder where they all have the
+same form as the rest of the graphs.
+
+You can use a bijective function where nodes
+from G go to nodes to H, and if u and v are
+neighbours in G, and f(u) and f(v) are neighbours
+in H as well, then they are isomoprh.
+
+
+
+Tree:
+If a graph is connected and not cyclic everywhere,
+then it is a tree. That is the basic definition.
+If there exists a cycle, then it is not a tree.
+
+Because of this the amount of edges that a tree
+has is connected to the amount of nodes it has.
+If a tree has n nodes, then the amount of edges
+will be n - 1, and if n edges, then n + 1 nodes.
+
+
+
+Leaf Node:
+A node in a tree graph that has degree of 1,
+so deg(v) = 1, is called a leaf node. It makes
+sense when you think of actual trees.
+
+
+
+Forest:
+However, if the graph is acyclic, but not
+connected, yet the parts that are not connected,
+are connected, so the parts that are not connected
+are trees, then the graph that consists of such
+multiple trees is called a forest.

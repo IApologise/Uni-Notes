@@ -1,0 +1,53 @@
+--- Discrete Search Methods ---
+
+1. Exhaustive Search:
+   This algorithm checks for all the possible solutions, it
+   is often slow and inneficient, but best used for tiny problems
+   where AI is not even required because computers are fast. It
+   is basically brute-forcing, but also sometimes considered an
+   ultra simple AI (which I am not sure about, it maybe is AI, maybe).
+
+2. Greedy Search:
+   This is an algorithm type that when met with a choice A or B,
+   if A is better than B (not necessarily in the long run, just
+   short-term) then the option A is chosen and not the option B.
+
+3. Hill Climbing:
+   Imagine that our problem is just a bunch of hills where each
+   peak is the local optimum, Hill Climbing starts out by checking
+   its neighbours and then picks the best one to.
+
+4. Simulated Annealing:
+   What if you want to explore your options first? This is what
+   simulated annealing does, it has what is called a temperature,
+   the higher it is, the more it explores, and the more likely it is
+   to accept the worse solutions. The exploration is highest at the
+   start of the search and is gradually reduced for exploitation.
+   So it explores and then converges to a solution.
+
+Difference between Greedy Search and Hill Climbing:
+The difference between a greedy search and a hill climbing is
+that hill climbing is applied to continuous problems and graphs,
+whilst greedy search applies to direct problems and graphs.
+
+
+
+--- Continuous Seach methods ---
+
+1. Gradient Ascent/Descent:
+   This is an algorithm that basically looks at the slope of a
+   function that we got and then moves by some tiny step x to then
+   find the new slope. It is like derivation, but instead you get
+   just the slope and not of a 2D function, but a ND function
+   instead, so you derive over multiple variables, not just x.
+
+   Whenever you want to maximize the function's output it is called
+   a gradient ascent, when you minimize it is called a descent. The
+   technique itself is called a gradient because of the slope.
+
+   To calculate the slope of a function f(x, y), so ∇f(x, y) you
+   basically derive each one separately, so if f(x, y) = x^2 + 3xy + y^2
+   then you first derive f'(x, y) for x which is 2x + 3y and then for
+   y which is 2y + 3x and then you get that ∇f(x, y) = (2x + 3y, 2y + 3x).
+   So at the end you merge all the solutions you got into one vector.
+

@@ -1,0 +1,65 @@
+--- Personal Area Network (PAN) ---
+A connection established directly between the end-systems. For example a USB-C connection between a keyboard and a
+mouse, or a bluetooth connection between a phone and your wireless headphones. These aren't particularly fast, but
+they often don't need to be.
+
+
+
+--- Local Area Network (LAN) ---
+Here we got a router which is the central part in it all. It uses DHCP to assign local IP addresses to each device
+all of which go through the router to communicate. Router becomes the middle man. A router can connect to other
+routers each of which have their own LAN. The routers below in hierarchy create what's called a sub-LAN. Router's
+reach is often extended by a switch, a wireless access point, or a range extender and such... Devices connect via
+ethernet cables and Wi-Fi. Think of it as connecting all the devices within a building.
+
+There are also WLANs (Wireless Local Area Networks) which are the same as a local one, the difference being is the
+fact that there are no ethernet cables connecting the devices or other wired types of connections. Mostly just
+Wi-Fi (radio waves and such) and range extenders.
+
+
+
+--- Campus Area Network (CAN) ---
+Whenever an organization is quite large it might operate within multiple buildings, some of which could be further
+apart. LANs ethernet cables are too slow, so we use fiber optic cables to connect the LANs between the buildings,
+typically 1 - 5 kilometer range. So whenever we are talking about CANs we mean all of the LANs that the
+organization has connected.
+
+
+
+--- Metropolitan Area Network (MAN) ---
+MANs, just like CANs, connect LANs. The difference is the scale and ownership. CANs are owned and controlled by
+and for a single organization connecting buildings at most across a city. MANs connect the whole city and cities
+across the whole country whilst also not owning any LANs or having any control over them. Its purpose is to
+connect different organizations together within a country. They also often utilize fiber optic cables which are
+often larger and faster than those seen connecting LANs in a CAN.
+
+
+
+--- Wide Area Network (WAN) ---
+This one is very similar to a MAN, the only difference is the scale. WAN connects countries even across an ocean.
+Just like with MANs fiber optic cables are also used and scaled accordingly with the demand. In addition to that
+satellites and telephone lines are also used sometimes to reach all parts of the globe.
+
+
+
+--- Storage Area Network (SAN) ---
+Unlike the network areas above, SAN is not about the scale but purpose. This is a dedicated network for servers
+and data centers which store and retrieve into. For example, streaming services create these networks which are
+dedicated to connecting users and sending each one video file data, like when you watch a Netflix show or a
+YouTube video.
+
+
+
+--- Virtual Private Network (VPN) ---
+VPN is a server that creates an encrypted connection between your end device and its servers. Any messages or data
+send and received first go through a VPN stripping your IP address and replacing it with its IP address (requires
+the whole data to arrive first creating delays based on file size) which then forwards it as if their own. Thus
+it acts as a middle man between you and the server. Websites know that you are using a VPN (because their servers
+are well known), but they can't know where the original requests are coming from.
+
+Similarly there is Onion Routing or TOR which is doing something similar. Instead of passing through a single
+server like in a VPN, here we pass through many. Thus nobody knows who sent what since there is no central figure
+that controls all these layers. In TOR Browser each router that connects to the browser assists others in this
+endeavour making it impossible to know who is the receiver and the sender. Because even if you are the first one
+to send or last to receive, the router that sent you the message or receive one from you can't know if you truly
+are the last stop of the first one to have sent it.

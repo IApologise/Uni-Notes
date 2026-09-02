@@ -1,0 +1,49 @@
+Turing Machine or TM for short can do anything modern computers can. We create algorithms for lots of different
+stuff like traversing a graph, and we will be talking about these algorithms. But first, we need a way to input
+the graph into the turing machine, and that is usually done exactly how a graph is defined in logic, i.e. by
+inputing nodes and edges like "(1, 2, 3, ...), ( (2, 1), (2, 3), ... )". This is just an example, we can replace
+numbers with the amount of symbols of "a" for example, but the gist is that anything that is easily understandable
+works. However, we often don't do that and instead just write that whatever it is we are describing, its input that
+the turing machine can accept is <G> where G is the graph itself in this case, but <G> is the input representation
+of the graph G. So the language L = {<G> | G is a graph} is an example of such notation.
+
+Just like with coding, which we often use when inputs are too complex to work with, we also describe algorithms on
+a higher level since everything is getting really big and really complex really quickly. Abstraction is key to good
+coding and progress. Basically what we do is we just describe what our turing machine's pointer does like "sweep
+right until X is found", "if X do Y, else do Z", "Sweep right and replace all X with Y", "Repeat steps X to Y",
+etc. All of this is kind of like normal coding and doesn't even always include a pointer, sometimes it is higher
+level and that is also fine as long as it is not up for alternative interpretations, understandable, and
+implementable. Like with <G>, we might use a comma symbol as separator, but we don't need to include this detail
+when describing an algorithm and we can just instead say something like "Cross off each node connected to node 1".
+
+Some problems turing machine may solve, some it may not, the proof of it is done through a surprisingly simple
+contradiction. There is a machine called a decider which is basically a turing machine that always halts no matter
+what the input is. Deciders accept inputs it recognizes, and rejects all that it doesn't recognize, it never loops
+forever. A recognizer is a turing machine that always halts on inputs it accepts, but may not reject all and thus
+keep looping forever never halting on the ones that it doesn't recognize. A turing machine can also be neither of
+those two classifications, i.e. be in an infinite loop for the ones that it both does and doesn't recognize, but
+not necessarily all of the inputs are that way of course, it may still accept and reject, but that depends on which
+turing machine it is, i.e. how it works...
+
+A reminder that a DFA and an NFA are both finite, meaning that they eventually always halt. So if we want to
+simulate one of these in our turing machine, we always get a decider. As for PDA, it is not necessarily finite,
+i.e. it isn't always a decider. That is because PDA may manipulate memory infinitely in a constant loop which may
+prevent it from fulfilling the requirements to progress into further states, and thus not make any progress even
+with infinite branching. Whilst an NFA always makes progress because as long as an NFA has a finite amount of
+states (which both do) one of its branches will reach an accept or a dead state eventually. Even though a PDA also
+has both an accept and a dead states and finite amount of states, the loop prevents progress. The same also goes
+for recognizers.
+
+Lets say that we got a turing machine M which decides whether some DFA A accepts some input w. This machine M is a
+decider, i.e. it will always halt. But what if we want to check if two DFAs A and B accept same language? We can
+simulate running machine M on an another turing machine N which takes in two DFAs and runs every input on the
+union kleene-star of both domains, i.e. (Σ_A ∪ Σ_B)*, but since the language of either or both L(A) and L(B) can
+be infinite, the machine N may never halt (it may not be a decider, nor a recognizer). However, since regular
+langauges are closed under complement, union, intersection, and difference, we can construct a DFA C that recognizes
+the same language as the symmetric difference between A and B, i.e. L(C) = L((A \ B) ∪ (B \ A)), and if L(C) = Ø,
+then it must be the case that L(A) = L(B). This example goes to show that even though some machines like N through
+naive brute-forcing methods may never halt, i.e. not decidable, then it doesn't mean that brute-forcing is our only
+option, and that sometimes through some clever design we can make a machine N that is decidable, i.e. always halts.
+This is also true for undecidability of PDAs since an input w of length n can be recognized by a CFG in CNF
+(Chomsky Normal Form) which always uses 2n - 1 rewrite rules (not has, uses), and such a CFG can be translated into
+a PDA that always halts, thus all languages can be recognized by a decidable PDA, i.e. a decider.

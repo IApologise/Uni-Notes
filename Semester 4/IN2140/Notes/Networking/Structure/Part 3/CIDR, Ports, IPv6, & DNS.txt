@@ -1,0 +1,160 @@
+--- Classless Inter-Domain Routing (CIDR) ---
+Remember how IPs were split into A, B, and C levels where the higher the level, the more global IP addresses they may have? Such as A having 3 bytes, B having 2 bytes, and C having 1 byte. CIDR is basically the new standard which
+is where we split the networks not by bytes in size, but by bits in size for more control (and because why not? the
+idea of splitting by bytes makes no sense). For that we use the notation where the subnet mask is involved. The
+subnet mask basically says how many bits are used to get to the LAN's host router. For example 192.168.1.10/24
+where the left is the IP from layer 3 it is trying to reach, and 24 is its subnetmask (equivalent to 255.255.255.0)
+which tells the current router whether the destination network is inside its LAN or not, and if not we forward to
+default gateway. To find out if it is in the same LAN, simply use the mask to remove all the IPs that can point to
+some device within your LAN using bitwise AND operation, and then use ARP if the destination IP is in the LAN.
+
+Example: Destination IP = 192.168.1.13, My IP = 192.168.1.17, My subnet mask = 24, i.e 255.255.255.0. Then we apply
+the subnet mask on both IPs, A = 192.168.1.13 & 255.255.255.0 = 192.168.1.0, B = 192.168.1.17 & 255.255.255.0 =
+192.168.1.0. As you can see, A == B is True, thus we use ARP because we are in the same LAN. If we would not have
+been in the subnet, then A == B would be False, and then our machine (whether it is a computer, phone, router,
+switch, doesn't matter) would forward to its default gateway. Note that routers have lookup tables when forwarding,
+but I am not sure how they work exactly (either I didn't understand or don't remember). They make the routing
+faster though.
+
+If we used default gateway, and then reach a point where the destination IP is now within scope (i.e. LAN), we
+might not know which router to forward to using ARP. For example, if we have a router A which has devices B and C
+as well as routers D, E, and F all of which are directly connected to A, and we receive a request from router F, it
+is possible that F is trying to reach either one of B or C, or one of the end-devices in D or E. We use subnet mask
+with the longest fit to determine whether it is one of the end-devices in A that we were trying to reach, or one of
+the end devices in either D or E (depends on the subnet mask whether F tried to reach D or E, can't be more than 1
+of the routers within A at once). For a precise example check out "CIDR Longest Match Rule X.png" where X is one of
+the examples from the series.
+
+
+
+--- IPv4 vs IPv6 & Notation ---
+We also touch the differences between IPv4 and IPv6, check out "IPv4 vs IPv6.png" for more details. The gray parts
+is what has been removed, i.e. which parts of IPv4 are not included in IPv6, mostly because they were dumb...
+Note that IPv6 is written as hexadecimals instead of demicals for short, and the separator is ":" instead of ".",
+and the separator ":" is used every 4 hexadecimals. We also use "::" instead of any combination of zeroes after the
+first 64 bits, i.e. 16 hexadecimals such as "ABCD:0000:EFGH" = "ABCD::EFGH" where all the letters are variables, or
+like in "ABCD:0000:0000:0000:EFGH" = "ABCD::EFGH". That is because the last 16 hexadecimals (after the 16 first),
+are split up by the admin just like the rest of the IPs in the subnet of IPv4. We also have subnet mask notation in
+IPv6 too, but it is used only for the first 16 hexadecimals, like I mentioned before the other 16 hexadecimals are
+used for other purposes (IPv6 is 32 hexadecimals, aka 128 bits, aka 16 bytes, in size).
+
+
+
+--- TCP, UDP, and Ports ---
+Now for the layer 4 in the ISO model where we find TCP, UDP, and other connection types... In the course, we call
+TCP messages, UDP datagrams, and ISO is TPDU (Transport Protocol Data Unit, i.e. ISO's 4th layer). Layer 4 is
+basically carrying all the data on which connection type it wants to establish as well as the ports. Check out the
+C code "UDP & TCP in C.png". Note that IANA maintains the list of all the well known ports such as SSH, HTTP,
+HTTPS, DNS, etc.
+
+The first 1024 ports are officially reserved by the IANA. So a port like 443 (HTTPS) is simply a convention
+enforced by most applications and servers. It at least requires admin privileges to change this setup or something
+like that I believe... But frankly I could create a server listening on port 443 but processing it as HTTP. Though
+browsers won't tolerate that and the user's devices often assume that 443 is an HTTPS meaning that the user's
+devices and browsers will expect a TLS handskahe first, which will fail the connection request.
+
+Anyways, here you can also see whether these ports use UDP or TCP. To connect to a device listening on port 22
+it most likely expects an SSH protocol to be used and a TCP handshake connection to be established. If I were to
+try and request a connection on port 22 but on UDP, most likely nobody is listening to this channel and thus the
+connection would fail. A device listening on port 22 TCP may not listen on port 22 UDP, and vice versa, because the
+OS does a clear distinction between the two and treats them as separate. This also implies other connection types
+such as DCCP and SCTP.
+
+The rest of the ports between and including 1024 and 49151 can be reserved by private organizations, but not
+enforced on the machine (I think that is what they meant), so if I already have port 1024 in use, then nothing will
+break (I believe). The enforcement part is kind of vague, because the AI explained it simply being a well-known
+convention and not an enforcement, which I do find to make more sense.
+
+The port reservation is done for security reasons. Like root privileges being required to ignore the 0 - 1023 port
+rule. This is done so that unprivileged processes won't be able to impersonate some "well-known services". The
+1024 - 49151 ports are just "registered ports", which aren't enforced in any way, not these days at least. But,
+there are some pre-defined ports by the OS called Ephemeral Ports typically around 49152 - 65535. These are used
+for websites opened by your browser, servers, as well as by the OS itself.
+
+
+
+--- Connections Via an Example ---
+So whenever I, the client which we will call A2, try to watch YouTube for example I first open the browser which
+creates a new process and my OS assigns it a new port within the 49152 - 65535 range. Then my router: A1, port
+forwards it so A2 can receive back a response. This port forwarding is in a TCP-3 format: [A2's IP, A2's Port,
+TCP]. Note that NAT changes it to A1's IP and A1's Port that it keeps a table of, and that the "TCP" simply
+signifies which type of connection it is. A2 then sends a request to the website's router: B1, using port 443 which
+is HTTPS through A1 which used a NAT. B1 must have already had its TCP-3 open which directs A2's request to some
+server B2 within its LAN that B1 connects me to. This B2 is always listening to this port 443 and redirects any
+connection requests to one of its free servers B3 that handle this type of stuff (often used to manage multiple
+users, but not when I host my own server on my PC for example, that would be overkill). Once B3 accepts the
+connection request B2 issues a request to B1 to port forward B3 using a TCP-5 format: [A2's IP, A2's Port, B3's
+IP, B3's Port, TCP]. We do add this port forwarding rule to allow for limitless connections where each server's
+process isn't limited to a single user, but to the amount it can physically handle simultaneously. Note that after
+that B3 sends an acknowledgment message to A2 so that A1 may also do a TCP-5 port forwarding. After that A2 sends a
+message to B3 to let it know that the connection was a success. Note that B2 never had any connection established
+and simply forwarded the request. In small systems there is no B2, and the listening is done by B3. Now, we have
+estabilshed a TCP connection and I can browse videos on YouTube (not watch them yet).
+
+However, once I choose a video I also have to establish one more TCP connection with the video server on port 554
+which creates another process A3 on my device that communicates with the video server's process B5 (B4 is the
+intermediary server similar to B2). So the TCP connection here is done in the same way as shown in the previous
+example. After that both A3 and B5 open a yet another dynamic port and share it to each other. Then A3 port
+forwards using a UDP-3 format: [B5's IP, B5's Port, UDP], and B5 port forwards: [A3's IP, A3's Port, UDP]. This
+way both can quickly receive data from each other.
+
+P.S. For some reason, when a single IP has multiple ports open it is called multiplexing and de-multiplexing (from
+the MUX logic gate). But like... isn't IP + Port just an address? Maybe I should check out what MUX does...
+
+Also, Sockets is what we call these connections, i.e. the combination of IP:Port:Type where Type is a TCP/UDP/etc.
+The OS actually differentiates between TCP and UDP and others, so there can be for example both TCP : 7777 and
+UDP : 7777 connections on the same machine simultaneously, where the TCP is used for some process A and UDP is
+used for some other and completely irrelevant process B. Also, Port 7777 and 27015 may be for the same process A,
+so different ports don't imply different processes. So whenever coding, the processes use sockets to get and send
+data. Anyways, A socket is made of 5 parts: SenderIP, SenderPort, ReceiverIP, ReceiverPort,ConnectionType. Like
+with TCP from the example that we've seen, but  sometimes of 3 parts like with UDPs or TCP-3s. For that we keep a
+separate list of these connections and redirect them as needed (the routers do that since they are the ones that
+use NAT). Before the connection is established, the server must first be ready to listen. This means that the
+server has a port open where anyone may connect. Once someone does and the TCP is established a copy of the
+connection is made (a 5-tuple TCP socket), and the old 3-tuple socket resets and listens for someone next. Note
+that this is a TCP unique thing, since UDP just sends data this makes a 3-tuple sufficient enough.
+
+
+
+--- Domain Name System (DNS) ---
+By the way, when it comes to DNS which translates IPs to domain names (like https://142.250.68.206 becoming
+https://google.com), these are maintained by the ICANN (authority that distributes IPs in the US I think). Like,
+you know how IPs were distributed and assigned to different countries, and that these countries further assign IPs
+and such, well ICANN maintains a table of who it distributed some of the IPs to, like ".no" being managed by
+UNINETT. UNINETT itself also distributed those IPs that it got, like UiO getting its fair share with ".uio" ending.
+UiO itself also distributed them and IFI got its share with the ".ifi" ending, and there we got a server called
+"login". So, whenever you want to get to the login server instead of some IPv4 or IPv6 you just type in
+"login.ifi.uio.no", which as you can see is read right to left. So whenever you use DNS you first send a request
+to ICANN, which sends it to UNINETT, and so on and so forth...
+
+Now ICANN and a bunch of other organizations have ROOT servers, and as of today there are 13 DNS-es each of which
+has a copy of all of the names of DNS servers of these ".com" and ".no" authorities, and also lists whose they are
+and such so the chain of lookups can be done. But due to a technique named anycast (servers with exactly the same
+IPs, first to respond is the one you connect to) there are 1600+ of these DNS servers. In practice however, your
+machine or browser has these IPs stored locally and updates them too. They are also cached by the servers such as
+uio.no (when asked, so that less chain lookup is needed and faster response), which is done often if some IP is
+used often, like google.com, even though google.com is not uio.no's responsibility. There are 2 ways that we can
+get the IPs, check out the pictures for that, but basically the difference between the two is who gets the most
+traffic load. Sometimes, the servers may have many domain names, which might be relevant based on language and
+generally with what's popular. Sometimes it is necessary because there are multiple servers in different countries
+that do the same job. It also works the other way around where a single domain name can map to multiple IPs,
+depending on which one is closer or faster to respond which is also often tied to proximity to it (zoning). An
+example can be "loing.ifi.uio.no" actually rerouting to one of the 4 that actually exist which are
+"sytosin.ifi.uio.no", and same for "adenin.ifi...", "guanin.ifi...", and finally "tymin.ifi...", which is just
+an example of the concept.
+
+Note that DNS is often some global server which many devices already know the IP for which is included
+automatically (unless browser has the IP you want cached, then that is used instead to make it faster, and
+less load too). But what if you want to reach some local device within your LAN whose IP often gets reassigned
+by the DHCP? That is what mDNS fixes (multicast DNS). Basically whenever you add ".local" to the end like
+"myLanServer.local" and you don't know the IP, what is done first is sending broadcast to all DNS servers only
+(which is actually what a multicast is) in your LAN using this "224.0.0.251" IP which all mDNS-es always listen
+to (and other devices may too). This multicast essentially asks if they are the "myLanSever.local", and if so then
+they reply with their own IP. Note that the ".local" is reserved to specifically only be used in LANs.
+
+P.S. Multiplexing means combining multiple streams into a single channel, like how multiple TCP connections share
+the same IP (due to port being different we can have multiple TCP connections) all of which go through the same
+home router. Multicasting is sending to all the devices (a specific group), such as in the example above with the
+mDNS where we broadcast message only to the devices that listen to 224.0.0.251. For a device to be able to receive
+multicasts it must let the network know that it is a part of this multicast, otherwise it isn't getting anything
+and such broadcasts targeted to a specific IP (i.e. multicasts) are ignored on a hardware level.

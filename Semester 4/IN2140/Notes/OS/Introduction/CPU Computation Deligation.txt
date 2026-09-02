@@ -1,0 +1,32 @@
+OS must manage resources and deligate the CPU tasks such that all the programs get a cut and may execute their tasks.
+This is done by doing some parallel executions and by waiting for the locked data (data that is in use) to become
+unlocked (released of use by the program it was locked by).
+
+CPUs have cores, each core is a hardware which can run tasks independently. This is the real parallel execution with.
+A single core can only perform a single task at a time. Threads are not physical, they are digital tasks assigned by
+the processes instantiated them which are being juggled (switching between constantly) inside a core. Threads also
+share the process in question's local memory. Anyways, the OS is managing the juggling part. Think of it as OS being
+the person, cores being the hands, and juggling balls being the threads. The juggling is done by temporarily pausing
+on any tasks that the current thread is doing, and switches to the next thread's tasks. Any data that the thread had
+locked at the time can not be written to by other threads during its pause until the thread gets back its attention and decides to unlock it. However, the locked data can be read from during this time. This is called a "data race".
+
+The more cores, the more threads can be juggled simultaneously. If a program can be multi-threaded, then several
+cores can juggle parts of the program (which is split in form of threads). If the program can not be multi-threaded,
+then it becomes a single thread and is thus limited to being juggled by a single core at a time.
+
+The way in which the juggling between threads occurs is by interrupting them and resuming later. Interruption happens
+by capturing its state first, then "switching control", then finding the right interrupt handler, and finally
+executing the interrupt handler. After that the next thread is restored from the previously saved states and the
+this next thread resumes its execution.
+
+
+
+When we press on a power button to boot up the pc this is what happens: Flash BIOS is runned which first verifies
+that all the hardware is working properly by requesting each part to verify itself and send an "ok" message. Then it
+locates the "boot" file from the memory PCI slots (HDD, SSD, whichever has it) which is usually reserved for this. After that, the boot executable is sent to RAM, and then from RAM to the CPU. There it is runned and is doing some
+checks. After that the boot executable identifies, loads the proper OS into the RAM, and runs it.
+
+There are also 2 main OS categories, but only one of them is popular to use because the other one is too slow (it is
+the micro kernels one). For more check out the screenshot called "OS Types.png" from the presentation. There are also
+3 types of virtualization (VMs), for that check out "VM Types.png". Keep in mind that "sandboxing" is basically
+restricting some stuff in the OS (I think) for security reasons, and each app is runned on its own OS (isolation).

@@ -1,0 +1,1 @@
+ssh -J justassi@login.uio.no justassi@login.ifi.uio.no

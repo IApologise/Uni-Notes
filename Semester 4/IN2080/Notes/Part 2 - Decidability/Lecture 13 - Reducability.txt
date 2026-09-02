@@ -1,0 +1,41 @@
+Regular turing machines are recognizers, they either accept or reject. Enumerators are an exception by being
+connected to a "printer" of sorts to output all the words it recognizes (i.e. the language). But now we will look
+at Transducers. These are turing machines that take some inputs (as per usual), but instead of a simple accept or
+reject they do whole outputs as well. Note that they are more specific than that. Transducers are basically TMs
+that do some function f. So imagine you define f(<x, y>) = <x + y>, the transducer takes in x and y as its start
+tape, and at the end (when it halts, it has only one halting state) the tape only contains the result, i.e.
+f(<x, y>) already computed and done. For example, to compute sum(2, 5) we create our transducer which is programmed
+to sum up these two input numbers. It starts with configuration "q_0 2 _ 5", (i.e. the input), and halts with the
+configuration "q_h 7" (i.e. the output) where q_h is the halting state. Note how function f actually takes just one
+input (because one tape) which is denoted as <x, y>, and the output is denoted as <x + y> for the same reason.
+However, note that in the tape itself we don't have "q_0 < 2 , 5 >", the way we have it written down before is
+also valid, but this method "q_0 < 2 , 5 >" isn't wrong either, we often use a separator of sorts to denote the
+different inputs which in the lectures is often the "#" sign, like "q_0 # 2 # 5".
+
+P.S. Later on Transducers are defined as being able to only use n + log_c(n) tape space where n is the input that
+is read-only, log_c(n) is the number of tape space it has available to work with however it pleases (all start
+blank), and then there is the output which is write-only.
+
+Now for reduction definition. A ≤_m B written as A m-reducable to B where both A and B are languages is basically
+saying that: If there exists a function f such that for each word w in A we have that f(w) is in B, then A ≤_m B.
+We call this function f a reduction from A to B (calling it both a function and from A to B is weird), but we can
+also say that A is m-reducable to B via f. This basically means that f is a total map from A to B (all inputs have
+an output, but not necessarily vice versa). So for example if we manage to show that A ≤_m B (i.e. that w ∈ A <=>
+f(w) ∈ B), and that B is a decider, then we can use B and our function f to decide A.
+
+With this reduction we get 2 theorems: If A ≤_m B and B is decidable then so is A, and the same about the
+recognition holds. In time complexity and classes section we will use A ≤_p B which is a very similar function
+that basically adds an extra restriction, and it is that the mapping function f must finish in polynomial time.
+Exactly the same additional restriction is added to the theorems, so if A ≤_p B and B is in P, then so is A.
+Similarly, if A ≤_p B and A is not in P, then B is not in P either. Note that you will also have to show that
+the function f is in P.
+
+P.S. I found an explanation that makes sense intuitively for me: A ≤_p B means that B is at least as hard as A,
+so if B is in P and we got a function f in P that encodes A's input to B's input, then we can just use that function
+f and that turing machine B to get the result for A. A ≤_p B means that there exists such a function f btw, but
+it doesn't mean that either A or B are in P, that requires its own proof, what was to also show the theorem's logic.
+Note that the encoding means that each unique input A maps to a different one in B (doesn't have to be vice versa).
+Note that whenever creating such a function f, you must show that the mapping works, and if we work with
+p-reducability, then we must also show that f is in P. For an example check out Theorem 7.32 in Sipser's book,
+the pages are 302 - 303. There are more examples, but find those yourself in the book if interested. If you'd
+rather have a lecture walkthrough (different example) check out lecture "v20-nr7" or "v20-nr8" in Panopto.

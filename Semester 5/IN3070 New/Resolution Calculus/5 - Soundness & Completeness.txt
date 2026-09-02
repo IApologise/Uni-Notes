@@ -1,0 +1,37 @@
+--- Soundness ---
+To prove that the resolution calculus is sound. We must prove two
+things. 1. That if we add the resolvent of clauses C1 and C2 from
+S, to S, then S stays satisfiable (if it already was). 2. That the
+set S containing an empty clause means that S in unsatisfiable.
+
+To prove resolvent's soundness, assume that we got a set of clauses S
+and an interpretation I that satisfies S also denoted as I ⊨ S. Since
+I ⊨ S, and S is a conjunction of disjunctions, I ⊨ C where C is a
+clause in S, this goes for all the clauses. Now, let's say that there
+is a literal L in C_1, and -L in C_2. I must either satisfy L or -L.
+
+Case 1: I ⊨ L, this means that -L in C_2 is false, so something else
+from C_2 must be satisfied to make S satisfied. Thus, we can safely
+add C_2 \ -L to S since -L is no longer what can make C_2 satisfied.
+Case 2: I ⊨ -L, same reason as in case 1, C_1 \ L can be added to S.
+
+So, since either some literal in C_1 except for L, or some literal in
+C_2 except for -L are satisfied in I, if we add all the literals from
+both except L and -L, we are safe to say that the clause we add is
+satisfiable as long as S is. So adding a new (C_1 \ L) ∪ (C_2 \ -L)
+clause is guaranteed to be satisfiable as well (again, as long as S is).
+This is the resolvent by the way, this is the method.
+
+Now, to prove that an empty clause is unsatisfiable, assume for a
+contradiction's sake that it is satisfiable. To satisfy a clause,
+there must be an interpretation I such that I ⊨ Ø. To satisfy this
+clause at least one of the literals in that clause must be T. But,
+since there are no literals in Ø, there is nothing to satisfy.
+
+Therefore, per definition, I can not satisfy Ø, and since Ø is
+a clause in S, and S is a conjunction of disjunctions, if there
+is at least one clause that is not satisfiable, nor is the whole S.
+
+
+
+--- Completeness ---

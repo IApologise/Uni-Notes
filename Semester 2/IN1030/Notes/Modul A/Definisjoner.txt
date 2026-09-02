@@ -1,0 +1,48 @@
+Merk at når det gjelder disse definisjoner så er de generelle definisjoner. Men, i vår tilfelle
+er det ofte fokus på relasjoner og samspill mellom mennesker og digital teknologi (sosio-teknisk).
+
+
+
+--- Del 1: Sosiotekniske Systemer ---
+Sosioteknisk: Samspill mellom mennesker og digital teknologi.
+
+Interesse: Et behov, både fysisk og/eller mental, som skal tilfredsstilles (satisfied)
+Interessent: Et gruppe eller individ som kan bli påvirket av eller påvirke et system, både direkte og indirekte.
+Aktør: En interessent som direkte bruker eller samhandler direkte med systemet (sånn som et app for eksempel).
+
+Rike bilder: Et strukturert representasjon av Interesser og Interessenter som gir bredere forståelse. Disse er ofte
+laget for å identifisere konflikter mellom Interesser og Interessenter. Det finnes ingen syntaks, men ofte bruker
+man ikoner (icons), piller (pointers), sverd og hjerter. Alt dette brukes for å forenkle prosessen av bilde lagring
+og vise relasjoner mellom Interesser.
+
+Folk kan bli påvirket av objekter der nivået/rangeringen er delt slik:
+1. Micro Nivå - Hvordan noe påvirker individet
+2. Meso Nivå  - Hvordan noe påvirker et gruppe
+3. Macro Nivå - Hvordan noe påvirker samfunnet
+
+
+
+--- Del 2: Brukerundersøkelser ---
+Personopplysning: Noe som kan identifisere en fysisk person, direkte eller ikke (i.e. indirekte).
+
+Undersøkelse: Et miljø hvor man observerer og samler inn masse relevant data (ofte personopplysninger)
+1. Kvantitativ undersøkelse: Å samle tall og statistikk om noe sånn som alder, rating, osv.
+2. Kvalitativ undersøkelse: Å samle brukerens tilbakemelding sånn som meninger, opplevelser, osv.
+
+Undersøkelser kan også deles inn slike typer deltagelse:
+1. Skjult observasjon: Brukeren føler seg komfortabel som om ingen observerer ham.
+2. Åpen, passiv observasjon: Brukeren blir observert, men får ingen tips, kritikk, osv.
+3. Deltagende observasjon: Både brukeren og observatør deltar i undersøkelsen.
+
+
+
+--- Del 3: Universel Utforming ---
+Universelutforming (UU): Utforming/Tilrettelegging (design/adapt) av hovedløsningen (i.e. app, system, osv.) som
+handler om IKT (Informasjons- og kommunikasjonsteknologi), slik at hovedløsningen kan benyttes av flest mulig.
+
+Web tilgjengelighets økosystem, i.e. protokoller, anbefalinger, og mål (for UU) er slike:
+- W3C (World Wide Web Consortium) er et dokument som handler om standarter for hvordan web skal fungere.
+- WAI (Web Accessibility Initiative) er en del av W3C som fokuserer på tilgjengelighet.
+- WCAG (Web Content Accessibility Guidelines) inneholder konkrete regler/krav for å oppnå akseptabel UU.
+- Digdir (Digitaliseringsdirektoratet) er ansvarlig for at disse reglene følges her i Norge.
+Disse kommer vi å se mer på og studere i IN2120, se der for mer detaljer og konkrete forklaringer av WCAG.

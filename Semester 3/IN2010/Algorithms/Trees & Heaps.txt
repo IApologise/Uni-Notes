@@ -1,0 +1,60 @@
+A tree is like a file hierarchy. Start with the
+main folder, and go down the folder line. The main
+reason we do this is to sort stuff faster. This
+method allows us to find a file in O(log(n)) time too.
+
+Folders that are in the same folder are called
+siblings. Folders that are inside a folder are
+called children, and children's folders are parents.
+The folder with no parents is the root folder.
+
+Depth is how far from the root folder the
+folder is. If there is no root, then -1, if
+there is only root folder, then 0 is the depth.
+Height is the maximum depth of a folder.
+
+
+
+Apparently we might want to do operations during
+the time we are traversing the trees. Preorder is
+when we initialize our operation on current node first,
+and then the children nodes, and postorder is vice versa.
+
+This is mostly for recursive functions. For example, to
+copy a tree you would use a preorder where you copy the
+main element first, and then recursively copy their kids.
+But, to delete a tree, you would delete children first,
+then the root (assuming no garbage collector is present).
+
+
+
+There are multiple tree algorithms, mostly binary.
+Binary Tree: Nodes that has max 2 children.
+Balanced Tree: The shallowest spots are filled first.
+
+AVL Tree is a tree that is always sorted. It does so
+by having the middle as the head. To the left of the head
+we have nodes that are lower than the middle, and to the
+right, we have nodes that are higher than the middle. We
+also rotate the tree through left, right, and double rotations.
+This way we keep it balanced once new nodes are added.
+
+Red-Black Tree is a tree that is simplier than the AVL Tree,
+but is worse at keeping itself balanced. This is for when we
+value simplicity over complexity, mostly when memory is limited.
+It is the way that Java implements trees I think.
+
+Binary Heaps are like binary trees where their elements are comparable.
+The parent is always bigger than both children. And whenever there
+is an empty space, the shallowest one is filled, from left to right.
+Thus it is always balanced, but not sorted. Still, the elements can be
+located in O(log(n)) time due to min/max property.
+
+Huffman Coding is a brilliant compression technique.
+It compresses by looking at the symbol frequencies and
+redefines what bits represent which symbol (encoding).
+It works by making it so that no sequence of bits has a
+subsequence in it, like 010 in 0101 <- Not allowed.
+The way we can dynamically encode files like that is
+to assign those bit sequences through a tree. Check out
+Huffman-Coding.png to see how it works exactly.

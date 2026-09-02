@@ -1,0 +1,99 @@
+Abstract Datatype (ADT):
+This is a datatype that says how data will behave,
+but says nothing about how it is to be implemented.
+Kind of like interface in Java, but for datatypes.
+
+This is mostly used for lists to describe stuff like
+what functions array, or a stack, or a queue have, etc.
+But it does not say how those are implemented, only what
+inputs they take in and what they return (so interface).
+
+Note that it also means that we introduce the function
+itself too, so we introduce like a stack for example
+and specify what it can do like pop(), add(), etc.
+but again, not how those are implemented nor efficiency.
+
+
+
+P Class:
+A problem is in a class P if there exists an algorithm
+that can solve the problem in polynomial time. Meaning,
+an algorithm of form O(n^m) where m is a constant.
+
+
+
+NP Class:
+A problem is in a class NP if the solution provided
+by an algorithm to the problem can be verified in
+polynomial time, so O(n^m) where m is a constant.
+NP problems can also not be solved in O(n^m), it
+takes longer than that to solve them (exponential).
+
+Therefore, all the problems that are in NP are
+at least as hard (or rather as slow) as all the
+algorithms in class P (polynomial time).
+
+
+
+NP Hard Class:
+These are the problems that are at least as hard
+as all the algorithms in NP class. So these are
+like the hardest of NP problems which might not
+even be possible to verify in polynomial time.
+
+However, it doesn't mean that they can't be verified
+in polynomial time, or that they all take longer to
+solve than NP Class problems.
+
+All it means is that all NP class problems can be
+reduced to them in polynomial time, check out what
+reduction means and how to do it for more. This also
+means that if you could solve an NP-Hard problem in
+polynomial time, then all NP problems can be too.
+
+
+
+NP Complete Class:
+If a problem is both in NP and NP-Hard class like
+an SAT solver, meaning that it can be verified in
+polynomial time, and it takes longer than polynomial
+time to solve, and any NP problem can be reduced to
+it in polynomial time, then it is also NP Complete.
+
+
+
+Does P = NP?:
+Basically, if a problem can be verified in polynomial
+time (it is in NP), then to solve the problem itself
+it takes at least an algorithm of the same caliber
+(polynomial, class P).
+
+The question however is, are all the solutions that can
+be verified in polynomial time, also have an algorithm
+that can find those solutions in polynomial time too?
+
+Because as of today, there exist cases such as a game
+sudoku where we can verify the solution in polynomial
+time, but still can't find an algorithm that can find a
+solution to it in a polynomial time aswell. This leads
+many to believe that P ≠ NP. Basically, that verifying a
+solution might be logarithmically (or further) easier
+than finding a solution from the initial state.
+
+
+
+Polynomial Reduction:
+This is an algorithm that can turn all the solutions of
+a problem A into a problem B in polynomial time. So if
+a specific state of a problem A returns true (meaning
+that it is valid and such), then so should its reduced
+version (simplified version) B too. Same goes for all
+the returns of false.
+
+For example if we have an algorithm A that determines
+whether an input N is odd, then we can reduce it into
+an algorithm B which determined if an input M is even
+through a reduction algorithm that substitutes the
+input M from B with an input N + 1 from A.
+
+We will learn how to do this if we take IN2080 though.

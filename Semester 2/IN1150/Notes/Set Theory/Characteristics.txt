@@ -1,0 +1,113 @@
+Important note: If a set S is not given, then it is assumed
+that the relation R is related to a new, made up a set S
+which contains only all of the elements mentioned in R.
+
+Another important note: Not Reflexive and Irreflexive are
+not the same. Same goes for most of the characteristics.
+
+
+
+Reflexive Relation:
+If it is such that for all elements x in S there
+is a relation <x, x> in R, then R is reflexive.
+
+
+
+Irreflexive / Anti-Reflexive:
+If it is such that for all elements x in S there
+is no relation <x, x> in R, then R is irreflexive.
+
+
+
+Symmetric Relation:
+If for all x and y in A there is a path <x, y> and there
+is a path back being <y, x>, then A is symmetric.
+
+
+
+Assymetric Relation:
+If for all x and y in A there is a path <x, y> and there
+is no path back being <y, x>, then A is Assymetric.
+
+
+
+Anti-Symmetric Relation:
+If for all x and y in A there is a path <x, y>, and there
+is a path <y, x>, and y is x, then A is Anti-Symmetric.
+
+
+
+Transitive Relation:
+If for all x, y, and z in A there is a path <x, y> and <y, z>,
+and then there is a path <x, z>, then A is transitive.
+
+
+
+Injective Function:
+If there are no two inputs tied to the same output,
+then the function is considered injective.
+
+
+
+Surjective Function:
+If for all of the function's outputs there exists an
+input that results in that output, then the function
+is considered surjective.
+
+
+
+Bijective Function:
+If a function is both injective and surjective, then
+the function is as a whole said to be bijective.
+
+
+
+Equivalence Relation: ~
+A binary relation that is reflexive, symmetric, and transitive.
+More on it in the Terms section of Set Theory.
+
+
+
+Universal Relation:
+A binary relation that relates everything to everything else, no
+connection is missed. So it is reflexive, symmetric, and transitive.
+
+
+
+Identity Relation:
+A binary relation that relates all of the elements in a set
+only to themselves, and nothing else. So it is only relfexive.
+
+
+
+Partial Order / Total Order / Linear Order:
+A binary relation that is reflexive, antisymmetric, and transitive.
+If a relation is on set S and all of the elements are related to
+each other in at least one way, then it is a total order / linear order.
+So in total order, everything must have a relation to each other.
+More about it in the Terms section of Set Theory.
+
+
+
+Inverse Relation:
+An inverse relation is the one which flips all of the tuple's
+orders. So for example a tuple <a, b> in a relation would be
+a tuple <b, a> in an inverse relation. A and b swithced places.
+
+Note that inverse relations are usually defined for binary
+relations. Functions however are defined quite similarly.
+
+
+
+Inverse Function:
+An inverse function is the one where if before you would put
+data as an input, and you would get a result as an output,
+now you do it the other way around, you put result into input,
+and the inverse function returns data as output.
+
+Note that the inverse functions may not always be defined properly.
+If two different inputs give the same output, then the inverse
+function would be confused as to which input it has to output.
+if {<a, 1>, <b, 1>} is a function, then the inverse {<1, a>, <1, b>}
+would be invalid. An input can not have 2 different outputs.
+Therefore, only bijective functions can have an inverse of themselves.

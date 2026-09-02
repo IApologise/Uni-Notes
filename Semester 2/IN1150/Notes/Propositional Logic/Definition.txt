@@ -1,0 +1,5 @@
+In propositional logic there are statemenets that are either ⊤ or ⊥.
+There are also only 5 main logical connectivities: Negation, Conjuntion,
+Disjunction, Implication, and Biconditional. These are used as building
+blocks and in combination with each other (although not strictly necessary)
+to create statements or so called propositions.

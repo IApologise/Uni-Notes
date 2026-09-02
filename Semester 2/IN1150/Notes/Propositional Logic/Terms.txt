@@ -1,0 +1,96 @@
+Truth table: Is a table that shows all the possible results
+when accounting for all possible states the premises can have
+and what they evaluate to during those states.
+
+So we basically look at all "what if this one is ⊤, but the other
+ones are ⊥?", "What if all of them are ⊤?", etc.
+
+
+
+Truth value clasification terms of logical statements:
+-     Tautology: Always evaluates to ⊤
+-   Satisfiable: At least once evaluates to ⊤
+-   Falsifiable: At least once evaluates to ⊥
+- Contradiction: Always evaluates to ⊥
+
+If a statement is a tautlogy, then it is also satisfiable.
+It also means that it can not be falsifiable and/or a contradiction.
+
+If a statement is satisfiable, then it can not be a contradiction.
+However, it can still be either falsifiable or a tautology, not both.
+
+If a statement is falsifiable, then it can not be a tautology.
+However, it can still be either satisfiable or a contradiction, not both.
+
+If a statement is a contradiction, then it is also falsifiable.
+It also means that it can not be satisfiable and/or a tautology.
+
+
+
+Commutative:
+If an operation (a 2-arity function) is commutative, then it
+means that the the order of inputs does not matter. This can
+also be defined similarly for more than 2 arities, the point
+is that the order of inputs does not matter. So f(x, y) = f(y, x).
+
+Here are examples: Addition and multiplication are commutative,
+because 2 + 3 and 2 * 3 are the same as 3 + 2 and 3 * 2 respectively.
+However, substraction is not, 3 - 2 is not the same as 2 - 3.
+Division is not an operation at all, 2/0 is not in outputs set.
+
+
+
+Associative:
+Whenever you use the same operation twice, if they are associative,
+then they can be combined. It means that parantheses do not matter.
+So addition is associative because (a + b) + c = a + (b + c).
+Substraction is not because (a - b) - c is not a - (b - c).
+
+An operation may be associative but not commutative and vice versa.
+Let's define functions X and O. X will be an example of an operator
+that is commutative, but not associative, O is the opposite of that.
+
+X : {0, 1, 2}, {0, 1, 2} and X = {<0, 0, 1>, <1, 1, 2>, <2, 2, 0>,
+As you can see here, it is not    <0, 1, 2>, <0, 2, 0>, <1, 2, 1>,
+associative, here is an example   <1, 0, 2>, <2, 0, 0>, <2, 1, 1>}.
+(0 X 1) X 2 = 2 X 2 = 0,   0 X (1 X 2) = 0 X 1 = 2,   0 is not 2.
+However it is commutative, check each definition for yourself.
+
+O : {0, 1, 2}, {0, 1, 2} and O = {<0, 0, 0>, <1, 1, 1>, <2, 2, 2>,
+This one is not commutative,      <0, 1, 0>, <1, 0, 1>, <2, 0, 2>,
+that is because the result is     <0, 2, 0>, <1, 2, 1>, <2, 1, 2>}.
+determined by the first input, it is the "leader". However, since
+everything is decided by the first input - second, third, and so on,
+do not matter. Therefore it is associative, no parantheses needed.
+
+
+
+Idempotent:
+If an operator or a function is applied to something once, so like
+f(x) = y, then applying the same function again would not change it,
+so f(f(x)) = f(y) = y. So as you can see f(f(x)) = f(x). The result
+stayed the same as if we applied the function just once.
+
+Important note, when a function of arity more than 1 is checked
+if it is idempotent, all the inputs must have the same value.
+f(x, y) is not a valid check it can't return both x and y,
+So f(x, x) it is. Although the idea is still possible, but whatever.
+
+
+
+Identity / Neutral Element:
+An input "e" in a binary or n-ary operator for example ? such
+that x ? e = e ? x = x. No matter how we apply e, the outcome
+does not change and the input is returned back to us.
+
+
+
+Inverse Element:
+If there is such an input b in a binary or n-ary operator for
+example ? such that a ? b = b ? a = e, then a and b are the
+inverse elements of each other. So a is inverse of b, and b
+is the inverse element of a.
+
+Often you can see people write not a ? b = b ? a = e, but
+a ? a^-1 = a^-1 ? a = e. In this case, a^-1 is the inverse
+of a, and a is the inverse of a^-1. The identity element is e.

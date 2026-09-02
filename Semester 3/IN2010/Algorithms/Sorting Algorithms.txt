@@ -1,0 +1,103 @@
+Bubble sort:
+Goes through the whole array and switches x with x-1 if necessary.
+Next time we switch again from start, but up to n-2 instead of n-1.
+It repeats this until it is sure that an array is sorted (n-1 times).
+
+
+
+Selection sort:
+Finds the smallest value A and places it first (checks whole array
+first for this, n-1). Then repeats for second, third, etc. until n-1.
+
+
+
+Insertion sort:
+Places values where they are supposed to be relative to each other.
+It splits the array into a sorted and unsorted part and inserts the
+values n-1 times. Example: We start with 3, 2, 1, 5, 4. After first
+Iteration we get 2, 3, 1, 5, 4. Next: 1, 2, 3, 5, 4. Next: 1, 2, 3, 4, 5.
+It is similar to selection sort, but instead of placing value where it is
+supposed to be from the start, we place it where it is supposed to be
+relative to the sorted part on the left.
+
+
+
+Heap sort:
+Note that this is more of a how to sort a heap and not an array. So to
+make it work with array first convert an array to a max-heap. To sort
+max-heap we first let i=H[n-1] where n is the size of the heap and H is
+the heap. Then we switch root with i and sink the new root to where it is
+supposed to be. However, we do not sink it further if it gets into the
+sorted part. To avoid this, we specify the part that is unsorted yet,
+namely n-2, then n-3, and so on. Now we repeat this process until done sorting.
+It is like an insertion sort where we create a sorted part and an unsorted one.
+The sorted part starts at the end though.
+
+
+
+Merge sort:
+Divide array into pairs of 2, sort those, and then merge those pairs into
+2 again, and again and so on. So we get 2 elements per pair first, then 4
+per pair, then 8, ... This way the time complexity is O(n * log(n)). Note
+that the way we merge is O(n). That is because the two sub-arrays are already
+sorted, so we don't need to iterate over them multiple times, just once. Kind
+of like a simplified selection sort. And since we repeat this process O(log(n))
+times and not O(n) due to splitting, the total time becomes O(n * log(n)).
+
+
+
+Quicksort:
+Choose a pivot (a reference point) first. Everything to the left of the pivot
+should be smaller than it is, everything to the right is bigger. To make it so
+we look for the incorrect values on both sides and switch them places. So find
+the incorrect on left, then one on the right, and then switch. If one of these
+two pointers did not find the wrong value, then they meet eventually. Once they
+do we switch places with the pivot (depends on side chosen, if we choose left
+pointer as the main one then the pivot switches with the right most value first,
+then the left pointer goes first, if it doesn't find anything wrong then we choose
+a new pivot and start over again. If the left pointer finds wrong value and the
+right doesn't, then we switch our pivot at the point where left and right meet,
+this second part is a successful one so we split and continue our quicksort. If
+we were to choose right as main pointer, then we switch pivot with left most value
+and the right pointer goes first.). Then repeat this for left and right parts (it
+is kinda like merge sort). We only repeat same process without progress only if
+a bad pivot was chosen and no changes had to be made in the first place by the
+main pointer (depends if left or right pointer goes first).
+
+Efficiency depends on how well the pivot was chosen, yet there doesn't exist the
+best method of finding one. Ideally you would want to choose the median value,
+but to find one you need to use O(n) time for this. Therefore the common method
+is to either choose randomly, or calculate the median between the first, last,
+and middle values. Can also be the median between 3 random values, 5, etc. But
+at that point we are just getting to the O(n) method. Just don't pick first or
+last values as your pivot since it is the worst case scenario.
+
+
+
+Bucket sort:
+This sorting algorithm works for finite sets. Natural numbers for example are
+an infinitely large set N, so we can not use bucket sort there unless we find
+some other category we can sort it by (such as being even or odd for example).
+
+Next we create array lists for each of the categories which for convenience
+lets say we work with a set of cards (A < 2 < ... < 10 < J < Q < K) which
+result in a total of 13 array lists (one for each category). Now, we simply
+go over the random list and put these values into their corresponding array
+list. This makes the algorithm finish in an O(n) time.
+
+But, since a set of cards also has a symbol (club < diamond < heart < spade)
+we can create an arraylist for those too, so 4 more array lists. Since we have
+the values already sorted, we can read those in order then sort by the symbols
+as well. After that, again, since the array lists were placed in the right order
+from the start (need that kind of setup), we can put it all into a single list
+and read everything from there making the whole thing in O(2n) = O(n).
+
+
+
+Radix sort:
+Basically a bucket sort but with multiple bucket sort iterations such as in
+the example with cards seen in the bucket sort description. If we were to
+only have just (A < 2 < ... < 10 < J < Q < K) so 13 arrays without any more
+iterations then it wouldn't be a radix sort. Because there was the next
+iteration (4 more array lists with club < diamond < heart < spade), it
+then became a radix sort. Used when data can be ordered lexicographicly.

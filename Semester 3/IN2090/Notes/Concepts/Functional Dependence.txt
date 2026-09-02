@@ -1,0 +1,56 @@
+Functional Dependence:
+Say we got collumns A and B in our table filled with lots
+of rows of data. Functional dependence is when we can get A
+from B. So B is kind of like a primary key to identify A.
+This is denoted as B -> A.
+
+Note that primary key can consist of multiple collumns like B
+and C. So if that were used instead to identify A we would
+denote that as BC -> A, if we could also identify collumn D
+with that, then we would denote it as BC -> AD.
+
+So in those examples, A and D are both functionally dependent
+on a combination of B and C. This does not work the other way
+arround however, A and D can repeat, B and C can not (unique).
+
+This is a piece of design that we can not achieve using ER modelling.
+ER modelling shows the relations between tables, functional dependence
+shows relations between collumns. Simple as that.
+
+Also, note that this functional dependence, although it touches
+the relations between collumns, these collumns might be in different
+tables, so functional dependence is described on schema's level.
+Reminder: Schema is our database, so a folder where we keep tables.
+
+
+
+If we have corelations X → Y and Y → Z then we also have X → Z.
+Therefore, X is the primary key that can be used to identify both
+Y and Z. This can be used to identify better design models. Note
+that X can also be a candidate key if more options exist.
+
+So what can be identified by X is called its closure (be it direct
+or not). X's closures are X itself, Y and Z denoted as X^+ = X, Y, Z.
+In this case X is the primary key. That is because there are no more
+options that we can use to identify all the collumns X, Y, and Z.
+
+The operation "→" is transitive. However, it isn't commutative nor is it
+associative. So X → Y is not the same as Y → X, and X → Y → Z is not the
+same as X → Z → Y, but, X → Y and Y → Z can be merged into X → Y → Z.
+
+Here is a concrete realization example from previous part.
+| CREATE TABLE Students (
+|     student_name text PRIMARY KEY,  -- PRIMARY KEY because Candidate key X
+|     takes_course text NOT NULL,     -- NOT NULL because Y relation to Z
+|     course_description text         -- No restrictions because none depend on Z
+| );
+
+We can easily determine which are a part of being a candidate key
+or not by using this technique: If some collumn X is never occuring
+on the right side of any → operator, then X must be a part of a
+candidate key. If X never occurs on the left side, then it can not
+be a candidate key. For the rest, simply check the possibilities.
+Remember that there can be multiple candidate key combinations.
+
+A great explanation which is way better than what I could write
+for myself is to simply watch 07-02.mp4 from 14:24 to 18:31.

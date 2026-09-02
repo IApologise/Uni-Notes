@@ -1,0 +1,23 @@
+SDL (Storage Definition Language):
+This is an SQL part that focuses on the actual
+physical layers of how sql works with pc.
+
+DDL (Data Definition Language):
+This is an SQL part that focuses on concepts
+and how to utilize them the best in SQL.
+
+VDL (View Definition Language):
+This is an SQL part that focuses on presenting
+the database architecture to make it easier.
+
+DML (Data Manipulation Language):
+This is an SQL part that focuses on using
+the SQL commands to do what needs to be done.
+
+DQL (Data Query Language):
+This is an SQL part that focuses on searching
+and receiving the right data from the database.
+
+DCL (Data Control Language):
+This is an SQL part that focuses on the cyber
+security of the database and its integrity.

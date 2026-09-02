@@ -1,0 +1,55 @@
+Whenever a user specifies and/or chooses sorting options avaliable
+the program should be able to translate this into a .sql script which
+then is executed and the results sent to the user pc.
+
+For example, let's say that the user wants to buy a house and goes to
+finn.no to find one. There he chooses option "boliger" which becomes:
+| SELECT *
+|   FROM boliger;
+This table is then converted to the user friendly interface at finn.no.
+
+Note that whenever these queries are generated they are considered
+just strings which means that all sorts of changes can be done to em.
+
+Once queries are generated, they must be sent and executed. To send
+those queries we use what's called a connection object which connects
+us to the database. We need this connection object because we need DB
+name, username, password, etc. which the user obviously doesn't know.
+Once the user is autthenticated, it creates what's called a cursor
+or a statement object which executes the query and sends data back
+to the user through the connection object.
+
+Note that the connection object and cursors/statements do not protect
+against SQL Injections and such, it is well written code in the server
+that executes the cursors/statements that does so using "%s" in SQL query.
+
+
+
+For python we use a library called psycopg which allows us to create
+these connection and cursor objects in python thorugh commands like
+"psycopg2.connect({Connection})" and connection's ".cursor()" method.
+
+The cursor can then execute the query using ".execute({Query})", note
+that {Query} is a string. To get the result back you type in cursor's
+".fetchall()" which returns a list of tuples (so a matrix).
+
+For Java we got a library called JBDC which is more universal, so it
+also requires a driver to be installed for PostgreSQL which is done
+
+using this line of code "Class.forName("org.postgresql.Driver")".
+Then create "DriverManager.getConnection({Connection});" which is a
+connection object, note that {Connection} must be of type <conStr>.
+
+Once the connection object is created, we can use it to create
+statements ".createStatement();" and ".prepareStatement();" both of
+which do the same but one is more flexible than the other. Finally
+we can do ".execute();" on the statement which returns a ResultSet
+object. You can use ".next();" on ResultSet to get next row.
+
+From the row we can get the collumns using ".getString({index});"
+and ".getInt({index});" etc. where {index} is an integer which
+points to a collumn in the row (idk if it starts at 0 or 1).
+
+Note that in both python and java there are memory leaks that happens
+from connect objects, cursor/statement objects, and ResultSet in Java
+too. So to fix that we can do ".close()" to reset the memory usage.

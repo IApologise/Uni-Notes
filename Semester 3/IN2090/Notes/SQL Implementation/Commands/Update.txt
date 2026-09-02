@@ -1,0 +1,20 @@
+This is a continuation of SQL Core file.
+All the syntax rules there also apply here.
+
+
+
+General Helper Instructions:
+| SET {Value}  ->  What we update or replace rows with
+| WHERE {Condition}  ->  When we update or replace rows
+
+
+
+Instruction Examples:
+|
+| UPDATE Students
+|    SET birthdate = '1987-10-03'
+|  WHERE name = 'Sam Penny';
+|
+| UPDATE products
+|    SET unit_price = unit_price * 1.1
+|  WHERE quantity_per_unit LIKE '%bottles%';

@@ -1,0 +1,71 @@
+--- General & PostgreSQL ---
+
+About SQL:
+- Imperative & Declarative Coding
+- 4 Database Types
+- SQL Branches
+
+Formal Definition (Set Theory):
+- DB Construction
+- Relation Algebra
+- Super Keys
+
+
+
+--- Structure & Diagrams ---
+
+ER Diagrams & Realization:
+- About Datamodelling
+- Syntax & Semantics
+- Realization Algorithm
+
+Analysis & Optimization:
+- Functional Dependence
+- Anomalies & NormalForms
+- Lossless Decomposition
+
+
+
+--- PostgreSQL Scripting ---
+
+Syntax & Semantics:
+- Basics (Semicolons, etc.)
+- Datatypes, Manipulation & Math
+- Database Creation & Copy
+- Insert, Update, & Alter
+- Delete & Drop
+- Queries, Unions, & Joins
+- Explain & Analyze
+- Command Order
+
+Commands for User Access:
+- Privilige & Roles
+- Temporary Accounts
+- Connection Limits
+
+Scripts:
+- Constructing Scripts
+- UI to Scripts
+- Executing through CMD & Shell
+- Integrating into Python & Java
+
+Query Processing:
+- Index Structures
+- Queries Under the Hood
+
+
+
+--- Safety & Security ---
+
+Reliability:
+- ACID
+
+Security:
+- Authenticity
+- Firewalls
+- CIA
+
+Data Access:
+- Role Based Access Control
+- Data Encyrption
+- User is Owner

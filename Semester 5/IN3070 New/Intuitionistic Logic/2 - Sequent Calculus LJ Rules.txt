@@ -1,0 +1,72 @@
+--- Core differences ---
+In Sequent Calculus LJ which is the intuitionistic logic branch of Sequent Calculus,
+we are not allowed to prove more than a single conclusion at a time, thus we can
+at most have only one conclusion in the right side of ⊢ and at least 1 too. Note that
+this limit does not apply to the left side though. If we have none on the right side,
+then we usually add a dummy conclusion/goal D.
+
+We also don't branch often in this type of logic (we can though), and we often have choices which we can make. If we fail at the choice we've made, then we can always
+copy-paste up to the point when the choice was made and try a different one. You
+will see once we get to the ∨-right rule (there are 2 of those we can choose from).
+
+Note that to prove validity, all the branches must be closed as per usual. So if
+one of the choices we've made turns out unable of proving validity, and the other
+one is able to prove validity, then the formula is valid since one of those was able
+to prove validity, one of those choices that we've made, e.g. not all must be valid.
+
+
+
+--- Rules ---
+
+Axiom rule:
+
+----------- axiom
+Γ, A ⊢ A
+
+
+
+Left/Right structural rules:
+
+ Γ ⊢ D            Γ ⊢ D
+-------- W-left   ------ W-right
+Γ, A ⊢ D          Γ ⊢ A
+
+Γ, A, A ⊢ D          Γ, B, A ⊢ D
+----------- C-left   ------------ P-left
+ Γ, A ⊢ D            Γ, A, B ⊢ D
+
+
+
+Left/Right logical rules:
+
+Γ, ¬A ⊢ A           Γ, A ⊢ D
+---------- ¬-left   ---------- ¬-right
+Γ, ¬A ⊢ D            Γ ⊢ ¬A
+
+ Γ, A, B ⊢ D           Γ ⊢ A   Γ ⊢ B
+------------- ∧-left   -------------- ∧-right
+Γ, A ∧ B ⊢ D             Γ ⊢ A ∧ B
+
+Γ, A ⊢ D   Γ, B ⊢ D             Γ ⊢ A                  Γ ⊢ B
+-------------------- ∨-left   ---------- ∨-right_1   ---------- ∨-right_2
+   Γ, A ∨ B ⊢ D               Γ ⊢ A ∨ B              Γ ⊢ A ∨ B
+
+Γ, A → B ⊢ A   Γ, B ⊢ D           Γ, A ⊢ B
+------------------------ →-left   ---------- →-right
+     Γ, A → B ⊢ D                 Γ ⊢ A → B
+
+
+
+Left/Right quantifier rules:
+
+Γ, ∀xA, A[x\t] ⊢ D          Γ ⊢ A[x\a]
+------------------ ∀-left   ---------- ∀-right †
+   Γ, ∀xA ⊢ D                Γ ⊢ ∀xA
+
+Γ, A[x\a] ⊢ D            Γ ⊢ A[x\t]
+------------- ∃-left †   ---------- ∃-right
+ Γ, ∃xA ⊢ D               Γ ⊢ ∃xA
+
+Note that ∃xA is not preserved, but we can by branching, it just isn't necessary
+unless we made a mistake (because we are dumb), but at this point we should just
+start over from that point instead since it would not allow us to prove validity.

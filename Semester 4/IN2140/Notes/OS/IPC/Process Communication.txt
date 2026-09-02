@@ -1,0 +1,43 @@
+--- IPC - Inter Process Communication ---
+Different processes might want to communicate with one another, kinda like clients and servers in multiplayer games.
+There are 2 types of communication that they can have, direct and indirect. With direct, client A must specify which
+client X it sends data to. Client X must specify which client it must receive the data from, i.e. client A. That is
+because the buffer may be full with other clients and other data, so we want to select what is useful and not what
+isn't. Direct communication allows for one-to-many connections (sent by one, received by many). As for indirect
+communication, it allows for many-to-many connections (sent by many, received my many). This is done by having a
+host server of sorts that manages the client connections and the data they can access (processes request data and
+send data to that server themselves). In direct communication, both the sender and the receiver must have buffers
+(temporary storage until data is processed) set up. In the indirect communication, there is only 1 buffer and it is
+the server or the "mailbox" as described in the presentation.
+
+The servers, i.e. "mailboxes", have the information received stored in a FIFO data structure. Note that we have to
+address who is supposed to be the receiver, so we get a matrix: Insert data by rows which are sorted in FIFO order.
+When the receiver looks at the server and finds the information type it was looking for, it is taken out of that
+receiver's buffer (from FIFO row in matrix). The data itself is of a custom struct type we define which consists
+of a "long" type and "char[] type". There are commands that use these structs to send and receive messages to and
+from processes, "msgsnd()" and "msgrcv()" in C. For more detailed explanation check out the "C - Communication.png".
+
+In our case, we don't consider the internet as a whole, for all we know it all could be local as well. In this case
+it is local, all of it is happening only on your PC so processes can communicate between each other. There is no
+difference in what must be achieved, the only thing that is different is security which does change how the data is
+to be sent and received when working over networks. But in this case we got our OS managing it all with 0 security
+issues making it simple and plain.
+
+There is also something about pipes which I don't understand completely, so just check out the screenshot called
+"Pipe Example.png". For now I can't figure out how it works, best to google and ask AI for some clarification.
+I guess there is also a difference slide, so check that out for some help too "Mailboxes & Pipes.png".
+
+There is also an another way to communicate and that is through shared memory. It works by assigning some space for
+this memory in RAM (a frame), and the processes that share it have a virtual memory address in their pages pointing
+to that frame (the start of this shared memory) in RAM. So the virtual memory treats shared memory as being part of
+the process, when in reality it is not truly isolated. This means that multiple virtual addresses that point to the
+same physical address can have their present bits set to 1 (i.e. that the address is loaded). When unloading the
+frame (that physical address) we cascade set all the present bits within all those virtual addresses to 0, but of
+course we have a data structure that does it fast and not just check all the virtual addresses in existence to see
+if they point to this or some other physical address (and is loaded). Getting access to this shared memory is easy
+and is not regulated, so if there is an application that launches processes X and Y which share a memory, I can
+create a separate application which creates a process Z granting me direct control of the shared memory between X
+and Y, even if the application didn't intend to give me any through its user interface. Kind of like creating a
+Cheat Engine, but usually these applications and games act as a single isolated process, so what the Cheat Engine
+actually does is just scanning all of RAM and finding addresses that most likely represent the game data (based on
+value changes during game run time).

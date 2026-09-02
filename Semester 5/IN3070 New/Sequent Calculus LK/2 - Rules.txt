@@ -1,0 +1,132 @@
+Description:
+Sequent Calculus LK is used to prove validitiy in case all the axioms
+are closed, or falsifiability if at least one isn't. The way it works
+is we start by trying to prove that it is falsifiable by looking at
+all the ways we can falsify it.
+
+If we end up with a situation where atomic-formula (p, q, r, etc.)
+must be both ⊤ and ⊥ which is denoted as p ⊢ p (more on it in general
+form section) which is obviously not possible to falsify since it is a
+contradiction (axiom), then we can close the branch and conclude it as
+valid. If all the branches are closed, it means that there is no way
+to falsify the formula and therefore it is valid.
+
+
+
+General form:
+The way we represent assumptions and conclusions is through this
+general form where Γ are the formulas we assume to be true, whilst
+∆ is what we can derive from those assumptions denoted through ⊢.
+The general form thus becomes Γ ⊢ ∆. This means that to falsify a
+branch all formulae in Γ must be ⊤ and all in ∆ must be ⊥.
+
+Before we go into the rules though, note that the symbols Γ and Σ
+often represent assumptions also called ascendants (⊤ per definition),
+whilst ∆ and Π are conclusions also called succedents. These assumptions
+and deductions are sets which may be empty and thus either not denoted,
+denoted as {}, or denoted as Ø. In handsight, {A ∧ B} can be denoted
+as Γ, Σ, ∆, or Π. Anything goes where ⊢ is per definition the separator.
+So what actually Γ, A ⊢ ∆, A stands for is this: (Γ ∪ A) ⊢ (∆ ∪ A).
+
+
+
+Deduction / Evolution:
+We can use rules which were logically derived from syntax and semantics
+to derive a conclusion from original assumptions. Kind of like trying stuff
+out and see where it leads us. Of course often we have a goal in mind, a
+destination we want to get to, a deduction to make, a conclusion to get to.
+
+Note that during process, we may split into multiple branches or join
+branches into one, thus a split branch like {{Γ, A} ⊢ {∆}, {Γ, B} ⊢ {∆}}
+can be joined into a single one as {{Γ, A ∨ B} ⊢ {∆}}. To denote this
+split without curly brackets, we simply split them by using 3 spacebars
+like so: {{Γ, A} ⊢ {∆}, {Γ, B} ⊢ {∆}} ≡ Γ, A ⊢ ∆   Γ, B ⊢ ∆
+
+
+
+Axiom rule:
+
+------------ axiom
+Γ, A ⊢ ∆, A
+
+
+
+Left/Right structural rules:
+
+  Γ ⊢ ∆              Γ ⊢ ∆
+--------- W-left   ---------- W-right
+Γ, A ⊢ ∆           Γ ⊢ ∆, A
+
+Γ, A, A ⊢ ∆           Γ ⊢ ∆, A, A
+------------ C-left   ------------- C-right
+  Γ, A ⊢ ∆              Γ ⊢ ∆, A
+
+Γ, A, B ⊢ ∆           Γ ⊢ ∆, A, B
+------------ P-left   ------------- P-right
+Γ, B, A ⊢ ∆           Γ ⊢ ∆, B, A
+
+
+
+Left/Right logical rules:
+
+Γ ⊢ ∆, A            Γ, A ⊢ ∆
+---------- ¬-left   ---------- ¬-right
+Γ, ¬A ⊢ ∆           Γ ⊢ ∆, ¬A
+
+Γ, A, B ⊢ ∆            Γ ⊢ ∆, A   Γ ⊢ ∆, B
+------------- ∧-left   -------------------- ∧-right
+Γ, A ∧ B ⊢ ∆              Γ ⊢ ∆, A ∧ B   
+
+ Γ, A ⊢ ∆   Γ, B ⊢ ∆           Γ ⊢ ∆, A, B
+--------------------- ∨-left   ------------- ∨-right
+    Γ, A ∨ B ⊢ ∆               Γ ⊢ ∆, A ∨ B
+
+Γ ⊢ ∆, A   Γ, B ⊢ ∆            Γ, A ⊢ ∆, B
+-------------------- →-left   -------------- →-right
+   Γ, A → B ⊢ ∆               Γ ⊢ ∆, A → B
+
+
+
+Left/Right ∀ & ∃ (quantifier) rules:
+
+Reminder, A[x\t] means that we substitute a term t for
+every free occurence of the variable x as long as our
+substitution value t is not already within A's scope.
+
+If we want to denote a substitution specifically we
+define σ first as σ = [x\t] and then write A(σ(x)).
+If we want two substitutions to result into the same
+thing, so σ(x) = σ(y), then that is called a unifier.
+
+For example, we can substitute ∀xA[x\t] where A is equal
+to p(x) ∨ ¬p(t) and get ∀xA = p(t) ∨ ¬p(t), so p(t) ⊢ p(t).
+Since t was not bound in A's scope to begin with it's fine.
+That logic applies for all ∀ and ∃ rules because otherwise in
+an example like ∀y∀xA[y\x] where A = p(x) ∨ ¬p(y) becoming
+∀x(p(x) ∨ ¬p(x)) we only look at the diagonal of permutations
+where x = y, and not the whole grid of possibilities.
+
+However, ∀-right and ∃-left are a bit more problematic. Not
+only are the same limitations applied, but in addition to that
+when substituting A[x\t] (All instances of x in A with t), we
+must make sure that t is not in previous sequences (same branch).
+So t must be a new, fresh variable not seen anywhere before. Take
+∀-left and ∀-right for example. Since the left is the assumptions
+part, we may substitute with any concrete example. However, right
+side is what we have to conclude, and we can not conclude a single
+example unless it was arbitrarily chosen. This arbitrarity is what
+forces us to use a variable that wasn't introduced before. Similar
+reasoning works for ∃-right and ∃-left. This restriction is denoted
+by the symbol † to the right of the name of the rule.
+
+Γ, ∀xA, A[x\t] ⊢ ∆          Γ ⊢ ∆, A[x\a]
+------------------ ∀-left   ------------- ∀-right †
+    Γ, ∀xA ⊢ ∆               Γ ⊢ ∆, ∀xA
+
+Γ, A[x\a] ⊢ ∆            Γ ⊢ ∆, ∃xA, A[x\t]
+------------- ∃-left †   ------------------ ∃-right
+ Γ, ∃xA ⊢ ∆                 Γ ⊢ ∆, ∃xA
+
+Also, check out SAT Optimizations if you want some rules that can make
+your SAT solver faster, it doesn't change its soundness nor does it
+change its completeness either. But it does complicate things a bit.

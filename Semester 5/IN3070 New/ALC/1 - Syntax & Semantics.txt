@@ -1,0 +1,92 @@
+--- Syntax & Semantics ---
+As you can see from motivation.png series, we have defined new symbols and limited
+2-ary atoms as always having a single free (left) and single bound (right) inputs
+which are also called roles. 1-ary ones have a single one that is free too and are
+called concepts. So our atoms are 1-ary or 2-ary predicates. Concepts basically
+describe objects with common features and roles help us to connect them.
+
+Therefore, we've made special symbols ¬, ⊓, ⊔, and ⊑ which work the same way as
+in propositional logic ¬, ∧, ∨, and →. However, those can only be applied to
+concepts and not roles. Also, note that ⊤ and ⊥ are both conceepts. Anything that
+is valid or unsatisfiable is a concept basically. Also, slight catch, ⊑ also adds
+a universal quantifier at the end, so A(x) ⊑ B(x) = ∀x(A(x) → B(x)) where x is
+supposed to be the last free variable type left.
+
+Here are some concept examples: 1. Adult, 2. ¬Child, 3. Child ∨ Adult,
+4. Juvenile ⊓ Disease. Note that numbers are not part of syntax but are
+more like lines of code for our program.
+
+ 
+
+For 2-ary atoms (roles) like Damages or Affects to become concepts the second (or one of the two inputs only) must be bound by a quantifier and a concept itself. To
+denote something like that we write ∃Damages.Joint and ∀Affects.(Child ⊔ Adult).
+The first one says ∃y(Damages(x, y) ∧ Joint(y)), and the second one says
+∀y(Affects(x, y) → (Child(y) ∨ Adult(y))).
+
+So these are the equivalences that we get. So, when using ∃ on 2-ary atom, we
+divide with ∧, when using ∀ we divide with →, both followed by a concept.
+
+
+
+To finalize a concept as a fact, we simply add a quantifier which binds the remainig
+quantifiers which should be just 1 variable type like all x-es of a whole concept.
+Before an example is given, note that ⊑ is the perfect closure.
+
+Here is an example fact in ALC Person ⊑ Child ⊔ Adult which reads
+∀x(Person(x) → (Child(x) ∨ Adult(x)) when translated to first-order logic.
+
+Here are some more fact examples: 1. JuvenileDisease ⊑ ∀Affects.(Child ⊔ Teen),
+2. Child ⊔ Teen ⊑ ¬Adult, 3. JuvenileDisease ⊑ Disease. Think of it as something
+that belongs to the left side of ⊑ also belongs to the right side of ⊑.
+
+You can check out the types of uses that are commonly done this way thorugh a
+Syntax & Semantics.png picture which should be located in the same folder.
+
+
+
+We can also represent contants as facts by simply replacing variables with specific
+cases, so instead of Human which actually denotes Human(x), we do Human(Joe) which
+is the same as Human(Joe) where Joe is now a new constant that is also a human.
+Note that ⊤ and ⊥ are both concepts and facts.
+
+If we write Person ⊓ Man(Joe), then it is the same as (Person(Joe) ∧ Man(Joe)), we
+simply replace the free variable with a constant which in this case is "Joe".
+
+
+
+--- Knowledge Base ---
+ALC knowledge base is basically like a database where all the facts are stored and
+such denoted as a fancy K symbol. The database K = <T, A> (fancy T and fancy A)
+where both T and A are sets. A which is called ABox has all the constants ("data
+assertions") that are like Human(Joe) and Affects(HIV, Joe) and such, so basically
+concepts/roles where the free variable type is substituted with a constant. T which
+is also called TBox has all the facts where the free variable type is bound by a
+universal quantifier instead of a constant like in ABox. So for example:
+Child ⊔ Teen ⊑ ¬Adult, JuvenileDisease ⊑ Disease, etc.
+
+For some reason, to translate ALC syntax to First-Order Logic syntax, we use symbol
+pi like pi_{free variable type}({ALC Concept/Role/Constant/etc.}) which should
+output first order logic syntax.
+
+Anyways, sometimes the things we describe in our program might never occur such as
+Arthritis only affecting Adults, and JuvenileDisease only affecting Juveniles (Not
+Adults), so if we define JuvenileArthritis, it will always be False. This leads to
+an error by our program.
+
+So basically we want to check if it is satisfiable or nah, we can do it simply by
+checking if from our premises from a TBox we can satisfy this conclusion (fact) A
+denoted as T ⊨ A. This is where Sequent Calculus for ALC comes in which is more
+like a modal logic to be honest.
+
+
+
+--- Alternative Semantic Definition ---
+For some reason I am told the other way to define semantics using "Direct (Model-Theoretic) Semantics" which is done by constructing an interpretation I and a domain
+D where everything that is in domain D is evaluated as ⊤ and what is not in D is ⊥.
+
+The rest is basically defining logical operators like ¬, ⊓, and ⊔ as the ones from
+set theory, where ¬A = D \ A, A ⊓ B = A ∩ B, A ⊔ B = A ∪ B, and some for
+quantifiers too, but idk go look at the screenshot instead (Direct Semantics-x.png).
+
+Oh by the way, found out that roles + quantifiers are basically the same as box □,
+and diamond ◇ from modal logic. Basically, ◇A = ∃R.A, and □A = ∀R.A, neat right.

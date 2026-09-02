@@ -1,0 +1,33 @@
+Folk ikke alltid gjør det de sier, og vice versa. Vi gjør brukerundersøkelser for å finne ut hva som skal forbedres,
+hva som er forvirrende og teknisk vanskelig for brukerne. Når vi gjennomfører brukerundersøkelser må vi bare
+observere og ikke påvirke brukeren på en uplannlagt måte. Vi må også navngi hvilke gruppe folk skal undersøkes, i.e.
+hvilke relevante bakgrunn vi trenger, f.eks.: Barn, pensjonister, studenter, sykepleiere, osv.
+
+Med brukerundersøkelser trenges det en samtykke hvis man vil få inn personopplysninger, i.e. data som kan
+identifisere en person. Dette er det personopplysningloven handler om, den sier hva som må være oppnådd, hva
+som er ikke lov, hvilke straff samt hvem for de. Samtykket må være frivilig, spesifikt, at brukeren har lov til
+å få informasjon om hvordan og til hva personopplysningene er brukt, og at samtykke må være gitt eksplisitt.
+
+Før man gjør en undersøkelse må man få: Samtykke. Det er også viktig å Anonymisere alt mulig (med mindre det er
+relevant til undersøkelsen). Det er viktig å observere nøye og gjøre notater underveis. Deretter, til slutt kan vi
+analysere det vi fant ut basert på de notatene vi har gjort. By the way, noter bare det som er relevant.
+
+Selve undersøkelser delles inn i 2 del: Kvantitative og kvalitative. Kvantitative undersøkelser handler om å få inn
+tall sånn som gjennomsnittlig bruker alder, top og bottom 1% bruker alder, antall brukerne som er handikappa, osv.
+Kvalitative undersøkelens mål er å få til det som kan ikke beskrives av tall sånn som brukerens tilbakemelding av
+både meninger, opplevelser, beskrivelser, osv. som er ofte oppnådd via intervjuer, tilbakemeldinger, og direkte
+spørsmål. Målet er å få inn en dypere forståelse, ofte noe tallene kan ikke vise, nemlig: Følelsene.
+
+Undersøkelsene er ikke alltid deltagende, noen ganger observerer man bare personen, og noen ganger er det slik at
+folk merker ikke at nen observerer dem i det hele tatt sånn som ute på gata fra siden av. Det første heter
+deltagende observasjon, det andre heter åpen og passiv observasjon, og det tredje heter skjult observasjon.
+
+Hva som skal beskrives i et dokument får å få et gyldig samtykke:
+1. Formål: Dokument's tittel og dato, hvem undersøker, hva blir undersøkt, og hvorfor
+2. Deltakelse: Nevne målgruppe, ønske for konkret personlig data behandling, og hvor lenge de blir behandlet (dato)
+3. Type Deltakelse: Neven deltakerens rettigheter (f.eks. kan man trekke seg fra når som helst eller ikke?)
+4. Personvern: Detaljer om personlige opplysningene blir annonymisert (eller ikke), hvem som skal ha tilgang til
+disse data, hvordan disse data blir brukt til slutt, og hva som blir oppbevart (f.eks. annonymisert data).
+5. Rettigheter: Kontakt informasjon for trekk av bruk av dine data eller ønske for tilgang til dine lagrete data
+6. Samtykkeerklaring: Nevne at man har lest over dokumentet, forstått informasjonen, og samtykker. Kreves signatur,
+Svaret "Ja", sted og dato for underskrivelse (signatur), og deltakernes fullt navn.

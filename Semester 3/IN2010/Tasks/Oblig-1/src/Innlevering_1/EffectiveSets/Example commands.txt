@@ -1,0 +1,24 @@
+insert 5
+insert 12
+insert 3
+size
+contains 12
+contains 3
+contains 5
+contains 8
+contains 10
+remove 12
+remove 3
+size
+contains 12
+contains 3
+remove 5
+size
+contains 5
+insert 8
+contains 8
+size
+remove 8
+contains 8
+size
+exit

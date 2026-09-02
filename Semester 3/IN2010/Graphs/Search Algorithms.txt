@@ -1,0 +1,192 @@
+Depth-first search:
+An algorithm that takes one path at a time. This type of
+algorithm always ends up as a tree, whenever it has a choice
+of taking either path A or B, it takes A and once it hits
+a dead end it backtraces back to that same choice and takes
+B next (if it has not visited it before already). It is the
+fastest at finding a node, but not the shortest path. Still,
+if we are to visit them all, it is still a O(|V|) in time.
+Note that |V| is the amount of vertices (nodes).
+
+
+
+Breadth-first search:
+An algorithm that takes all a look at all the neighbouring
+paths first. The path also always ends up as a tree. Whenever
+it has a choice A or B it first picks A, then immediately
+goes back and picks B, and so on. Only then will it move
+further and explore other paths. This one should complete
+in O(|V|) which is linear and very nice.
+
+
+
+Dijkstra's algorithm:
+Same as breadth-first search but it is adjusted to work with
+weighted edges and with/without directional graphs. We also
+look at all the paths and replace all previously found paths
+to node X if a better one was found.
+
+Once we check all the neighbours of node X we no longer come
+back to it, but it can still be visited as a neighbouring node
+to check if a shorter path to it was found. Once all the paths
+to neghbours were found, we choose the shortest one (in hopes
+of getting to the destination faster).
+
+Note that once we get to a node X, if there is a node Y that we
+already visited (not as a neighbour) then we ignore it and do not
+even try to update its weights because if we did visit it before,
+then we already did check all its neighbouring paths.
+
+Also, make sure to use queues since they are convenient and
+minimize work done. Time complexity is O((|V| + |E|) * log(|V|))
+where |V| is the amount of nodes and |E| is the amount of edges.
+The time complexity is such because we visit each node and edge
+once and do RemoveMin(queue) which is an extra log(|V|).
+
+
+
+Bellman-Ford algorithm:
+This is an algorithm whose sole purpose is to detect whether
+there is a way to go below weight 0 in a graph with negative
+weights. If that is the case, then we do not accept the path
+as valid (or a graph overall) and therefore raise an eror.
+
+Otherwise, although it is slower than Djikstra's algorithm, it
+will still return a proper path/value if there is no error. The
+way we find an error is by updating shortest paths for each node
+one at a time. So we take all nodes, update shortest paths to
+the start node, and do that again for a better one next time.
+Since the longest cycle can be |V| - 1 in length, we repeat
+this process |V| - 1 times, and if we get an update to any of
+the nodes the next run, then we got a negative cycle in a graph.
+It was said that it takes O(|V|^3) time complexity to run.
+
+
+
+Prims algorithm:
+This algorithm is to build a spanning tree for problems such
+as "what is the lowest cost tree we can build". So our goal is
+to get the total cost as low as possible such that all the nodes
+are reached. Here we assume that local optima = global optima.
+
+First choose any start node, then connect the node that is in
+the tree with the one that isn't such that the edge that connects
+the two is the lowest cost of all the options available. Repeat
+this process until all nodes are reached.
+
+Similarly to Djikstra's algorithm, we use queues here because
+it is convenient. It is also similar to Djikstra's, but idk.
+Time complexity is the same as Djikstra's, O(|E| * log(|V|)).
+
+
+
+Kruskal's algorithm:
+This algorithm is also made to create spanning trees. However,
+it starts by sorting all the edges by weight. Then, it chooses
+the shortest edge (node pair) and now adds those two to the set
+of all the nodes visited. If there is an edge where only one of
+the nodes is not in the set of nodes visited, we still connect
+but add just that one node (it is a set, duh). If there is an
+edge that connects two nodes both of which are already in a set,
+then we simply drop it. As you can see it is also greedy.
+
+This algorithm is described as "more universal" since it can
+identify any amount of spanning trees (a forest) in a graph
+that is not connected. But we can very easily modify prims
+to just repeat itself until all nodes are in a set.
+
+
+
+Boruvkas Algorithm:
+Also for creating spanning trees. This one is used more to
+create a sort of hierarchy and can easily be done in parallel
+due to its nature which I will explain now (a good advantage):
+
+First imagine that every node is a tree, then take a tree and
+connect it to another tree through a node from one tree to a
+node in another one by an edge such that the edge has the
+lowest cost possible. We repeat this iteration until no more
+connections can be done. Also, note that in an iteration, we
+can connect a tree that already connected to another one.
+The only thing we care about is the lowest cost here.
+
+Since it at least halves all the nodes in each iteration, but
+has to determine the lowest cost for each tree, it takes about
+O(|E| * log(|V|)) time to finish.
+
+
+
+DFS separation (undirected graph), (my own algorithm):
+The reason DFS (Depth first search) is faster is because it is
+good at finding separation nodes (nodes that if removed increases
+graph's component count). Basically, create two sets and a map. In
+the 1st set we will keep track of all the nodes we visited before.
+In the 2nd set, all the separator nodes. And in the map we will
+keep track of when we took a choice (by visiting node X instead of
+node Y). We will keep track of choices by having an unvisited node
+as a key, and the node we could visit it from at the time as value.
+
+So if we could visit node X and Y from node Z, and decided to go
+with node X, then X is added to the set of visited nodes, Y is
+added as a key to a map of unvisited nodes, and Z as Y's value.
+
+Now, by using DFS our main goal is to start at root node, and end
+at root node as well by taking only new nodes. As we start we
+create a path set where we keep all the new nodes we visit during
+our adventure to the root node. Along the way, we keep track of
+alternative nodes adding only those we did not visit before or
+during our path to the map set. If an alternative node was visited
+before, and it is not the node we started this path from, then the
+whole path is added to the visited nodes set, and we start anew
+from other alternartive paths, with a new path set, etc. Before
+that we also remove all the key nodes from the map that we visited
+during our path to reduce potential repetition.
+
+If during this process we reach a node we started this path from
+(note that we can not go back to the previous node directly), then
+the whole path is added to the separator nodes list (including
+the node that this path started with). Note that this happens after
+we check and add alternative nodes which will add the so far valid
+path to the visited nodes list, and the not valid part will start
+as a new path set only after that. However, this does not guarantee
+that the whole path is invalid, just that at least one node is, so
+if there are any altenrative paths we could take during a part of
+the "invalid" path, then we start with that part (the part where
+we got to the alternative node, and not the part of the path past
+it), and if that alternative reaches the visited nodes or the root
+(without reaching path's start node), then all of it is back at
+being valid and the alternative path nodes aswell.
+
+Overall, the algorithm is in O(|V| + |E|) time complexity
+because we must check each node and each vertex path that we
+can take just once without any extra logic. Memory vise it is
+also in O(|V| + |E|) because we basically keep track of 4 sets
+of all the nodes and paths we can take. It is actually in
+O(2|V| + |E|) to be more precise + a temporary path set.
+
+
+
+Kosaraju - DFS strongly coherent components (directed graph):
+strongly coherent components are defined as follows, if you have
+a graph G made up of vertices V and edges E, then a strongly
+coherent component U is a path U of a graph G consisting of the
+maximum amount of vertices such that from any vertice v in U
+we can reach any other vertice u in U through edges E.
+
+The algorithm to find these strongly coherent component paths U
+is quite simple actually. First use DFS (depth first search) to
+find which nodes can reach which nodes and store it in a map of
+sets. Next, reverse the graph and do the exact same thing again.
+Now for each vertice (node) which was supposed to be saved as key
+find an intersection between both sets. That intersection result
+is the strongly coherent component U, and all the other vertices
+that are a part of this result U should end up with the same
+result U, which is why I think it is best to do a DFS on a single
+vertice first on both graphs, find this U, and simply skip all
+the vertices that also got included in U so that we eliminate
+redundant repetitions (often by a lot, but not guaranteed).
+
+Also, if we now imagine that each of these components is a node,
+we create something called a component graph. Basically we
+imagine that each of these paths U is a node instead of a path.
+This component graph is also guaranteed to not be a cycle.

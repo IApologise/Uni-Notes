@@ -1,0 +1,272 @@
+--- Lecture 19 ---
+Next up we got locks, this is what is used in concurrency control ensurance protocol, and they are used within the
+transaction manager. Basically what it does is once some transaction tries to access some variable X from the DB,
+if that variable is not locked then it may read or written to (read and write have their own locks), if it is
+locked then the transaction is asked to wait and if possible move on to some other task it can do in parallel. To
+signify locking/unlocking in RA we write "LKD(X)" where X is some variable we lock/unlock. P.S. read and write may
+not have each their own lock, it depends on the definition. In binary locks read and write don't have their own
+lock, i.e. they share a boolean state of locked/unlocked. Shared/Exclusive locks do make it so that read and write
+each have their own lock. So, contradictory to the name "Shared", and unlike in the binary lock system, the locks
+actually are not shared. Ok? Weird...
+
+So yeah, transactions themselves have no idea that locks exist, all they know is that a transaction manager may ask
+them to wait or to abort. However, these transactions must follow a simple protocol, LKD(X) before read(X) is done
+(if not locked already), and LKD(X) before write(X) is done (again, if not locked already), and finally LKD(X) once
+all work with X is done within the whole transaction (X must have been locked for that, otherwise it may stay locked
+forever, but I assume that the transaction manager handles it somehow, like automatically unlocking once the
+transaction commits). It is the transaction manager itself that keeps track of these locks and who can access what
+and when, such is the system. So, if some transaction T1 tries to lock X, i.e. LKD(X), but it was already locked by
+some other transaction T2, then T1 must wait until T2 unlocks X, i.e. LKD(X). Also, some transaction Tj unlocking X  when it was locked by some other transaction Ti is forbidden, only Ti may unlock it whenever it is done with X.
+
+P.S. in the lecture lock(X) and unlock(X) are also used, but they are doing the same thing as LKD(X). So I guess
+in RA we actually write lock(X) and unlock(X) and not LKD(X), which I guess is shortened to l(X) and u(X) when
+writing it in the scheduler, for example: "Sa: b1, l1(X), b2, l2(X), w1(X), c1, l2(X), u1(X), e1, l2(X), r2(X),
+w2(X), c2, u2(X), e2" where as you can see, because T1 locked X first, T2's l2(X) fails and thus T2 is waiting for
+X to be unlocked, and only then does T2's l2(X) succeeds and T2 continues working until end. Note that in the
+example the waiting system is basically queuing T2's process back to the end of the OS's scheduler (or whoever
+else manages the shceduling concurrency). It may be done differently like having a list of waiting transactions
+and broadcasting that some value X has been unlocked to those transactions that needed it. And there are more...
+
+Note that some... questionable, coding may still happen such as in "L19 - Stupid Locks.png" where T2 is technically
+using locks in an allowed manner, but in a very bad way making these locks obsolete in practice and actually
+slowing down the whole system and not helping to prevent any aborts that could have been... Note that the point
+of locks is to help prevent dirty writes, dirty reads, etc. but even if locks are used in a stupid way the syntax
+is ok. However, when the protocol of the locks themselves is broken, such as reading the locked value, then it is
+not ok. That is precisely what is meant in the lecture slides! We also assume that the transaction manager doesn't
+have to keep track of who locked and thus who should unlock, and unlock if some transaction "forgot" to do so.
+
+For scheduling purposes and maybe others the concurrency control subsystem in our DBMS has a table inside which we
+can find all the locked variables as well as who locked them (this second one is optional). The values that are
+not in the table are deemed unlocked. It is the job of the lock manager module to update this lock table.
+
+
+
+After watching the idea of shared/exclusive locking system, I have to say I really don't like it. First of all,
+a transaction can only do one type of lock at a time per variable, either read or write. Read lock is basically
+a counter to how many transactions are reading X actually, so not really a lock? I don't really understand its
+purpose, and I believe that a write lock doesn't prevent transactions from reading, just writing...
+
+Regardless, to avoid most stupid and any illegal stuff, we basically have to follow some rules which I just
+screenshoted (cuz me lazy). So go ahead and check out "L19 - Exclusive Lock Rules.png". Also, I think that the
+only reason why we have a reader counter is so that whenever there are 0 readers, i.e. no read locks, only then
+we can optimize the write lock and allow for multiple write locks simultaneously. And I guess I will find out why
+we can't do both read and write lock simultaneously in this exclusive locking system. Because as of writing this
+it seems like it is actively sabotaging concurrency by disallowing dirty read/write preventions. There is actually
+a pseudo code on how the transaction manager manages these locks and maintains this table in the lecture 19.
+
+By the way, in this system since we got multiple lock types, we differentiate between them in the scheduler like
+this: Read-lock is written as "rl" instead of just "l" like in binary system, and write-lock as "wl". So for
+example "Sa: rl1(X), r1(X), rl2(X), r2(X), u2(X), wl1(X), w1(X), u1(X)" which is an example of something that is
+not okay to do, since we need to do "u1(X)" some time before "wl1(X)" is done. Read the P.S. below for more...
+
+P.S. I don't know if I mentioned it, but apparently read-lock prevents any transaction from write-locking the same
+variable, and I assume it also works the other way around then? I.e. write-lock prevents read-locking. And suddenly
+it makes sense why only one lock can be done by a transaction at a time. So T1's own write-lock should allow T1
+to read X as well, but not the rest then. This also means that if T1 does a read-lock, then it may upgrade it to
+a write-lock later without unlocking it, i.e. when read-lock counter is 1, an extra edge-case scenario rule then.
+This also means that we may also downgrade from write-lock to a read-lock (conditions are more complicated
+because if there are 0 reads then there may be multiple writes I believe and as we know there can't be a read
+lock whenever there is a write lock, again if I remember correctly).
+
+
+
+Now that the locking rules are in place, we can talk about two-phase locking which is basically how we should be
+using locks to prevent these dirty writes, dirty reads, and other stuff that cause failures and aborts. This is
+how this protocol works: Each transaction must first follow the locking rules, i.e. lock before reading/writing,
+and then the new rule is that after the first unlock, no more locking is allowed. Each transaction must be
+structured around this rule when coding the transaction itself. Thus there are 2 phases basically, the growing
+phase, i.e. the locking only part, and then the shrinking part, i.e. the unlocking only part. This single new
+restriction with these use of locks will always ensure at least conflict-serialisability. For example comparison
+check out "L19 - Two Phase Locking I.png" and "L19 - Two Phase Locking II.png".
+
+However, there is a drawback with two-phase locking. There exists a case where some schedule is serialisable, but
+two-phase locking will not allow it. Two-phase lock's main goal is to ensure that the schedule is serialisable, so
+in some cases where it is serialisable the two-phase lock protocol is left dissatisfied. However, in all cases
+where a schedule is non-serialisable the two-phase lock protocol is also left dissatisfied which is great. So the
+protocol limits concurrency, even when there is nothing wrong with it, but ensures serialisability.
+
+The previous tradeback is basically a tradeoff, less concurrency for more stability. But the second drawback are
+the presence of dead-locks. For example "Sa: rl1(X), r1(X), rl2(Y), r2(Y), wl1(Y), wl2(X)" is a dead-lock. Both
+T1 and T2 must wait for either to unlock a variable, and neither can proceed and actually unlock it. To prevent
+this issue, all the locks are to be done right away at the start of the transaction's process. It is said that
+this first dead-lock prevention method always works, but I don't think so... Unless all the locks of a transaction
+are done before others may lock some of them that is. There is also a more popular and less restrictive version,
+i.e. the second dead-lock prevention method, which is when all the write unlocks are at the end. More concurrency
+with the second method than with the first since it is less restrictive. This second method also guarantees
+strict schedules (Check out recoverability section from previous lectures, i.e. Transaction I). Last and least is
+the third method which is just bad but for lazy coders, which says that all unlocking is done at the end only. It
+is not dead-lock free, it only guarantees strict shcedules, and concurrency is very limited, but as mentioned
+before it is apparently easy to implement...
+
+So, how to fix deadlocks (which occurs in all lock systems: Binary, exclusive, etc.)? Because the second method is
+the one we probably gonna use... We may try to prevent deadlocks, detect deadlocks and abort, and introduce
+timeouts (i.e. if a process waits too long, abort it). Note that some of the protocols will have "stravation",
+which means that they may be aborting and doing a roll back indefinitely (I hate the fact that it may even happen).
+
+Here we will cover just the naive approach, for more go to Leacture 20. So, obviously the first naive approach
+is the conservative two-phase locking, i.e. the first method we discussed. Then there is the idea of locking based
+on some pre-defined order which I will not even explain because I see so many reasons for why it is wrong and
+doesn't help in any way. So many problems that the professor does not mention believing in them blindly, or not
+mentioning thinking it is obvious and it is me that doesn't get it... P.S. I am in the wrong because the
+explanation that the professor gave us was shit, or so I believe at least since I didn't get it.
+
+--- Lecture 20 ---
+Now for the actual methods that work (I mention the naive only because I might need it on exam). These are based
+on the time and some transaction checks, but not on "T1 has been waiting too long" kinda stuff, so these are still
+some good and determenistic algorithms without needing to configure any values.
+
+First we got Timestamp-based category algorithms:
+1. Wait-Die: This method basically keeps track of how old each transaction is, and whenever some transaction T1
+   requests to lock some variable X that is already locked by T2, if T1 is older than T2 then T1 waits for T2 to
+   finish. However, if T1 is younger than T2 then T1 aborts. So if T1 is younger than T2 it always aborts instead
+   of waiting to prevent deadlocks, and since it is the youngest the oldest get to finish their work (nice). By
+   the way, this is what was meant by the order based naive solution that I didn't bother to mention...
+2. Wound-Wait: Basically Wait-Die rule, but in reverse. This means that in a similar situation if T1 is older
+   than T2 then T2 aborts, and if T1 is younger than T2 then T1 waits. So again, oldest get to finish and youngest
+   get aborted, But, unlike in Wait-Die, here it is the older transactions that abort the younger ones, whilst in
+   the Wait-Die it is the younger that abort themselves. The choice depends on the concurrency scheduler we got.
+
+The drawback of both is that we must keep track of time stamps, and that we abort transactions where there are no
+deadlocks, but where there might be instead, kinda like how antibiotics work (don't know which bacteria are evil,
+so we kill all the bacteria, good die too, but so do the evil ones). Same drawback for the two ones below too.
+
+Next we got the second category which are called waiting-based:
+1. No-Waiting: If some transaction T1 tries to lock X which is already locked by T2, then T1 aborts, that's it.
+   The drawback is obvious, but it is simple. However, I personally don't go for simple and would rather go for
+   what is more effective. This one transaction management algorithm just aborts for basically no good reason.
+   It is basically a simplified version of the timestamp-based algorithms, just that we don't need timestamps...
+2. Cautious-Waiting: This algorithm simply checks if T2 is still running, if T2 is not waiting then T1 waits.
+   However, if T2 is waiting and T1 sees that, then T1 aborts thinking that there is a deadlock.
+
+All of these algorithms, including timestamped ones are not perfect and may abort whenever there are no deadlocks.
+But all of them work and guarantee that there are no deadlocks. All of them obviously weaken the concurrency's
+efficiency, but there is little we can do about it. Also, the waiting-based algorithms may cause starvation, which
+is basically when we constantly abort transactions such that none ever finish, an infinite loop... Timestamp-based
+don't have this kind of problem, since older always have the priority. So I like the timestamp-based more :)
+Though small transactions are fine with the waiting-based method and possibly even faster in practice.
+
+Obviously we also got the timeout-based deadlock avoidance algorithm, which is where we have a constant or some
+value we calculate which dictates how long a transaction may wait until it must abort. Starvation is possible if
+the value is poorly chosen, efficiency suffers from that too. But it might also make it slightly faster if chosen
+well, though I myself am not a fan of this method anymore (I kinda was slightly before). This method is quite
+popular though and is used in many cases such as Error 404 - Page Not Found (not a DB related example though).
+
+So that was the aborting part, what we can also do is specifically create an algorithm that keeps track of these
+transaction, which ones wait on which on some wait-for graph, and basically with each addition check for cycles
+(or ocasionally). Once a cycle is found we can abort any single one transaction in that cycle, but preferably the
+shortest to live should go first (no starvation). So we got nodes which are the transactions, and edges which
+indicate if some transaction Ti waits for some transaction Tj by connecting the two (directional graph). The
+problem is to maintain such a graph, since for each new read/write we do a whole path to see if it is a cycle.
+
+
+
+That was all related to fixing the problems that the two-phase locking couldn't fix. Next we got a timestamp based
+approach (not to confuse with the timestamp based rule that the two-phase lock uses to resolve deadlocks). So,
+this protocol (which is an alternative to the two-phase locking one) defines an order based on the time the
+transaction got launched. This method does not use locks, instead it just runs the schedule until a conflict is
+found and then rolls back a single transaction. Note that this method doesn't seem to have starvation, but may
+have some recoverability issues.
+
+So in an example schedule "Sa: b1, b2, w2(X), r1(X)" T1 reads after T2 wrote, and this is where the fail occured
+because according to the timestamp rule T1 can never read from a transaction ahead of it in the timestamp. T1 must
+finish reading X before those other transactions ahead may write to X. So in this case T1 is aborted and it starts
+all over again to restore the timestamp read-write order, then T1 is the one ahead of the T2 now (good). Note that
+this rule also applies for a read-write fail "Sa: b1, b2, r2(X), w1(X)". However, there are no write-write and
+read-read fails/rules, for a more formal definition check out.
+
+These 2 rules are written in RA as such, and I will also explain them (after the rule which is the first sentence):
+1. When T issues read(X), if WriteTS(X) > TS(T) then roll-back T, else finish read(X) and set ReadTS(X) to
+   max(ReadTS(X), TS(T)). So here we basically check whether there exists some transaction Ti that has already
+   written X, and is younger than the current transaction Tj (the one that tries to read right now). If such a
+   transaction Ti exists, then Tj must do a roll-back. If it doesn't exist, then Tj checks if it is the youngest
+   one that has read that variable X, if it is then the read timestamp is that of Tj's, otherwise the old read's
+   timestamp is kept (used for comparison by other transactions in rule 2, similarly to how we used the youngest
+   who written to X constant in here, i.e. rule 1).
+2. When T issues write(X), if ReadTS(X) > TS(T) or WriteTS(X) > TS(T) then roll-back T, else finish write(X) and
+   set WriteTS(X) to TS(T). Here we just check if we are the youngest transaction that has interacted with X, if
+   not then we roll-back. If we are indeed the youngest one then we update the X's write timestamp to ours such
+   that others may compare it in rule 1 (as mentioned in rule 1 as well).
+
+Note that the larger timestamp indicates a younger transaction, i.e. the transaction that started at a later time.
+Also note that in the second rule we may ignore the "... WriteTS(X) > TS(T) ..." condition. This trick is called
+the Thomas writing rule.
+
+--- Lecture 21.1 ---
+There is also an addition to these two protocols (the two phase locking and timestamp based) where we basically
+keep multiple versions of the same variable data and then merge the changes of each one together with the original
+(the outdated one), which is not a bad idea to be honest. For that we will from now on write "X0" instead of just
+"X" where "0" is now also the version of that variable that we use.
+
+In the timestamp based protocol each variable has a timestamp, WTS(X) is the timestamp of the transaction that
+wrote it, and RTS(X) is the youngest transaction that has read it. With multiversion timestamp protocol we keep
+these older WTS-es and update their RTS-es whenever needed. Thus, each WTS(Xa) has both the transaction's timestamp
+TS(Ti), and the version "a" which is basically its own new timestamp (unique to each version globally, not locally
+within the transaction's TS).
+
+So, whenever some transaction Ti wants to read X it makes sense to read the newest version of X, but Ti must
+preserve the order and thus cannot read from any versions that were written by somebody younger than Ti, because
+if Ti were it'd be effectively reading the future (can only read present or past). So Ti must read the youngest
+version of Xa such that WTS(Xa) <= TS(Ti). After the read, Ti updates the RTS(Xa) version with its own timestamp
+if it is the youngest to have read it so far, i.e. max(RTS(Xa), TS(Ti)). So the whole update formula is
+RTS(Xa) = max(RTS(Xa), TS(Ti)).
+
+Whenever Ti wants to write to X, the logic behind the rule is that different versions may coexist, but the system
+is fragile. Here is the rule: Ti gets the youngest version of X, which we will call Xa, whose write timestamp is
+not younger than Ti's timestamp. If Xa's read timestamp is younger than Ti's, then Ti aborts. That is because
+what we got is basically a read-write order violation; Ti wrote to X after some younger transaction read X, note
+that this rule is so advanced because we now allow for interactions where this younger transaction may read other
+variations of X that do not create this sort of conflict. All these X-es are then merged after some condition (idk
+what it is though, and I assume that since time based probably won't work and schedules never end in practice).
+Anyways, if Ti is not forced to abort, i.e. youngest Xa such that WTS(Xa) <= TS(Ti), and RTS(Xa) >= TS(Ti), then 
+Ti creates a new version of X which we will call Xb where WTS(Xb) = TS(Ti) and RTS(Xb) = TS(Ti) too.
+
+
+
+When it comes to two-phase locking variant, we know that if Ti read locks X, Tj can also read lock X and both can
+read from it. But whenever Ti write locks X then Tj can't read X, and whenever Ti read locks X, Tj must wait for
+Ti to read unlock X before it can write lock X. And obviously, Ti can't write lock X if Tj write locked X already.
+The mutliversion variant of two-phase locking does allow for write lock X while X is read locked, and vice versa,
+but not the write lock on write lock. Also, in addition to "read" and "write" we get a new aspect called "certify".
+Certify is used when committing the different versions of X to the database. Ti certify locking X requires there to
+be no Tj that read locked X, and no write lock nor another certify lock either. You can see these relation in the
+"L21.1 - MVTPL.png", note that "MVTPL" might not be the correct name for this version of two-phase locking method.
+
+There is also a validation based protocol, which is basically when the transactions gets to do whatever it wanted
+to, but before writing it validates the data it read. So there are 3 phases, read only phase where it reads all
+the data it needs, then validation phase where it does some checks (idk what these are, and it might roll back
+if the checks fail of course), and then in the last phase it does all the writes and commits. I am also told that
+this is THE multiversioning protocol, and that it is better than the other multiversioning protocols for various
+reasons like better concurrency, and also the fact that concurrency subsystems (as we will see in the future)
+become simplier. However, the roll backs may still not be recoverable, and the schedule might be starving.
+
+However, the protocol that is used the most is called Snapshot Isolation. It is used in PostgreSQL, Oracle, etc.
+This protocol is not even conflict-serialisable, but it still preserves isolation just in a different way. Look
+at this schedule: "r1(X), r1(Y), r2(X), r2(Y), w1(Y), w2(X), c1, c2". As you can see there are conflicts, two in
+fact. So, it is not serialisable, but is that a problem? If you look closely, everything still works fine and no
+wrong data was used by either of the transactions as well as there being no overwrites (good). So, it basically
+works by simply updating the values only when comitting, just writing creates local versions of same data. So,
+I guess it is the same as limiting the writing to just one write for each variable per transaction?
+
+Anyways, the problem with SI (Snapshot Isolation) is the fact that it can do what's called a skew-write, which is
+best explained through an example. Let's say that we have 239 spaces out of 240 booked in an airplane. Two users
+try to book a flight and both transactions succeed because both read 239 out of 240, and both book 1 more person.
+Once both commit we get 241 out of 240 booked, which is over the limit (bad). Both committed, so no aborts or
+roll-backs allowed. It was not discussed in the lecture, but there is a version of SI called SSI - Serializable
+Snapshot Isolation, which tries to detect write-skews. But I guess you might as well use other protocols then...
+That is, if SSI truly is serializable (which I did not ask AI).
+
+There is also one called Multiple Granularity Locking, which instead of locking just variables also allows to lock
+entire rows, disk blocks, tables, and database itself. So there are different locking levels introduced in case
+some big transaction needs to lock huge amounts of it (too many small locks, not efficient). The problem is that
+some transactions that do only lock fine amounts of data, like just a couple of variables for example, then the
+big transaction must check the entire section for any existing locks. To fix this we introduce intention locks
+for reads, writes, etc. which basically locks the larger sections that cover it, but allows for finer locks to
+be done (tree like structure where it locks the entire path to its section with intention locks, and the part that
+it works on itself with a regular lock). So if T1 locks entire row A in table R it also intention-locks R, now T2
+that wanted to lock all of R can't do it because it is intention-locked, but T3 can lock some other variable Y or
+a tuple B in R because Y and B themselves aren't locked nor intention-locked. However, some transaction T4 can't
+lock nor intention-lock some variable Z in tuple A in R because T1 obviously locked the entire tuple. Since it
+works with two-phase locking protocol, we got intention-shared lock (some finer part is read locked), intention
+exclusive lock (some finer part is exclusive-locked, i.e. read and write locked), and shared-intention-exclusive
+lock (this part is read locked, and some finer part is write locked). Note that finer part means descendants of
+the current part, such as A being a finer part of R, and X finer than A, but not vice versa for both.

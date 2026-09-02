@@ -1,0 +1,49 @@
+Usually we want to automate the process for which we create
+.sql scripts and then execute them with data as inputs that it
+then stores into the database for us.
+
+To run a script that we made we open a command prompt or psql-shell
+or equivalent on linux machine as such and type in the following:
+- Command prompt: "psql <flag> -f script.sql"
+- Psql-shell: "\i script.sql"
+
+To dump the data (output its current state) in PostgreSQL you write the
+following: "pg_dump [flag] {to Dump Database Name} > {To Output File Name}"
+If there is nothing to dump or a duplicate exists then we get an error.
+
+To fix errors in SQL scripts you can check whether something exists first
+to avoid further errors in logic which crash the whole script with commands
+like "IF EXISTS" and "IF NOT EXISTS", here is an example script:
+| CREATE TABLE IF NOT EXISTS persons(name text, born date); -- Create a table on first time use
+| CREATE TABLE IF NOT EXISTS persons(name text, born date); -- We return an error on purpose
+| CREATE TABLE persons(name, text, born date); -- We crash the whole script on purpose,
+|                                              -- So the commands below are not executed
+| DROP TABLE IF EXISTS persons; -- Assume we did not crash, this deletes the persons database
+| DROP TABLE IF EXISTS persons: -- This does nothing since the table was deleted already
+| DROP TABLE persons; -- This crashes the whole script since it already was deleted
+
+We can print out messages using "\echo 'Hello World!'" for example.
+Also, create constans for our script using "\set val 42" and then use
+it in a command like this where "val" is read as 42 instead:
+| INSERT INTO meaning_of_life VALUES (:val);
+
+If we want to stop executing a part of the script if some of it fails
+such as adding money to account A and removing from account B (as if B
+payed to A) for example because B didn't have enough in its account, then
+we use commands BEGIN and COMMIT. If after BEGIN there is an error, then we
+do not do any of these changes and jump to the commands after the COMMIT part.
+Here is an example code to show this situation in practice:
+| BEGIN;
+| 
+| UPDATE balances
+| SET balance = balance - 100
+| WHERE id = 1;
+| 
+| UPDATE balances
+| SET balance = balance + 100
+| WHERE id = 2;
+|
+| COMMIT;
+
+There are like 4 rules to follow to make a good script called ACID.
+Check the picture named ACID.png for more details cuz I am too lazy.

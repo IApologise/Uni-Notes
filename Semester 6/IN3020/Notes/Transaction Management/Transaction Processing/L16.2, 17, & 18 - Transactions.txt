@@ -1,0 +1,206 @@
+--- Lecture 16.2 ---
+P.S. Check out IN2090 for a reminder on what exactly ACID stands for.
+
+Transactions, i.e. changes in the database, must follow the ACID. ACID is a description on what must be maintained
+so that multiple individual changes don't contradict each other or lead to wrong changes (like volatile variables
+in processes). Transaction management/processing systems are large databases that have many concurrent users and
+require high availability and fast response time, like banks, airline bookings, and so on... Even if we process
+just a single user at a time, we still may try to change the same variables in the database simultaneously, so
+ACID is important even in cases like these where one concurrent change may fail, whilst the other succeeds. Note
+that transations and a transaction isn't the same. Transaction is the process of changing the shared values in the
+database itself, whilst transactions is the fact that we change these shared values.
+
+We identify two challenges: Concurrency Control, and Fail Recovery, ACID points out both. Whenever we want to
+do a transaction, we specify what part is the transaction itself (i.e. what series of commands is a single
+transaction). We do this by using "BEGIN" and "END" statements. In RA, we describe transactions through the
+read(D.R.A.X) and write(D.R.A.X) operators where D is the database we are working with, R is the relation table
+we access inside D, A is the attribute we want from R (i.e. a collumn), and X is the concrete value (in a row) we
+want to read from or write to. But we write read(X) and write(X) for short. We also assume that the value we read
+is a copy saved locally inside the process. Whenver we write we save the change to the shared database. Whenever we
+estimate the cost of these operators we also estimate searching for the value in read(X) including the block on the
+disk or cache, and with write we also include the cost of writing to the disk, as well as read(X) in order to
+find and replace the old version of X on disk and cache.
+
+With these values X we can perform operations such as "X := X + 50", "X := X - 20", etc. Both of those examples
+shown are a single command, a transaction T (as mentioned before) may consist of multiple such commands. These
+updates in each line are local, i.e. we change the copy-pasted version, not the one in the database (cuz of ACID).
+
+--- Lecture 17 ---
+There are 4 ways the concurrency process of two transactions trying to acceess same value in a table can go wrong:
+1. Dirty Write - Imagine T1 first doing read(X), then T2 doing read(X), after that T1 does some calculations on X
+   and then does write(X), after that T2 does some of its own calculations on X and does write(X) as well. Now the
+   part where T1 changed X was lost and instead overwritten by T2. This bad because if there is more that T1 has to
+   do, such as update some other value Y, it now can't do so because since it is a single transaction, X is
+   relevant somehow to Y, for example X being the buyer's bank account balance, and Y being the seller's bank
+   account balance. So T1 must be informed of this error and abort its transaction reverting only what's necessary,
+   like not reverting X but reverting changes done to Y and such, depends on what T2 changed...
+2. Dirty Read - Dirty read is similar to Dirty Write, but instead of T2 overwriting some value X used in T1 (making
+   it outdated), instead T2 reads the updated value of T1, but not the commited one, like when T1 rolls back the
+   X, thus X in T2 is outdated. Specifically like when if T1 does read(X), then some math on X, then write(X), then
+   T2 does read(X) and its own stuff on it, and then T1 has some more stuff to do like read(Y), and so on... and
+   then oops! T1 must abort, and thus T2 used wrong data and must abort as well (I don't know how to abort properly
+   yet, I will learn much later).
+3. Non-Repeateable Read - Imagine we use the nested loop algorithm from Lecture 16.1, this means that we do many
+   reads, one for each value of a table we are interested in. And now during this read(Xi) loop, some transaction
+   T2 updated Xn (Xn is some X read in Xi loop), now the whole nested loop process is wrong, and which part of it
+   is wrong might be unknown and differ in size of consequence dramatically (within the T1 transaction).
+4. Incorrect Summary - Basically when due to Dirty Write of X in T1 between T1 and T2 some other variable in T1
+   like Y in T1 suffered (but it might be ok? sometimes...). I honestly don't understand the difference between
+   this and the Dirty Write itself, so find the difference between the png "L17 - Incorrect Summary.png" and my
+   description of the Dirty Write (should be clear enough). Like... How is the reason it fails different here?
+
+Once the transaction is done the result and its completion state is sent for the transaction manager for approval.
+If transaction manager sees that there is no collision and such, then it approves and the result is commited to the
+database (i.e. no rollback). If not approved, then all the changes the transaction has done are rolled back. The
+hard part is the rollback, especially due to concurrency. Usually it is done by locking the change of the variable
+and allowing only one transaction to write to it, but due to cache that is not guaranteed, so something like a log
+of changes by transactions is used (just guessing what the log is as of writing this).
+
+The reasons for a failure are many, but in the presentation 5 types are mentioned:
+1. Computer Fails - Network card driver software crashes, some critical software we depended on crashes, etc.
+2. Transaction Errors/Fails - Mid calculation user aborts, division by zero, other logic errors in the code, etc.
+3. Concurrency Control Enforcement - Using outdated data, waiting for a lock to open and then getting denied, etc.
+   A specific example is like when Dirty Read happens, then the transaction manager detects and aborts T2.
+4. Disk Failure - Same as computer fails but specifically for disks. I think only the software is what is meant,
+   but maybe hardware problems are included too like removing/damaging the disk mid-reading or mid-writing.
+5. Physical Problems - Machine runs out of electricity, CPU cathes on fire, router stops working, hackers do bad
+   stuff, anything that happens in the real world that affects the machine (not a software bug or a problem).
+
+P.S. Aborting and rolling back a transaction is basically the Atomicity part of the ACID. The transaction manager
+is the one ensuring ACID's consistency i.e. that the rules are followed by the transactions. The protocol that
+the transaction manager uses is the isolation part in ACID. And the durability part in ACID is irrelevant...
+
+Also, begin is basically when the transaction starts (atomicity), end is basically when the request for a commit is
+sent to the transaction manager, and commit is when the data is actually now officially the up to date information
+in the DB and can not be rolled back (unless a backup is used or manual admin change is done). If the end is not
+approved for a commit, then it must abort. Abort can also happen any time between the start and end, and can be
+initialized by the transaction manager at any point as well. So, all in all, there are 4 commands: begin, end,
+commit, abort, read(X), and write(X). We abbreviate those as b, e, c, a, r(X), and w(X) respectively. When we work
+with multiple transactions, we also signify which transaction the command belongs to, like b1, b2, e1, r2(X), etc.
+Here is an example full notation: "T1: b1, r1(X), w1(X), e1". Note that the operations such as "X := X + 1" do not
+count because these are purely local changes and never result directly on concurrency order issues. But they are
+the cause of mismatches, it's just that if we don't have these operations, then techincally there would never be
+a problem with concurrency, but we focus on the order of changes done, not whether the changes themselves are the
+same due to some coincidence in practice (I hope what I wrote makes sense).
+
+--- WRONG: BEGIN ---
+We may describe the transaction manager as a scheduler, which is basically a collection of transactions where
+either all commit or all abort. But I am not sure if the transaction manager is the scheduler, or may consist of
+multiple shcedulers, where each scheduler only has the transactions that may fail some other transaction in that
+same scheduler. I.e. if both T1 and T2 access only X, but both T3 and T4 never access X, then Sa has T1 and T2,
+whilst Sb has T3 and T4, because these are always isolated. Also for example, if T5 can only be crashed by T2,
+and T1 may crash T2, then T1, T2, and T5 are all in Sa, because T1 crashing crashes all, chain reaction follows.
+--- WRONG: END ---
+
+I am wrong about the scheduler in the "WRONG" part, it actually is a log, i.e. a step by step, sequential history
+of how and what happened in total. Like imagine T1 and T2 working, but we have only one CPU so we simualte the
+concurrency by multi-threading (like in OS), so the scheduler is basically telling us how the switching was done
+between these two transaction processes. So like: "Sa: b1, r1(X), b2, r2(X), w1(X), r1(Y), w2(X), b2, w1(Y), c2, e2
+a1", and that is an example of a Dirty Write where T2 overwrites and commits T1's X value, so T1 aborts. Note that
+we don't have to type in begin and end, we assume that we added there where needed. It is easy to figure out when,
+we add "bi" where "i" is our transaction number before the transaction's first operation, and "ei" after the last
+operation including commit. None of the operations of Ti can go before bi and none can go after the ei. However,
+Ti can be repeated, so after the ei bi can go (assuming that there was a bi before the ei, syntax...).
+
+We might design the scheduler to not allow for certain concurrency actions, detect them, and force aborts and such.
+1. Serial - Basically no concurrency is allowed, like ever. If a some transaction T1 is working, then T2 and all
+   the other transactions must wait for T1 to finish, i.e. either commit or abort. So no interleaving in the logs.
+2. Conflict Serialisable - Conflict Serialisable is often what people mean when they say just Serial, because
+   Serial from 1. is never even a real option, we need concurrency in real world for optimization. so 2. Serial,
+   i.e. Conflict Serial, is when we allow for very simple concurrency with minimal conflict. These conflicts are
+   between transactions, which we graph and analyze. If there is a cycle then there is no serial equivalent (bad).
+   So basically, anything that is equivalent to the Serial in 1. but not necessarily 100% Serial. Note that 1.
+   Serial may produce different results in the DB based on the order of transactions. So when we say that 2. Serial
+   must be equivalent to 1. Serial, we mean that all 2. Serials must be equivalent to some chosen 1. Serial.
+3. View Serialisable - This version basically allows all sorts of stuff like Dirty Writes and Dirty Reads and such,
+   anything goes, literally no restrictions and no oversight, this is where concurrency may directly cause aborts
+   to be issued by the transaction manager on purpose, not due to some external error or some transaction crashing
+   like in Conflict Serialisable option in 2; I.e. the 2. Serial.
+For an example on each one, check out "L17 - Serialisation.png", "L17 - Conflict Serialisation.png", and
+"L17 - View Serialisation.png". Note that some of the details I added myself for clarity.
+
+--- Lecture 18 ---
+A conflict serialisable shcedule should be equivalent to some serial schedule, i.e. the result will be the same.
+If the schedule's concurrency is flawed, then there is no such serial schedule, meaning that the schedule that
+allowed for concurrency is not conflict serialisable since it breaks this "very simple concurrency" law. Now,
+let's take a look at the approaches on how we may determine this equivalence:
+
+1. Result Equivalence - Two schedules, first with concurrency enabled and second with disabled, where the first
+   one is the one we want to check for being conflict serialisable, and the second one is already some serial
+   schedule we use for comparison. The comparison is whether the first's result is the same as the second's.
+   Remember that a serial schedule's result might differ based on its order. However, since we must compare it
+   with some other schedule whose concurrency is enabled, the only right serial schedule to choose from is the
+   one where: The first transaction to begin in the first schedule is the first to begin in the second as well.
+   So the second schedule is constructed and ordered based on which transaction in the first is to begin next.
+   
+   For example, let's say we got "Sa: b1, r1(X), w1(X), b2, r2(X), w2(X), r1(Y), w1(Y), r2(Z), w2(Z), c1, e1, c2,
+   e2". This schedule is conflict serialisable, because we specifically construct a serial version following the
+   begin order "Sb: b1, r1(X), w1(X), r1(Y), w1(Y), c1, e1, b2, r2(X), w2(X), r2(Z), w2(Z), c2, e2" which as you
+   can imagine both result in the same database changes. So, the next transaction to begin in Sa, is the next to
+   begin in Sb. On the contrary, "Sa: b1, r1(X), b2, r2(X), w1(X), w2(X), c1, e1, c2, e2" is a dirty write, so if
+   we create its serial version "Sb: b1, r1(X), w1(X), c1, b2, r2(X), w2(X), c2" the changes Sa did are different
+   than those in Sb. So in this second example Sa is not conflict serialisable, its serial yields different result.
+   
+   The problem is checking this whilst the schedule is running, since it really never finishes. And that creates
+   too many problems and hurts more than doing simple serial without any concurrency. It is too brittle to work
+   reliably, especially as the system scales up. At least I couldn't come up with a good solution reasonably fast.
+   
+2. Semantic Equivalence - This approach defines some patterns in the schedule's concurrency that maps these
+   conflicts on a graph (as mentioned initially in the definition of conflict-serialisability). There are 2 patterns:
+   First is a "read-write conflict" which is when we have some transaction Ti do ri(X) before some other transaction
+   Tj did wj(X). Second is a "write-write conflict" which is when we got wi(X) before wj(X). In both these cases we
+   add a Ti -> Tj edge to our graph of conflicts. Once we have a Ti -> ... -> Ti cycle in our graph, then the
+   schedule is no longer conflict-serialisable, thus only view-serialisable.
+   
+   Note that any actions inbetween do not matter, i.e. "ri(X), wi(X), rj(X), wj(X)" is still a read write conflict.
+   In that previous example, that same conflict is also a write-write one too. Also, here is a an example of a simple
+   cycle: Ti <-> Tj, i.e. Ti -> Tj -> Ti. Here is a more complex cycle: Ti -> Tj -> Tk -> Ti.
+
+As mentioned before, view serialisable is fine sometimes. For example "Sa: r1(X), w2(X), w1(X), w3(X), c1, c2, c3"
+is fine, even though there is a dirty write here. That is because w3(X) overwrites it anyways, so there is no
+problem to begin with in the grand scheme of things. But for that we need to predict the future? Idk... There is
+actually a description on how it is defined, so check out "L18 - View Serialisable Equivalence.png". It doesn't
+check during run-time, just like result equivalence is. The typical solution is to trigger it after some time,
+like when "end" is sent by some transaction for the transaction manager to analyze whether to abort or commit.
+
+
+
+Now for atomicity, i.e. the recoverability part of the transaction management (which is also tied to the durabilty
+too actually). We distinguish between 3 types of difficulty to recover: Easy, Hard, and Impossible. Easy ones are
+the ones we can change right away tied to a single transaction, Hard are the ones where in our schedule, some
+transaction B failed due to transaction A failing and so on... So we cascade recover (I think), and then there are
+some that are Impossible to recover.
+
+A schedule S is recoverable if there is no transaction Ti in S that commited before some other transaction Tj in S
+commited, where some value X was first written by Tj and then read by Ti. We assume that there are no other
+transactions that have overwritten X in between this process, and check out "L18 - Recoverability Examples.png".
+
+We can also choose to change how the Hard recoverability is to be done.
+1. First method is where we directly handle the cascades by keeping track of which transactions depended on some
+   transaction Ti, and abort them if Ti is aborted. Note that keeping track of these cascades is expensive...
+2. The second method is called a cascadeless schedule. The idea is to never even get to the point where cascades
+   occur by restricting concurrency, which is when if some transaction Tj gets to the read-write conflict due to Ti,
+   then it just continues to do other, non-related to the value read stuff, that is until Ti commits, then Tj may
+   continue. I.e. there is never a read of X until the transaction that works on X commits, at most one transaction
+   may work on a variable at a time. So if some transaction Ti writes to X and Tj starts to read X before Ti
+   commited, then the schedule is not cascadeless.
+3. Lastly, there is even more strict version called strict schedule which limits concurrency even more than the
+   second method, but the recovery is less expensive once more. It basically does not allow any writing to a
+   variable until the transaction that wrote to it has commited or aborted. Similarly to the second method, but
+   with both write and read and not just read. So something like "Sa: w1(X), w2(X), c1" is not allowed, but "Sa:
+   w1(X), c1, w2(X)" is allowed. Note that every strict schedule is also cascadeless, and every cascadeless
+   schedule is recoverable, a niche hierarchy :)
+
+In the end it is mentioned in the lecture that Dirty Write "Sa: r1(X), w2(X), w1(X)" is non-conflict-serialisable.
+Dirty Read "Sa: w1(X), r2(X), a1, c2" is non-recoverable. Non-repeatable such as "Sa: r1(X), w2(X), r1(X)" are
+non-conflict-serialisable. And "Phantoms" is some problem of its own that is "Sa: r1(X), w2(X), r1(Y)" where X
+is used with Y in some T1's process, which apparently needs to be treated by "other mechanisms".
+
+There are also isolation "levels", which aren't really levels by the way, i.e. level 2 doesn't cover level 1 or
+vice versa, stupid... Anyways, sometimes we decide to "tolerate" some of the concurrency errors and failures for
+efficiency, which is where these levels come in, level 0 is no dirty reads allowed, level 1 is no dirty writes,
+level 2 is no dirty reads and no dirty writes, i.e. level 2 = level 0 & level 1, and level 3 = level 2 & no
+non-repeatable reads. Phantoms require their own specific solution (I believe), so these are not considered.
+Basically, level 3 is the only conflict-serialisable one here, the rest are view-serialisable. Fun fact, SQL does
+not consider dirty writes, and it isn't level 2 either because it does not allow non-repeatable reads. Check out
+"L18 - SQL Isolation Levels.png" for more details on this. Also, there is its own language in SQL for transactions (not scripting, and not transaction management itself), check out "L18 - SQL Transaction.png" for this.

@@ -1,0 +1,98 @@
+--- Regulations ---
+Risk is whenever something bad can happen in theory or has happened
+historically in practice before with similar systems. For example, a
+risk of some script kiddie having lots of zombies that execute a
+DDOS attack on the company servers to bring the websites down.
+
+We want to protect against those risks in the most resourceful way
+possible. There are regulations and standards made for this such as
+ISMS or LSIS (Information Security Management Systems) which defines
+what a company must implement to ensure CIA of assets from various
+attackers and to ensure the transparency between shareholders.
+
+These regulations must be followed because governments legally require
+companies to ensure the CIA because sensitive user information must
+be protected at all times (it is sensitive and private for a reason).
+But this regulation is loose because for example a meteor can hit a
+database and destroy the servers, but just like we don't build bunkers
+for every "the end of the world", we don't protect servers from meteors.
+It is simply not likely to happen, and is not a very wise use of limited
+copany resources, resources that can be used against something real.
+
+Note that ISMS is like a framework which is like a bunch of guides
+called ISO which tell you what must be defined properly and how it is
+supposed to be structured. The risk level, risk threshold, policies and
+procedures, etc. are to be assessed manually, more on it in chapter 7.2.
+
+I've also added a regulation hierarchy picture which kind of descrbies
+how important something is, because those regulations don't have to be
+done, but doing them is highly recommended, it is good practice and is
+often good for user trust and marketing. At the top of the hierarchy
+are the laws that are mandatory, the rest is not and is less important
+the lower down in the hierarchy you go.
+
+
+
+--- ISMS Frameworks ---
+There are 2 rule series that describe the ISMS for cybersec which are
+used globally, first is ISO and second is IEC. There is a 27000 ISO
+series such as ISO 27000, 27001, 27002, and many more other ISO and IEC
+standards that must be bought (lol, what? Ok...).
+
+In USA it is NIST SP800 series that are used (NIST is free), but there
+are also payed ones like SANS Institute and CIS. In Norway, we mostly
+use NSM, Digdir, Datatilsynet, sometimes ISO/IEC or NIST aswell.
+
+ISO 27000 is like an overview over what ISMS is and what definitions
+are used as well as the introduction on ISO 27001 and ISO 27002. ISO
+27001 is about what has to be done to ensure CIA, ISO 27002 is about
+how it is supposed to be accomplished. An inspection request must be
+made and passed to become ISO 27001/27002 certified. All of this is
+about customer & shareholder trust, and a little bit of marketing too.
+
+ISO 27001 consists of 10 chapters, which can be described as PDCA (Plan,
+Do, Check, Act) where plans 1-3 are just an introduction (not important),
+4-7 are about planning, 8 is about doing, 9 is checking, and 10 is acting.
+Note that 9 means to check the quality of what was done, and 10 is about
+making it better (thus repeating the cycle back to planning phase).
+
+ISO 27002 is a bank of security measures that should be considered for
+an organization and must be implemented if relevant / applicable. SOA
+(Statement of Applicability or Relevans Erklaring) is how we determine
+if the security measure is relevant in our system or not, and if it is
+must be implemented to be ISO 27002 certified. There are slightly less
+than 100 measures which are categorized by physical, technological,
+employee training, and organization related. Once can also search with
+"#" apparently if one is interested in the ones that are about integrity
+for example like "#Integritet" or if one wants to take measures in
+identifying or responding to vulnerabilities with "Identifisere" and
+"Oppdage". There is much, much more, and I am not sure how it works.
+But it is probably like a search just like an F3 in notepad.
+
+There is also like a satisfaction scale for like how well are the
+regulations and policies implemented in the company workflow and
+systems which is like a way to make you look bad / good called CMMI.
+
+
+
+--- Cyber Defense Matrix ---
+There is this popular cyber security book which says that there are 5
+distinct stuff we got to protect and take care of which are often done
+in different ways. Those are: Devices, apps, network, data, users. Then
+if we go back to ISO regulations, specifically ISO 27002 where we have
+to identify protection points, implement protection, set attack
+identification system, attack response plan, attack recovery plan, we
+can create a matrix where we check if for example devices have those
+ISO 27002 regulations implemented, do apps, networks, etc.
+
+In the picture blue squares is what we have already implemented, orange
+triangles are what we did not but wish to have done to better the security
+system that we have so far. This is like a common practice and is quite
+useful to be honest. There is also a governence part in NIST which is
+basically the same as ISO 27001. Note that there are many more ISO
+documents, not just ISO 27000, ISO 27001, and ISO 27002.
+
+There is also a picture where we can use the same matrix to distribute
+employee roles based on what they should do and such, also come in handy.
+Also, note that UiO has its own LSIS policy which is free and out there
+in the open (it usually isn't) found on their website. Pretty cool.

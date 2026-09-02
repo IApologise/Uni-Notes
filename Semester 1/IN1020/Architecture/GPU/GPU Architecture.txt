@@ -1,0 +1,55 @@
+For a Detailed explanation and more information watch this video:
+https://www.youtube.com/watch?v=h9Z4oGN89MU
+
+Memory units: From smallest to largest
+- Register
+- L1 Cache
+- L2 Cache
+- L3 Cache (if exists)
+- VRAM
+- RAM
+- SSD, HDD, ...
+- Other Devices, Cloud, ...
+
+
+
+The GPU:
+
+CUDA (also known as SP) - Compute unified device architecture.
+Purpose: Perform simple and specific tasks.
+Variations: FMAs exist in two forms, Scientific & Integer or Floating Point.
+Note: Many CUDAs make up a single SM.
+Architecture: Has about 410,000 transistors
+- 50,000 used on FMA operations (Fused Multiply and Add) which are most common and perform operation A * B + C per cycle (32 bit limit).
+Others are used to/for:
+- Accommodate negative numbers.
+- Bit Shifting.
+- Bit Masking.
+- Collecting and Queuing instructions.
+- Accumulating and Outputting results.
+
+SFU - Special Function Unit.
+Purpose: Perform more specialized and complicated calculations such as division, square roots and trigonometry.
+Note: SFU is a part of an SM.
+
+SM - Streaming Multiprocessor.
+Purpose: Perform a bunch of tasks and control CUDA cores, possesses L1 Cache.
+Note: Many SMs and more make up a single GPU where SMs perform calculations.
+SMs themselves are made up of a single bunch of Scientific CUDAs, Integer/Floating Point CUDAs, and a single SFU.
+
+GPU (Inside) - General Processing Unit.
+Purpose: Perform more, but specific tasks and at a slightly a slower rate than the CPU. Still much faster, just less frequent and versatile than CPU.
+Architecture:
+- A bunch of SM cores which make up a single GPC (Graphics Processing Cluster) and a controller of type (I assume).
+- Gigathread Engine: A controller of a GPU of sorts. It makes sure that the SMs are busy and data is spred evenly across. It utilizes techniques for pipelining its tens of thousands of cores by itself.
+- Two L2 Caches
+- Single PCIe interface: A huge and a quick cycle data transfer bus (x16 slot) that connects to other devices (aka high bandwidth connector).
+- GMC: Graphic Memory Controller which connects to RAMs and VRAMs and controls the data transfer flow. It gets the data from these connections to the SMs.
+- NVLink: A connector like GMC between other GPUs allowing you to stack em.
+
+GPU (Outside):
+- Display connectors such as HDMI, VGA, DVI and DP.
+- 16x PCIe Pins which connect to the motherboard.
+- 12 Volt power supply connector followed by a bunch of regulators (VRMs) which convert the power into a stable 1.1 Volt and a bunch of Watts output.
+- A cooler of sorts, mostly via turbines but water coolers are also popular.
+- A bunch of Graphics Memory Chips (GMCs) which access memory from RAMs of type VRAM. VRAMs are the specialized type of RAM made for GPUs.

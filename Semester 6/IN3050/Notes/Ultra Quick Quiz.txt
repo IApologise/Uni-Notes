@@ -1,0 +1,27 @@
+--- QUIZ ---
+
+- dot product
+
+- fitness sharing
+
+- precision
+- recall
+- F_1 and F_b
+
+- max-min scaling
+- standard scaling
+
+
+
+- name all 4 prediction/activation functions
+- name all 3 loss functions
+
+- perceptron prediction
+- linear regression prediction
+- logistic regression prediction
+- Multinomial logistic regression prediction
+
+- perceptron loss
+- linear regression loss
+- logistic regression loss
+- multinomial logistic regression loss

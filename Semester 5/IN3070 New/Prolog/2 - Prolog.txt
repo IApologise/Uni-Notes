@@ -1,0 +1,93 @@
+--- Prolog ---
+Prolog is a programming language that implements resolution calculus
+in this way, so in an SLD Resolution way. It is a DPLL I guess because
+"it doesn't play nice" with backtracking, not sure what that means.
+(Although it is mentioned that it does use backtracking on its own...)
+
+There is a way to remove it which is by using "!" when defining the
+predicate like "parent(thomas, anna) :- !.", but I would rather not
+mess with it because I don't understand it enough.
+
+Prolog files have a ".pl" at the end, so for example "family.pl". To
+run this file, we start prolog and type "[family]." into the console.
+Ctrl + C stops file execution, and "halt." exits prolog entirely.
+
+
+
+--- Simple Syntax ---
+To end a line we use a "." whilst "%" is to start a single line comment.
+For example, "male(thomas)." is a line, and "... % this is a comment" is
+a single line of comment which ends when "\n" (aka Enter) is typed.
+
+Note that ":-" means "<-" from propositional logic, and "," means "∧".
+Aslo note that once "." is used we technically can write next command
+line on the same line, so like "male(thomas). female(anna).". Lastly,
+"?-" is the same as "->" in logic.
+
+First we can define facts and rules (check SLD for those). Facts are
+written as a single line in form of {predicate(terms).}. Here are a few
+examples: "male(thomas).", "female(anna).", "parent(thomas, anna).". Rules
+are written as {predicate(variables) :- predicate_1(variables), ....}.
+Here is an example of a rule: "father(X, Y) :- parent(X, Y), male(X).".
+
+So we have defined what is a male, namely a constant thomas, and what is
+a female, namely a constant anna. We also defined what the predicate father
+is, which is true for X and Y if X is a parent to Y and X is a male.
+
+In prolog once we define the facts and rules, we can query (ask questions)
+about something using "?- query.". Here are some example queries:
+"?- parent(thomas, anna).", this returns "yes", "parent(anna, thomas).",
+this returns "no", "parent(X, thomas).", this also returns "no",
+"parent(X, anna).", this returns an example "X = thomas" and a "yes".
+
+So we can use it for derivation, cool. Note that constants are all
+lower case letters, variables start with upper case letters or "_", "_"
+is also considered to be "any" variable which is not used during definitions.
+Predicates also start with lower case letters, but also have parantheses
+at the end and contants/variables/mix that define how it acts.
+
+Also, Prolog can work with integers which are denoted with numbers (shocker).
+I assume that it is able to perform math too and that it already knows what
+"+", "-", "*", etc. mean, read more on it further down.
+
+
+
+--- Lists ---
+Lists take the following form {[Head|Tail]} where Head is the first element
+of the list, and Tail is the rest of it (in no particular order). So for
+example: "[a, b]" is a set, "[a|b]" is a list where a is first and b isn't
+(so it's last and second). This reminds me more of sets to be honest, but
+if we want an array that has order, we can just nest those "lists" like this
+"[a|[b|[c]|...]]" so we got "a" as first, "b" as second, "c" is third, etc.
+
+There are some already predefined predicate functions for those lists which
+are "member(Element, List)", "append(List1, List2, List3)", "length(List, Int)".
+
+Member returns yes if an element is in a list. If we use a variable as an input
+instead of a constant as an element, then it will return all X-es that satisfy
+member predicate which is basically all the elements that are in that list.
+
+Append returns yes if List1 and List2 when combined result in List3, if List3
+is a variable, then we will get the result itself which is a valid List3.
+
+Length returns yes if List is of length Int where Int is an integer value.
+If Int is a variable, then it will return the length of this List.
+
+
+
+--- Math ---
+To evaluate a mathematical operation, the predefined predicate "is" is
+used. So like "?- X is 3 + 5" which returns "X = 8" as a result. Note
+that it does not work backwards like "?- 8 is X + 5", I am not sure why.
+It also supports "=", "<", ">", "=<", ">=" symbols as well. For an example
+use check out the screenshots.
+
+
+
+--- More Logic ---
+We can also use negation here which is strangely denoted as "\+". So if
+a query returns "no", then a query that starts with "\+" returns "yes",
+and vice versa. Example: "?- \+ female(thomas)" will return "yes".
+
+There is also an OR logic denoted as ";", for example we can define parent
+as "parent(X, Y) :- father(X, Y) ; mother(X, Y).".

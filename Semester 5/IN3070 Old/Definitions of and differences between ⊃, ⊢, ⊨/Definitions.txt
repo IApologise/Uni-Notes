@@ -1,0 +1,21 @@
+Implies (→, ⇒, ⊃):
+  ...
+Example:
+  Let p be "It is raining" and q be "The ground is wet"
+  p → q means that we believe that rain leads to wet ground.
+  However, if "It is raining" is false, but "The ground is wet" true
+  then we can conclude q to be true, because it is a vacuous truth.
+
+Syntactic entailment: ⊢
+  When using this symbol the focus is on provability.
+  Meaning, if we assume A is true (left),
+  then we can prove that B is true (right).
+  e.g. A ⊢ B, assuming A we can prove B.
+
+Semantic entailment ⊨
+  Here we conclude B (right) from A (left).
+  In any situation where A is true, so is B.
+  e.g. A ⊨ B, whenever A is true, so is B.
+
+Differences between implies (→, ⇒, ⊃),
+Syntactic entailment (⊢), and Semantic entailment (⊨):

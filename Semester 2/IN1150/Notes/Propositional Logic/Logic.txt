@@ -1,0 +1,61 @@
+Constants: Something that is already set.
+In propositional logic there are only two states,
+namely: True - ⊤ or T, and False - ⊥ or F
+These states are also called booleans.
+
+Propositional Variables: A placeholder for any constant.
+These are most common variable names: P, Q, R, A, B, C
+
+Parantheses: Gives a higher precedence priority to what is inside
+1. if F is inside parantheses, then F is to be evaluated before G
+
+Logical Connectives: These are used to create formulas.
+All of them use constants and variables as inputs and
+then change then need to be evaluated for end result.
+
+
+
+Syntax and Precedence:
+1.   Constants: ⊤, ⊥
+2. Parantheses: ()
+3.    Negation: ¬, ¬
+4. Conjunction: ∧
+5. Disjunction: ∨
+6. Implication: →, ←, →, ←, ⇐, ⇒
+7. Bicondition / Equivalence: ↔, ⇔ / ≡
+
+
+
+Semantics of Logical Connectives:
+
+Negation: Arity is 1
+1. F -> T
+2. T -> F
+
+Conjunction: Arity is 2
+1. FF -> F
+2. FT -> F
+3. TF -> F
+4. TT -> T
+
+Disjunction: Arity is 2
+1. FF -> T
+2. FT -> T
+3. TF -> T
+4. TT -> T
+
+Implication: Arity is 2
+1. FF -> T
+2. FT -> T
+3. TF -> F
+4. TT -> T
+
+Biconditional / Equivalence: Arity is 2
+1. FF -> T
+2. FT -> F
+3. TF -> F
+4. TT -> T
+
+Equivalence: Shows that left is logically the same as right
+1. In all cases, {t} is logically equivalent to {u}
+2. It is exactly the same as bicondition, but used in other contexts.

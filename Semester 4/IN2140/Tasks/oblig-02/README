@@ -1,0 +1,8 @@
+Task 2.1
+A) Before this assignment I have never heard the name master file table, so I am honestly not sure. However, I do have
+   lots of notes from the video lectures written down, (but not memorized). Also, I mean... I did make a program that
+   reads this master file table of yours, just looked at the pictures and followed the tutorial: 1.2 Inode on disk, ez.
+B) All the implementation requirements except the regex were met (cuz me lazy and tired right now). Also, yay me :)
+C) I have implemented my own way to keep track of the directory and file IDs. It is naive but it is simple and it works.
+D) I think all the tests have been passed, at least the ones that did actually were tested on my machine only, lol.
+P.S. I stayed up all night doing this, but it was kinda chill, and I would do it again.

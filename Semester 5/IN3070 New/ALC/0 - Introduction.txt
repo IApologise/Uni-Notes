@@ -1,0 +1,14 @@
+--- About Modal Logic ---
+The type of logic we were studying is more powerful than propositional logic, but
+less powerful than first-order logic. This is because we want a system that is
+decidable. First-Order Logic isn't decidable, we might never halt. In Modal Logic
+we will always come to a conclusion, but we can't describe everything we want.
+
+We basically take propositional logic and add first-order logic parts that still
+make the system decidable and usable, preferably effectively. However, in a logic
+example from the "Motivation-1.png" is still not decidable, yet we can make it so by
+observing patterns and making it more restrictive to make it decidable.
+
+Scroll through these Motivation.png series for details, but basically since we
+commonly utilise variables that are free, we can create shortcuts in our syntax
+and add situations as additional, new and unique, semantic rules.

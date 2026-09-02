@@ -1,0 +1,34 @@
+Step 0: "Key" key
+By going into properties of "Key.jpg" the title gave away the encryption method used "AES", the mode used "CFB", the key "0dc87c21af02eceb0cbcae6dcbfdbb7a", and the IV "0000000000000000000000000000000" which allowed me to decode it using "AES Decrypt" service that "https://cyberchef.io" provides. The website will be addressed as Cyber Chef from now on for convenience.
+
+
+
+Step 1-2: Guessing pokemon
+From the message that we got this time Alice used encryption method "AES", mode "CFB", IV of "0000000000000000000000000000000", and that the key was an MD5 Hash of the best pokemon. She was so generous as to narrow it down for me to 5 choices of which, after brute forcing, "Mew" turned out to be the one.
+
+An interesting note though, why would she ask Bob those silly questions such as what the weakness of the symmetrical encryption is during such a dire situation? I mean... it does require secure communication to be established in the first place to be able to share it with others which is what the purpose of the symmetrical keys is in the first place. Is this a trap? Is she trying to expose someone gullible that is trying to get some more info by pretending to be Bob? Oh well, that shouldn't concern me, I should focus on the problem at hand.
+
+
+
+Step 3-4 & 6: 
+Looks like there was more to come. There was this task where I had to go to the "craskstation.net" and use it to find the password which turned out to be "Tiramisu". But I mean of course I would get the password since hashing algorithms like MD5 allow to backtrace to the input easily, it is a matter of seconds before brute forcing popular inputs would find a match.
+
+When hashing, no matter the input size, the output has a fixed one. Since there can be infinite inputs and only few outputs it is irreversible. However, to make it safer, similar inputs must yield completely different outputs, and the output's size must be significant to avoid collisions as much as possible. Otherwise, the integrity check becomes less credible. Did I mention that it is completely determenistic?Oh well, there is more than that, but that becomes more than 4 then, right?
+
+
+
+Step 5 & 7-8: Vigenere Cipher
+I have identified the codenames of two agents from B-Tjenesten, "Doomguy93" and "MegaScorpion222". The message encrypted is obviously a vigenere cipher. By looking at the word "rqh" I figure that the key is 12 or its factors in length. "az" is too much of a coincidence, but I will look into it later.
+
+For now, since it is supposed to be a location words such as "ved" and "til", "bak" can be common as well as words such as "den", "det" and such, this fits the "rqh" appreaing twice in such a context well. "zex" and "zqk" can also fit well and easy to brute force to get closer to the answer or get a part of it. "qkfi" can be words like "gate" or "møte", but I am not sure how "å", "ø", and "æ" are substituted for precisely. Lucky for me, the "-" is a very rare occurence and can give it all away quickly.
+
+Finally, I get something going with a word like "mekk" which gives me a lot. I get "gate" from "qkfi" and almost a "ved" from both "rqh" and "zex". So I try and expand "mekk" with "me??kk" to try and get the "ved". This is a dead end. Either that, or the password is longer than 6. So, I go for 12, and I expand again. Finally "mewmewme??kk" gives me "deg", "ved", and "agenten", but "gate" doesn't fit here anymore. "???-pammen" sounds almost like a word too. Since "mewmew" is a repetition and it gave me huge success, I try simply "mew" as a key, and finally I claim victory and suddenly, that "-" makes a lot of sense since it turned out to stand be "ifi-dammen".
+
+In the end, the key turned out to be "mew" which is unexpectedly short. The decrypted message thus became "agenten vil mote deg ved ifi-dammen ved midnatt". Turns out cracking vigenere ciphers like this one isn't that hard due to the fact that guessing the key length gets easier the larget the message is. Same goes for frequency analysis which is often the way to break it. Although encoding a message into parts with multiple keys or a longer key in general could make it more difficult to crack.
+
+
+
+Step 9-10: Authenticity Verification
+I have successfully verified the authenticity of an RSA, SHA-256 signature, by using a message and a public key. The result can be seen in the "Proof.png". Fun fact: private key since the private key is only known by the sender, it is used to sign the message. Thus, it is the only credible way to verify authenticity.
+
+Here is a more detailed explanation with RSA as an example. We choose {a} and {b} such that {ab ≡ 1}. Our private key will have the {a}, and public key {b}. When creating a signature {S} we do {S = mod_n( H(M)^a )} where {H} is a hash function and {M} is our message and {n} is a common value found in both private and public key. Now, to verify the authenticity we check whether {H(M) ≡ mod_n( H(M)^ab )}. If {ab ≡ 1}, then we get {H(M) ≡ H(M)} and the verification is complete successfully. Note that both private and public key values were used to verify which couldn't have been done otherwise.

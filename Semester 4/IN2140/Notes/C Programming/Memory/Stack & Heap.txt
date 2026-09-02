@@ -1,0 +1,15 @@
+--- Stack ---
+Each call to a new recursion takes up space because the pointer needs to know where to return to once the method call
+has finished. We save this information in what's called a stack. Stack is where all those local variables are saved
+by the program which are used during runtime (assigned and cleared automatically). Each program has some space
+deligated to it which can run out if for example the recursion is too deep due to too many local variables created
+for return pointers. This doesn't apply to just recursions, but is easiest to cause this problem. From the lecture
+video in the example the stack memory size was just 8 megabytes which is the default I guess. It can scale and be
+able to take more and less space too, but I am not sure how and why it didn't prevent the crash...
+
+--- Heap ---
+In stack the variables are all local and are released once the method has been terminated or once we get out of the
+scope that it was in. In heap we use "malloc()" which is the global memory of the whole program, and it has to be
+released manually using "free()". Failing to do so creates memory leaks, but it is released automatically on exit.
+Also, note that the Stack and Heap have nothing to do with the stack and heap algorithms themselves, it is just a
+naming coincidence, that's all.

@@ -1,0 +1,24 @@
+An algorithm is a list of instructions that run on a machine. An automata is a program with a very limited memory,
+and a turing machine is one with an unrestricted amout of memory. Automata is used in compilers as translators, and a
+turing machine is used in creating programs and evaluating their time complexity.
+
+Note: "if and only if" is often shortened and written as "iff".
+
+The automaton is often represented by a graph for ease of understanding. The nodes are the states in which it can end
+up in, the edges connecting these nodes represent the cause of going from one state to the other (directional). The
+automaton always has a starting state (node). The automaton must have a halting state which is called the accepting
+state so that it can be finite. Everytime one goes from one state to the other, the edge that was used is removed
+from the initial input (since the instruction was applied). Imagine automaton being kind of like a filter of what is
+and isn't a valid input. Iff the input we parsed in went all the way from the start to the accepting state and is
+empty at that point, then the automaton accepts the input as valid. If we can go further and end up to a
+non-accepting state also called the "dead" / "sink" state, then the input is not valid. These dead states are
+implicit and represent the rest of all the possible states that were not pointed out before.
+
+For a clear example or a clarification / own analysis, check out the "Finite_Automata.png".
+Also, I am too lazy so I screenshoted the definition of the DFA (Determenistic Finite Automata).
+For that check out "DFA_1.png", and for a formal definition check "DFA_2.png".
+
+We use these automata to define what's called a regular language. Basically, if there exists a finite automata such
+that all the language's words are accepted, then the language is also considered a regular language as well.
+Similarly we can use operations on these regular languages just like with normal ones, check out
+"Regular_Languages.png" for more. For a clear example check out "Regular_Languages_Union_Example.png".

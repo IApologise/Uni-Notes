@@ -1,0 +1,30 @@
+Regex, also known as RE which is short for Regular Expression is basically an another way to define what is and isn't
+allowed in our language (text). Just like NFA and DFA, a Regex can be described as both DFA and NFA, and the other
+way around. Regex is a more common term and is used often in practical programming for formatting like in Python,
+SQL, Java, Javascript, etc. Basically, it limits what is and isn't a valid input.
+
+In this course we will be using a program called Grep which detects all the lawful syntax and prints all of them out.
+Also, an important note to summarize all 3 of these lectures: DFA <-> NFA <-> RE <-> GNFA.
+
+When it comes to Grep though, you can translate operators by using the following equivalences (last is in grep) where
+A and B are regular languages:
+1. A ∪ B ≡ A | B which means A ∨ B, e.g. each letter must be accepted by either A or B
+2. A ∩ B ≡ ??? which means A ∧ B, e.g. each letter must be accepted by both A and B
+3. AB ≡ AB which means A + B or concat(A, B), e.g. the letters must be accepted by A first, once there is a
+possibility that further letter combinations may belong to both A or B, branch into multiple paths, where in one it
+is assumed to be still a part of A, and in the other a part of B. If at least one path finishes by accepting it as a
+B in the end, then the whole thing is accepted. So we guess what part belongs to A and what to B, and if there exists
+an interpretation where some division of the word into A and B is accepted, then the whole word is.
+4. A* ≡ A* which basically means "contains any combination of letters from A's alphabet".
+5. ∅ ≡ {} ≡ .^ which means that no words are accepted, because there are no states that may accept something.
+
+Anyways, For how to convert an NFA to GNFA which is basically NFA with Regex and some practical structure, check out
+the "NFA to GNFA part 1.png" for an NFA equivalent, and "NFA to GNFA part 2.png" for a GNFA equivalent. In case you
+are wondering, check out the "GNFA.png" for a formal definition of GNFA. Here are some GNFA (as R) formulas:
+1. R ∪ Ø = R    2. Rε = R    3. RØ = Ø
+
+There is also a way to convert DFA into GNFA and RE and so on, check out "DFA into GNFA part 1.png" and "DFA into
+GNFA part 2.png" for an example where we are going from DFA in part 1 to GNFA in part 2, and check out lecture 3 for
+exact algorithm and details. All of it shouldn't be hard with practice.
+
+So to summarize: DFA = NFA = RE = GNFA also written as DFA <-> NFA <-> RE <-> GNFA all which are regular languages.

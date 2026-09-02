@@ -1,0 +1,42 @@
+Identity laws:
+1. p ∧ ⊤ ≡ p
+2. p ∨ ⊥ ≡ p
+
+Domination laws:
+1. p ∧ ⊥ ≡ ⊥
+2. p ∨ ⊤ ≡ ⊤
+
+Idempotent laws:
+1. p ∧ p ≡ p
+2. p ∨ p ≡ p
+
+Double negation law:
+1. ¬¬p ≡ p
+
+Commutative laws:
+1. p ∧ q ≡ q ∧ p
+2. p ∨ q ≡ q ∨ p
+
+Associative laws:
+1. (p ∧ q) ∧ r ≡ p ∧ (q ∧ r)
+2. (p ∨ q) ∨ r ≡ p ∨ (q ∨ r)
+
+Distributive laws:
+1. p ∧ (q ∨ r) ≡ (p ∨ q) ∧ (p ∨ r)
+2. p ∨ (q ∧ r) ≡ (p ∧ q) ∨ (p ∧ r)
+
+De Morgan's laws:
+1. ¬(p ∧ q) ≡ ¬p ∨ ¬q
+2. ¬(p ∨ q) ≡ ¬p ∧ ¬q
+
+Absorption laws:
+1. p ∧ (p ∨ q) ≡ p
+2. p ∨ (p ∧ q) ≡ p
+
+Negation laws:
+1. p ∧ ¬p ≡ ⊥
+2. p ∨ ¬p ≡ ⊤
+
+Other laws:
+1. A ⇒ B ≡ ¬A ∨ B
+2. A ⇒ B ≡ ¬B ⇒ ¬A

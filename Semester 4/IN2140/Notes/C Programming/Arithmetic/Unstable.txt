@@ -1,0 +1,4 @@
+Looking at the picture "Unstalbe.png" this is something you should not do because the input for a method usethis()
+can vary wildly depending on how the machine and the specific compiler processes it in stack. For example, it might
+save ++a on the left and ++a on the right as local variables for usethis() method to use, and have the left and right
+to be different like 2, 3, maybe 3, 2, or maybe 2, 2 or 3, 3. This is unpredictable so don't do this.

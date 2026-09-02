@@ -1,0 +1,41 @@
+How are queries so fast? How is SELECT working under the hood? This is because
+of the data structure that SQL has when creating tables. There are 2 types,
+hash based which are keys and values using Separate Chaining, best when searching
+for certain values in multiple rows. And there is also a B-Tree-Index which is
+like an n-ary tree where leaf nodes also have pointers to nearby leaf nodes, so
+an n-ary tree for all values and a double linked list between leaf nodes. This
+second method is best for when searching by range such as products with price > 50
+and such. There are other data structures such as for JSON and such, but we won't
+get into those.
+
+These two data structure methods exist because getting data from a hard drive
+is way slower than an SSD and RAM. Yes, data is stored in HDDs because it is
+cheaper and may store lots of data (good value). So when we get the data, it
+is best to get it in chunks which is why a B-Tree-Index and Hash-Index are best.
+
+Whenever a collumn is set as the PRIMARY KEY in SQL, the whole collumn takes
+a structure of a B-Tree-Index which makes the JOINs between tables faster.
+However, sometimes we want to do joins not between primary keys, but other
+collumns. In those cases we must instantiate a B-Tree-Index ourselves.
+
+Whenever we query something it is first translated from SQL syntax to an equivalent
+one in Relation Algebra (but it looks more like a tree structure instead of a linear
+like the usual), this process is called Parsing. Then we Optimize the Relation Algebra
+by looking at its equivalent queries which might take less time to process, kinda like
+instead of doing a^2 + a in math we do a(a + 1) instead. We find out which ones are
+more likely to be faster also by looking at the statistics of our data in the DB, this
+is kinda complicated but it is basically looking at how UNIQUE collumns and how many
+unique attributes (out of the ones that can repeat) there are, etc. Lastly before
+execution an execution plan is created which is basically the best choice of algorithms
+and sequences we take to make the fastest version of this relation algebra work. Then
+of course comes the query execution part which looks over our DB and returns the result.
+
+Anyways, if we do not want the result but want to know the execution plan that it would
+have created, we can use EXPLAIN command in SQL infront of the query we would want to use.
+Note that the cost is the probable range of time that it will take to execute the plan.
+It also specifies how many rows and collumns the execution parts return as well as the
+algorithm/method used. Also, we read the plan from bottom to top and it is just an estimate.
+
+If we want concrete time it takes, then we do EXPLAIN ANALYZE which actually runs the
+execution part but instead of outputing the result outputs the time it took to execute it
+and all the other relevant information like time it took for certain parts and size and such.

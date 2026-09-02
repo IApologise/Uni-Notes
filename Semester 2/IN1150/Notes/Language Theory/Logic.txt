@@ -1,0 +1,10 @@
+Empty string:
+Although it doesn't quite make sense, but for
+logical reasons it has a symbol ∧, an empty string.
+
+
+
+All Strings: *
+If we have an alphabet A, then a string A*
+contains all of the possible strings that can
+be constructed from an alphabet A.

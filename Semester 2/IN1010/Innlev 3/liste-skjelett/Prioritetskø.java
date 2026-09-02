@@ -1,0 +1,3 @@
+class Prioritetskø <E extends Comparable<E>> extends Lenkeliste<E> {
+    // ...
+}

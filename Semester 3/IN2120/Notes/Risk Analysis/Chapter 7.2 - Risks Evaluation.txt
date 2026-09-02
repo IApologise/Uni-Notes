@@ -1,0 +1,92 @@
+Risk:
+An assessment of risk of damage from relevant parts of the system,
+mainly those 3: How often the system is getting threatened (threat),
+how much value is gotten from getting hacked (value), and how easy
+it is to hack the system and get those values out of it (vulnerability).
+
+
+
+Risk level - Qualitative:
+A quantitative assessment of how big of a trouble we will
+have once that part is breached. It is calculated like this:
+'Risk = Probability * Consequence' where both probability of
+getting attacked and the consequence's seriousness are both
+determined in some manner.
+
+However, note that if the scale is logarithmic, e.g. the risk
+level is ln(e^X * e^Y), then the result becomes X + Y which is
+a sum and not a product like X * Y instead. So like if the
+difference in probability level 2 and 3 is like 10 days to a 100
+days for example (same scale must be used for coonsequence as well).
+
+Probability is most likely to be determined manually by combining
+threat and vulnerability, whilst for consequence it is simply the
+loss of value or something similar. Note that if all the risk levels
+are huge or minimal, then something is wrong with our model because
+we then either have to use more resources than we have to prevent
+them, or none at all (which is hella greedy and a very bad take).
+
+
+
+Risk level - Quantitative:
+Here we calculate the loss of an event happening (which is often
+pre-determined by the qualitative risk level) which is often in
+logarithmic scale. For the amount of events that happens it is
+the same, being pre-determined by the probability risk level.
+
+Note however that both require base case constants like level
+5 consequence risk level is 10 million kron lost and such. Same
+for the probability where 5 for example can be 1000 risk events
+like this in a year (year is often used, same for kron). The
+cost can be easily calculated assuming we got the data, but
+not the amount of events that may happen in a year.
+
+Note that the total loss even if the scale is logarithmic does
+not become a sum, but a product instead because we multiply
+the amount of events happening by the cost, it is a cost per
+event after all (duh...).
+
+
+
+Risk threshold:
+An acceptable risk level an organization or an entity can take
+before having to use its limited resource pool to reduce the
+severity or likelihood of this risk becoming true. This value
+is determined based on risk assessment and avaliable resources.
+
+
+
+ROS analysis:
+An action of analyzing the risk like what causes it, what it affects
+how severily it affects stuff, then measuring its level. Later,
+create a plan of possible actions that can be taken to reduce it
+and evaluate the risk and its level after actions were taken. If
+it is not enough (below the acceptable risk threshold) then we
+create even more counter-measures to lower it further (more costly).
+
+
+
+Threat modelling:
+This is an act of trying to imagine different scenarios where the
+system might have been breached, what could have been revealed or
+tempered with, and how it could have been prevented. You try to
+think what the hacker could be interested in, what bad things can
+be done with this secret data that we got. You assess risks before
+they happen and try to predict, assess and prevent risky breaches.
+
+
+
+ROI (Return on investment):
+If we spend too much on making sure that the risk does not happen,
+then it obviously wasn't worth it. To find out whether we should
+or shouldn't do that we calculate the damages that can be done if
+that risk happens as 'gain' because we gain money from preventing
+it. And get the formula 'ROI = (gain - spent) / spent' where 'spent'
+is the money used to prevent that risk from happening. If ROI is
+positive, then it was worth it, if negative, then it wasn't.
+
+However, even if it is negative or positive, there are often more
+than one of those risks and they might happen multiple times (probably),
+consider that. To describe this we also predict based on frequency 'S'
+(from risk level) how often it may happen (in a year, etc.) and also
+from risk level, how much gained 'V' (prevented losses) in that period.

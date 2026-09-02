@@ -1,0 +1,10 @@
+load nat-add.maude
+load boolean.maude
+
+fmod NAT< is 
+  including NAT-ADD .           including BOOLEAN .
+  op _<_ : Nat Nat -> Boolean .
+  vars M N : Nat .
+  eq 0 < s(M) = true .          eq M < 0 = false .
+  eq s(M) < s(N) = M < N .
+endfm

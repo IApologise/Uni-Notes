@@ -1,0 +1,92 @@
+Logics requires these 3 core ingredients to function:
+- Syntax    -> What part of what is a formula, an argument, an operation, etc.
+- Semantics -> The way we interpret those formulas, the meaning of things.
+- Calculus  -> The process of computing, deducing, rule application.
+
+
+
+Syntax:
+In here, syntax is basically the one that was used in IN1150,
+So far I have noticed barely any modifications and alterations.
+
+Reminder, a formula is a single relation taking terms as inputs.
+Relation is a predicate having arity of 2 or more, predicate is
+a function that returns boolean values as output. Term is a
+constant or a closed form function. Closed functions are functions
+that have all their free variables bound by a quantifier. If A
+is a formula, then so is whatever can be built from it.
+
+In this course, every lower case letter is a formula (p, q, r, etc.)
+But this is basically the same as normal boolean variables from IN1150.
+
+
+
+Semantics:
+Since we can not know what p, q, A, B, etc. are and whether
+they evaluate to true or false we interpret them as if they do.
+We use V_I({Formula}) and assume evaluations to see what happens.
+Kind of like brute-forcing all the possible combinations that
+the formula can be evaluated in to then come to a conclusion.
+
+Here is an example formula {¬p ∧ p}. Obviously we don't know
+what {p} is and how it is being evaluated, so all we can do is
+guess the evaluation result. We start with V_I(p) = ⊤, next we
+get V_I(¬p) = ⊥, thus V_I(¬p ∧ p) = ⊥. This can be used to show
+a counter example, or brute-force solutions if we were to see
+what would happen if we assumed V_I(p) = ⊥ next. The first
+example shows that {¬p ∧ p} is falsifiable, the next that it
+is a contradiction, but we didn't get to that part yet.
+
+To define interpretation I properly we do it as follows: Say we
+got ∀x p(a, x). An interpreatation I(N, i) with p^i is <= operator
+and a^i = 0 is one of the properly defined ones. It shows what type
+of function p is (denoted as p^i), which scope the interpretation
+has (Natural numbers), and what the constant a is (denoted as a^i).
+Note that if there are more constants, we need to interpret em too.
+In Ben-Ari style we write it as simple as I = (N, <=, 0).
+
+so a function interpretation and evaluation which is V_I(p(a, x))
+becomes p^i(V_I(a), V_I(x)) which then becomes p^i(a^i, f(x))).
+Since x is a variable it is bound by the defined set's scope
+and all the variables must have an f(x) that maps to that set.
+Also, check out the Nesting Intepretations.png too see how
+truly flexible the whole thing is.
+
+Reminder, a formula A entails formula B, written as A ⊨ B if
+for every interpretation of I(A) and I(B), V_I(A) = V_I(B) = ⊤.
+In other words, A is a logical consequence of B.
+
+
+
+Calculus:
+This is the process of using syntax and semantics to come to a
+conclusion. We define rules based on syntax and semantics. This
+part is therefore governed by rules and its purpose is to compute.
+
+There are multiple calculuses with their own rules such as Sequent
+Calculus LK, Resolution Calculus, etc. More on that can be found
+in other text files (my notes) or in presentations/wikipedia.
+
+
+
+Entailment & Derivability:
+Note that ⊢, sometimes denoted as ⇒, and ⊨ are different.
+⊨ represents semantic notion, whilst ⊢ represents syntactic.
+Again, A ⊢ B means that we can derive B or that B is proven
+as long as A is. A ⊨ B means that B is ⊤ as long as A is ⊤.
+
+If we can show that (A ⊨ B) ⇒ (A ⊢ B) which when translated
+says "If when A is true and so is B, and we prove B from A, then
+the model is complete" then everything that is true, can be proven.
+
+On the other hand, if we can show (A ⊢ B) ⇒ (A ⊨ B) which when
+translated says "If when B is proven from A, and B is true whenever
+A is, then the model is sound" then everything that is provable is true.
+
+For example, lets say we have a system for prime number prediction, a
+machine of sorts. If that system is complete but unsound, then it will
+give wrong answers too like 1, 2, 3, 4, 5, ... As you can see, 4 is not
+a prime, so it is unsound, but since it outputs all the numbers, it is
+complete. If a system is sound but incomplete, then it will output not
+all the right answers such as 1, 3, 5, 11, 13, ... As you can see, 2
+is missing, but there are no wrong answers, so it is sound but incomplete.

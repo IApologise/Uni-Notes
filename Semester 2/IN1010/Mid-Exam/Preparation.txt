@@ -1,0 +1,113 @@
+Comparable<T>
+- methods:   int CompareTo(T other) -> returns an integer result.
+- variables: this.item, other.item
+
+Iterable<T>
+- methods:   bool hasNext() -> Checks if next element in array exists
+             T next()       -> Gives the next element in array
+- variables: this.array
+
+
+
+Inheritance:
+
+Useful declarations...
+- B extends A
+- D implements C
+- E extends A and implements C
+- G extends B
+- F extends A implements C
+- H extends F
+
+
+
+Extensions:
+
+If we declare reference to point to B {B reference;}
+then we can not set it to be a more general class.
+So this is not allowed { B reference = new A(); }.
+
+However, if we have a general reference {A reference;}
+then we can specialise it into another class.
+So this is allowed { A reference = new B(); }.
+
+We can convert spesialised classes into general
+classes. If we have { B reference = new B(); } then
+this is allowed { reference = (A) reference; }.
+
+This conversion can only happen if the extension is
+more specialised. So if we have { E reference = new E(); }
+Then this is not allowed {reference = (B) reference; }
+because E extends A which is more general than B.
+
+If however we have { G reference = new G(); }, since
+G extends B we can do { reference = (B) reference; }
+and since B extends A { reference = (A) reference; } too.
+
+
+
+Interfaces:
+
+Interface itself can not be created since
+it is an abstract class which means that
+{ C reference = new C(); } is not allowed.
+
+With interfaces, any class that implements it
+can be created as a new interface object.
+So this is allowed { C reference = new D(); }
+This is also allowed { C reference = new E(); }.
+
+Objects that implement this interface can
+also be converted to the interface later.
+So { reference = (C) reference; } is allowed
+as long as referenced object implements C.
+
+
+
+Extensions and Interfaces:
+
+If a class extends another class that implements
+an interface, then it is as if it itself implements
+same interfaces. So if we would have had a class
+{ F implements C } and class { H extends F } then
+it is the same as if { H implements C }.
+
+If a class E extends A and implements C it can still
+be created and converted to A since E extends A.
+
+Also, pay attention. If both classes D and E
+implement C it does not mean that D and E can
+be converted into each other or created.
+
+
+
+Shortcut for type convertion:
+
+To determine if object can be converted ask yourself:
+"Is object X of type Y Z?" which looks like that
+{ Y object = new X(); }, { object = (Z) object }.
+
+So if we have Truck extends Transport implements Grounded.
+And if we have { Transport = new Truck(); } and then
+we do { object = (Grounded) object; } then we ask ourselves
+"Is object Truck of type Transport Grounded?" answer: Yes.
+
+or if { object = (Truck) object; }: "Is object Truck of type
+Transport a Truck?", the answer is: Yes again! And for
+whether it is a transport too - Yes.
+
+
+
+Shortcut for type creation:
+
+"Is X a type of Y?" where { Y object = new X(); }.
+So in our case with Truck, Transport and Grounded
+it would be like that: { Truck object = new Transport(); },
+meaning: "Is Transport of type Truck?" It isn't, so No.
+
+However, { Transport object = new Truck(); } would be like
+"Is Truck of type Transport?", Yes! Truck is a type of transport.
+
+And Grounded is an implementation, not a type so it can never 
+be created. How can you create an adjective as object? Exactly.
+Thus, { Truck object = new Grounded(); } does not make sense, so No.

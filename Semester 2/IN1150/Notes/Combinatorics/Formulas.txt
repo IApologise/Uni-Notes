@@ -1,0 +1,18 @@
+Inclusion-Exclusion Priciple:
+1. |A ∪ B| = |A| + |B| - |A ∩ B|
+2. |A ∪ B ∪ C| = |A| + |B| + |C| - (|A ∩ B| + |A ∩ C| + |B ∩ C|) + |A ∩ B ∩ C|
+
+Multiplication Principle:
+1. |A x B| = |A| * |B|
+
+
+
+Permutation:
+1. ^n P_k = n! / (n - k)!
+2. ^n P_k = (n, k) * k!
+
+Binomialcoefficient:
+1. ^n C_k = n! / ((n - k)! * k!)
+2. ^n C_k = (n, k)
+3. S = n! / (r_1! + ... + r_m!)
+4. (n + 1, k) = (n, k - 1) + (n, k)

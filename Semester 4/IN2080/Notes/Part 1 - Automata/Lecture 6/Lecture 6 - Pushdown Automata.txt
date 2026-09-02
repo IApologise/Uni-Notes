@@ -1,0 +1,66 @@
+--- PDAs ---
+DFA/NFA/RE/GNFA are all computational models with finite memory, but what model can accept context-free languages?
+For that we need one with infinite memory called pushdown automata (PDA). The type of infinite memory that we have
+is a stack with a LIFO algorithm (Last In First Out). PDA is basically an NFA with just an infinite memory stack.
+For a more formal definition check out "PDA Definition.png".
+
+NFAs simply read the input and switched states depending on that input. PDAs do that too, but they also have a
+stack which is used to also store some of this read data for later use (a stack to write to and read from). For the
+way we write this all down, how it looks, and such check out "PDA Syntax.png". Note that A and B are example
+states. There is also an example from the lecture which shows how we can describe the previously indescribable
+language by NFA in a PDA at "PDA Example 1.png". Since PDA is an NFA, if there exists an interpretation that we
+accept, then we accept the whole input (even if there exist derivations that do not lead to an accept state). This
+is important for another problem we couldn't describe before at "PDA Example 2.png".
+
+More about accepting, here is how a PDA must start, go, and end like for it to accept a string. First we can only
+have one start state, and at the start the stack must be empty. During the transitioning between the states, we can
+read a string's symbol thus moving to another state, read/write to the stack, or both of these two at the same
+time. Lastly and obviously, after reading the whole string the PDA must end up in an accepting state.
+
+Whenever we are writing "X, Y -> Z", i.e. going from state A to one of the states B that requires X as the
+transition symbol from the input as well as popping Y out of the stack and adding Z to the stack, all of that
+actually is done through a single state. But if we have "X, Y -> aZb" for example, we need multiple pops and
+pushes, so this is a short-hand notation for something like this: "X, Y -> b", then "ε, ε -> Z", and in lastly in
+our case "ε, ε -> a". Note the reversed order from "aZb" to "bZa" due to the nature of push (LIFO data structure).
+
+--- PDA <-> CFG Theorem ---
+Anyways, if we got a CFG then there must be a PDA that accepts a language constructed through this type of grammar.
+There is a proof for that where we first look at an algorithm which always constructs one, and then formalize it which can be seen in "PDA for a CFG type language.png".
+
+However, to prove that from a PDA we get a context-free language is something that will be done in lecture 7 which
+is where we will finish the proof of a theorem "A language is context-free (CFL) if and only if some pushdown
+automaton (PDA) recognizes it". For now we do some assumptions like 1. Our PDA only has one accept state, 2. The
+stack is empty before accept state, and 3. No simultaneous push & pop (i.e. both a push and a pop in a single
+transition between two states).
+
+Due to assumption 3. what we end up with is a PDA where we just apply the short-hand notation we discussed before
+in a similar fashion here as well. Due to assumption 2 we know that there must exist a variable that generates
+strings the PDA accepts which results in an empty stack before the accept state. In the lecture there is talk about
+the fact that if the PDA accepts the strings generated, then the first transition must be a push only (due to
+assumption 3.), and the last must be a pop only (also due to assumption 3.). Then there is the fact that the values
+pushed and popped are possibly not the same, so if we have a variable A that takes us from start to accept states,
+and the push & pop aren't the same, then A can be broken down into an xBy (i.e. A -> xBy) variable where x is the
+first pushed symbol, y is the last popped symbol, and B has the same nature and role as A. Lastly, if there are
+no states to traverse, then there is no push and pop so the A may also generate an empty string. However, I fail
+to see why it is important to discuss the nature of A and how it works. But alas, we just go with it I guess...
+All of these assumption 2 details on how the A works look like this: "Magic Variable A.png".
+
+Anyways, the lemmas are as follows: 1. "if A_pq generates x, then x brings P from p to q with empty stacks", and
+2. "if x can bring P from p to q with empty stacks, then A_pq generates x", both of which we prove using a method
+of induction. 1. Lemma: In the base case our PDA only has 1 derivation step, and this allows for only one rewrite
+rule that leads to a terminal which is "A_pp -> ε". Then in the induction step we assume that A can generate such
+an x in k derivations (i.e. rewrite rules). Now we show that in two cases, namely "A_pq -> a(A_rs)b" and in the
+"A_pq -> (A_pr)(A_rq)" both lead to the number of derivations shrinking (from k + 1 to k) and an empty stack. This
+means that it can cascade like that and shrink further from any size to the base case which we know is true.
+2. Lemma: In the base case the x is empty which leads to no read and thus 0 computation steps where due to the
+"A_pp -> ε" rule the base case is proved by definition. Here (just like previously) we assume that this second
+lemma is true for computations that take k steps. Here we divide into 2 cases, either the stack is empty only at
+the beginning and the end, or it is emptied inbetween them. Here we do similarly to how the first lemma was proven
+where we show that we divide it and thus it shrinks, and since it holds for k + 1 it holds for k, and since it
+holds for base case, it holds for the one above, and so on...
+
+P.S. Something tells me this was the lecture 7, but we are going to go with what the presentations are named by so
+that's that. Any complaints to the professor that made this stuff, especially these tideous to understand proofs,
+but they are by no means complicated, I just couldn't give myself enough time to figure them out completely myself
+and analyze the decisions and reasons for them made carefully which makes it really hard to remember due to my lack
+of complete understanding of these choices (which is how I remember stuff - by understanding why not otherwise).

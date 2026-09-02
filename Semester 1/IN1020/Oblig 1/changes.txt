@@ -1,0 +1,9 @@
+Changes:
+
+added:
+- STA sum  // To make it so we always start with a sum of 0 after full restart
+           // But ultimately not important
+
+changed:
+- SUB plu --> LDA load_plu  // Now changes the loader properly
+                            // This is what was causing "PC = 7" error

@@ -1,0 +1,62 @@
+STA sum
+restart INP
+STA plu
+BRZ exit
+
+INP
+STA amount
+
+LDA default
+STA load_plu
+
+load_plu LDA
+SUB plu
+BRZ continue
+
+LDA load_plu
+ADD next
+STA load_plu
+BRA load_plu
+
+continue LDA load_plu
+ADD one
+STA load_price
+
+load_price LDA
+ADD sum
+STA sum
+
+LDA amount
+SUB one
+STA amount
+BRZ restart
+BRA load_price
+
+exit LDA sum
+OUT
+HLT
+
+default LDA ls
+
+sum DAT 0
+amount DAT 0
+plu DAT 0
+
+one DAT 1
+next DAT 2
+
+ls DAT 405
+DAT 7
+DAT 307
+DAT 4
+DAT 303
+DAT 10
+
+j DAT 10
+u DAT 21
+s DAT 19
+t DAT 20
+a DAT 1
+s2 DAT 19
+s3 DAT 19
+i DAT 9

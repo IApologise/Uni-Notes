@@ -1,0 +1,51 @@
+In Time Complexity we were looking at how much time it takes for a decider to halt. In Space Complexity we will be
+looking at how much space of a decider's tape is taken (not counting the input itself). Specifically, we look at
+the configuration that had taken the most at the moment after the decider concluded, and that maximum space used at
+some point is the measurement, so do not mistake it for the total or the average over all configurations, it is the
+max over all configurations (for a NTM we look at the branch with largest max tape space configuration used).
+
+The amount of tape's space used proportional to the word length is split into these class types:
+1. PSpace - A language recognized by a determenistic decider turing machine that uses polynomial tape space.
+2. NPSpace - A language recognized by an NTM Decider that uses polynomial tape space.
+3. PSpace Complete - If any PSpace problem can be p-reduced to this one, then this problem is PSpace Complete.
+
+4. L - I.e. LogSpace is a language recognized by a Transducer that has only log_c(n) available work space
+5. NL - I.e. NLogSpace similarly to the LogSpace but the Transducer is a NTM, i.e. Non-determenistic TM.
+6. L Complete - Same as L but if every problem in L can be reduced to this one, then this one is L Complete.
+7. NL Complete - Same as NL but if every problem in NL can be reduced to this one, then this one is NL Complete.
+When deciding a language with a decider, the language's space complexity is determined by the best decider we could
+come up with, i.e. the one using least big O space, just like with time complexity.
+
+Note that all of P, NP, NP-Complete, coNP, coNP-Complete problems are in PSpace. If one proves that some PSpace-Complete problem is in P then the whole hierarchy of classes between P and PSpace becomes one. It would be even
+more substantial than proving that P == NP, much more so.
+
+Similarly to the time complexity's TIME(f(n)) and NTIME(f(n)), we got space's SPACE(f(n)) and NSPACE(f(n)). Thus
+we can define PSpace and NPSpace just like we did with time complexities (very similarly):
+1. PSpace = ⋃_(k ∈ N) SPACE(n^k) which is saying that PSpace = SPACE(n^0) ∪ SPACE(n^1) ∪ SPACE(n^2) ∪ ...
+2. NPSpace = ⋃_(k ∈ N) NSPACE(n^k), i.e. NPSpace = NSPACE(n^0) ∪ NSPACE(n^1) ∪ NSPACE(n^2) ∪ ...
+3. LogSpace = SPACE(log_c(n)) where c is some constant, we round up by the way.
+4. NLogSpace = NSPACE(log_c(n)) where c is some constant here too, and we also round up.
+
+Note that SPACE(f(n)) means that at most O(f(n)) of the tape's space can be used where n is the length of input w,
+i.e. n = |w|, and f(n) is any polynomial function. Similarly, NSPACE(f(n)) means that we use a non-determenistic
+decider turing machine instead of a determenistic one (like with PSPACE(f(n))), and that each branch uses at most
+O(f(n)) space, just like with TIME(f(n)) and NTIME(f(n)).
+
+An important theorem is that whenever f(n) >= O(log_2(n)), then SPACE(f(n)^2) >= NSPACE(f(n)). This means that we
+can simulate a Non-Determenistic Decider (TM) that uses n tape spaces on a Determenistic Decider (TM) by needing
+to use at least n^2 tape spaces on it. Thus PSpace = NPSpace, since by squaring it - it still remains a polynomial.
+
+This also means that any DTM that works with f(n) tape space, works in at most c^(f(n)) time where c is some
+constant. Due to this we can expand the Time Complexity Classes by adding: ExpTime = ⋃_(k ∈ N) TIME(c^n^k) which
+basically has O(c^n^k) time complexity where both c and k are constants. Similarly, since NLogSpace has log_c(n^k)
+space its time complexity is n^k * log_c(c) = n^k, i.e. it works in at most polynomial time, i.e. L <= NL <= P.
+
+So, we got L <= NL <= P <= NP <= PSpace <= ExpTime hierarchy. We haven't proven that P = NP, P = PSpace, and that
+PSpace = ExpTime, but we have proven that P != ExpTime. Most think that P != NP, NP = PSpace, and that PSpace !=
+!= ExpTime. So either NP = PSpace or PSpace = ExpTime. P.S. In the lecture it is written "P = PSpace and not NP =
+= PSpace", but it doesn't make sense that most believe that both P != NP and that P = PSpace, so I changed it up
+a bit. Actually, after checking on internet, most believe that P != NP != PSpace != ExpTime.
+
+So in addition to the time complexity classes we had before, we also got:
+1. ExpTime - Exponential Class are deciders that halt within exponential time of polynomial degree, i.e. O(c^n^m)
+   where both c and m are constants.

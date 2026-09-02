@@ -1,0 +1,136 @@
+This is a continuation of SQL Core file.
+All the syntax rules there also apply here.
+
+
+
+There are lots of data types in SQL. You can
+even define your own data types and functions
+but the most common ones are: Numerical, string,
+time and date, boolean, array.
+
+Lots of data types are that are commonly used
+are not a standard part of SQL, but additions.
+Same can be said about functions as well.
+
+We can also cast the values from string to int
+for example like this: '1'::int, cast('1' AS int),
+and int '1'. Not sure if casting is done automatically
+if I do INSERT INTO numbers VALUES ('1'); for example.
+
+
+
+Data Types:
+| smallint  ->  Integer, but it is max 2 bytes in size
+| integer  ->  Stores a number max 4 bytes in size
+| bigint  ->  Integer, but it is max 8 bytes in size
+| decimal  ->  Max 131072 digits before decimal point, max 16383 digits after
+| numeric  -> Exactly the same as decimal
+| real  ->  Max 4 bytes in size, 6 decimal digits precision
+| double precision  ->  Max 8 bytes in size, 15 decimal digits precision
+| smallserial  ->  Same as smallint to integer variation but for serial
+| serial  ->  Same as integer but only positive digits (1 bit less memory)
+|   ->  It is also auto-incrementing, no need to input it
+| bigserial  ->  Same as bigint to integer variation but for serial
+For more check out: https://www.postgresql.org/docs/current/datatype-numeric.html
+
+
+
+Mathematical Functions:
+| ceil()  ->  Round value up
+| floor()  ->  Round value down
+| sqrt()  ->  Square root of
+| power()  ->  Raise to the power of
+| abs()  ->  Absolute value, removes negative signs
+| sin()  ->  Sine of value
+| cos()  ->  Cosine of value
+| tan()  ->  Tangent of value
+| random()  ->  Outputs a pseudo-random floating point value between 0 and 1
+For more check out: https://www.postgresql.org/docs/11/functions-math.html
+
+
+
+String Types:
+| varchar({Length})  ->  String that can not be longer than {Length}
+| character varying({Length})  ->  Exactly the same as varchar function
+| char(n)  ->  Same as varchar, but the extra space left is filled with blank spaces
+| character(n)  ->  Exactly the same as char function
+| text  ->  Not really standard to PostgreSQL, string with huge length
+For more check out: https://www.postgresql.org/docs/current/datatype-character.html
+
+
+
+String Functions:
+| strpos({String}, {Substring})  ->  Finds start index for {Substring} in {String}
+| substr({String}, {Substring Start Index}, {Substring Length})  ->  Finds substring
+|   ->  that starts at {Substring Start Index} with the length of {Substring Length}
+|   ->  from the {String}
+| position({Substring} in {String})  ->  Exactly the same as strpos function
+| substring({String} from {Substring Start Index} for {Substring Length})  ->  Exactly
+|   ->  the same as substr function
+For more check out: https://www.postgresql.org/docs/11/functions-string.html
+
+
+
+Time Types:
+| date  ->  Day, month and year. Between 4713 BC and 5874879 AD
+| interval({Precision})  ->  time between events, value range from -178 to 178 million years and optional precision
+| time({Precision})  ->  Time of day without time zone with optional precision argument
+| time with time zone({Precision})  ->  Same as time but time zone is included
+| timestamp({Precision})  ->  both date and time of day without time zone and optional precision
+| timestamp with time zone({Precision})  ->  Same as timestamp but time zone is included
+For more check out: https://www.postgresql.org/docs/current/datatype-datetime.html
+
+P.S. Dates can be written in many forms, not just '1999-01-08'
+but also like 15 more for example '1999-Jan-08' and '1/8/1999' etc.
+Same for time of day like '04:05', '04:05 AM', '04:05:06.789', etc.
+
+
+
+Time Functions:
+With the use of the interval we can also use operations such as
+addition and substraction: date '2001-09-28' - interval '1 hour' =
+= timestamp '2001-09-27 23:00:00' and so on. Note that it auto casts.
+
+We can also use extract() command to get a part of the time we want
+such as extract(hour from timestamp '2001-02-16 20:38:40') = 20 to
+get hours or extract(week from date '2001-02-16') = 7 for weeks, etc.
+Same for date_part('hour', timestamp '2001-02-16 20:38:40') = 20.
+
+We can also do now() to get the current timestamp. We can also do
+current_date which is a constant being updated automatically.
+We can also create dates using make_date(year int, month int, day int).
+We can also use overlaps to see if 2 intervals overlap or not.
+
+For more check out: https://www.postgresql.org/docs/11/functions-datetime.html
+
+
+
+Additional information:
+PostgreSQL also supports arrays, XML, JSON, bitstrings,
+network adress types, geometrical types, etc.
+You may also always add external extensions to it.
+For more check out: https://www.postgresql.org/docs/11/datatype.html
+
+
+
+General Examples:
+|
+| SELECT product_name,
+|        ceil(power(units_on_order, 1.0/3)) AS box_size,
+|        round(units_on_order * unit_price) AS approx_price
+|   FROM products
+|  WHERE units_on_order > 0;
+|
+| SELECT replace(product_description, 'glasses', 'jars') AS product_description
+| FROM (
+|   SELECT format('Product %s costs %s per %s.', product_name, unit_price, quantity_per_unit)
+|   AS product_description
+|   FROM products
+| ) AS t;
+|
+| SELECT (DATE '2001-02-16', DATE '2001-12-21') OVERLAPS
+|        (DATE '2001-10-30', DATE '2002-10-30');
+|
+| SELECT avg(required_date::timestamp - order_date::timestamp) AS ship_to_req
+|   FROM orders
+|  WHERE (order_date, required_date) OVERLAPS (make_date(1997, 1, 1), now());

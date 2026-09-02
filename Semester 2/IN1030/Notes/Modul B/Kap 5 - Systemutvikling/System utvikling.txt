@@ -1,0 +1,60 @@
+Når man jobber med et prosjekt tar det tid og penger. Disse to spiller en rolle i prosjektets endelige kvalitet.
+Jo mer tid ble brukt, jo bedre kvalitet. Jo mer penger, jo mer verktøy og mennesker som kan assistere og jobbe med
+prosjektet (mer inspill, men også tar kortere tid til å bli ferdig). Ikke nok tid eller penger fører til mangel
+i funksjonalitet, god design, osv. Dette er beskrevet i "Magisk Triangel.png". Selve begrepet "Systemutvikling"
+(Software engineering) og dets rolle og sånt er beskrevet i "Systemutvikling.png".
+
+Forskjellige systemer har sine toleranser. For eksempel har en fly/tog kontrollsystem en lav toleranse for feil og
+må derfor testes grundig, mens en web-nettside kan krasje når som helst uten store konsekvenser og har derfor en
+høy toleranse for feil. Dette også handler design, funksjonalitet, effektivitet, osv.
+
+Når det gjelder prosjektets prisanbud (cost expectation) for å utvikle den så er de ofte ikke nøyaktige og kan
+variere synnsikt mye. Det var en eksempel hvor bedrifter skulle gi en slik anbud på en små prosjekt og det var
+et sted mellom 20- og 600 tusen kron. Det var masse grafer og sammenligninger mellom det som ble utviklet, her er
+en oppsummering: Bylligst er ofte verst, dyrest ofte ser best ut men kan være ganske dårlig sånn som den bylligste
+varianten, og de i middels prisen var faktisk de beste (generelt og gjennomsnittlig). Ut i fra dette fikk vi noen
+tips: Jo mindre linjer kode, jo bedre er vedlikehold (mindre og raskere endringer i systemet kan gjøres senere,
+systemer også fungerer mer stabil og gjør mindre feil), men dette krever god koding og problemløsning skills.
+
+Hver prosjekt bør følge en enkel mønster mens den er utviklet som du kan finne i "Systemutviklingsprosess.png".
+Man bør planlegge hvor mye tid og ressurser man kan bruke på hver del, men det er verdt å nevne at validering kan
+og ofte feiler, så man bør planlegge for det også, noe de billigere bedrifter gjør ikke og derfor tar lengre tid
+og mer ressurser for å bli ferdig med produktet. Det som bør inneholdes er også hvordan teamene organiseres,
+hvilke verktøy og metoder blir brukt, osv. Jo mer detaljer jo bedre. For en eksempel av slik prosess kan du se på
+"Planlegging & Gjennomførings Fasen.png" som beskriver nøyaktig hvor mye ressurser brukt hver bedrift, hvor A er
+den billigste, B er nest billigste, C er nest dyreste, og D er dyreste (B var best, i.e. første plass, C fikk andre
+plass, og både A og D fikk tredje plass). P.S. Systemet som nevnt i sta var "ganske enkelt".
+
+I tillegg til det vil jeg nevne at når man lager en prosjekt er det ikke alltid åpenbart hvilke roller som trengs.
+Noen ganger vil vi ikke finne noen som er kompetent nok pga. ROI (Return On Investment), men oftest skyldes det
+mangel av kompetente folk som kan få jobben ferdig, disse ofte mangler bedrifter. Grunenn til dette er faktisk
+fordi at de som er høyere opp er usikker på hva slags kompetanse som trengs for å få jobben ferdig (billigst
+mulig). Det samme gjelder verktøy sånn som GitHub, IDEs, Testing, Diagram konstruksjon, osv.
+
+En modell som ofte er brukt (som er også ganske generell) heter og kan du finne i "Fossefallsmodellen.png". Denne
+modellen blir brukt ofte av ingeniører som et startpunkt for hvordan de skal planlegge og gjøre ting og sånt. Det
+også finnes anbefalinger når det gjelder IT spesifikk, spesielt hvordan bør vi jobbe med prosjektene og planellege.
+Dette finner du i "12 Principles - Agile Manifesto.png".
+
+Det ofte brukes en av to modeller for å spore fremdriften (progress) og sjekke om alle mål blir oppnåd riktig.
+Dette er en del av prosesspinspiiene. Først har vi tidsbokser (Scrum) hvor vi prioritiserer og velger noen av de
+mest prioriterte oppgaver og planlegger ca. hvor lenge tid de skal ta, så jobber vi med dem ikke lengre enn den
+tiden vi satt opp. Når tiden er ferdig vi går til neste høy prioritert oppgave, når disse høy prioritere oppgaver
+er vi ferdig med, så gjør vi det samme igjen med de mindre prioriterte oppgaver også, og det er sjeldent at vi går
+tilbake til disse oppgavene (med mindre de er veldig kritisk). Den andre er flyt av oppgaver (Kanban) der vi bare
+definerer hva som må lages i deler for å lage systemet (hvilke features skal implementeres, og hvilke mål skal
+oppnås), og jobber med dem til disse målene blir oppnåd. Begrunnelsen er at "hvis noe er kritisk, så bør vi
+implementere det riktig uansett hvor lenge tid det skal ta". Da, mindre viktige funksjonaliteter kan være ikke
+implementert i det hele tatt når deadlinen kommer. Som du kan tenke deg er Scrum enklere å jobbe med. Den deler
+arbeidet i små deler og lager en enkel sjekkliste med enkel koordinasjon mellom arbeidsgruppene, kunden, osv. Mens
+Kanban spesifiserer disse delene mindre detaljert siden den sier bare hva bør fungere og dette kan ikke deles mer.
+P.S. I bildene står WIP for Work In Progress. Og det jeg sa om Scrum og Kanban kan være feil...
+
+Til slutt er det snakk om refaktorering som er basically når man forenkler koden (allerede nevnt litt før, og det
+er noe jeg gjør veldig ofte), og kan noen ganger være ganske kostbar. Men, dette også skaper mindre dokumentasjon
+og mer forståelig kode. Dette gjelder fjerning av duplikat kode bitter, variabel navn og attribut forbedring,
+reorganisering av klassehierarkier, implementering av metoder og eventuelt egne dedikerte biblioteker, osv.
+Faktisk så brukes "pair programming", som betyr at vi har to folk som koder samtidig, som vi har to piloter på et
+fly, men det var uformelt vist at dette er faktisk en ganske uproduktivt, fordi at man må forklare til en annen
+hva man skal gjøre og hvordan det skal fungere (må bevise, forklare, kanskje overbevise også, osv.). Derfor
+brukes dette bare på noen vanskelige oppgaver, men hva regnes som vanskelig kommer ann på ekspertise.

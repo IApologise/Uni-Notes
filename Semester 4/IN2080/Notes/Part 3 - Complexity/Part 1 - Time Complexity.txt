@@ -1,0 +1,17 @@
+I hope I don't need to explain what both time and space complexities are. So Google it if you're unsure. However,
+here we expand on the notation slightly which is best explained with an example. But first formal definition: Take
+some function g and f. O(g(n)) is a set of functions that grow slower than it does. So if f(n) = 5n and g(n) = n^2
+then f ∈ O(g(n)), though for some dumb reason we also may write f = O(g(n)), which doesn't mean that O(g(n)) = f.
+So it is actually not an equal sign like in math, thus I prefer using ∈ instead. Also, note that instead of "5n"
+for example we might like to write "c * n" instead where c is some constant, and do denote the point where the two
+functions f(n) and g(n) may cross we use n_0.
+
+Some languages can easily be determined by a simple and a fast decider, whilst some may take longer (using the best
+deciders that we can come up with). We categorize such languages based on the speed of these deciders using the big
+O which we call TIME. So, TIME(f(n)) is a set of languages all of which have a decider that halts in O(f(n)). For
+example, P Class is a set of deciders within some certain maximum speed, but TIME class is a set of langauges these
+deciders decide within some certain maximum speed.
+
+Fun fact: If we have an m-multi-tape turing machine that decides a language in O(f(n)) time, then there exists an
+equivalent (decides same langauge) single tape decider in O(f(n)^2). This is true no matter the amount of tapes
+the multi-tape turing machine has, as long as it is more than one of course (i.e. m > 1).

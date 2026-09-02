@@ -1,0 +1,36 @@
+We divide turing machines into 4 classes all of which are deciders. The only differences that you may find between
+them is how fast they halt (time complexity wise), how fast they are to check (also time complexity wise), and
+whether it is reducable or all can be reduced to it. Note that all of this is proportional to the input length:
+1. P - Polynomial Class are deciders that halt within polynomial time, i.e. O(n^m) where m is a constant.
+2. NP - Decider whose solutions can be verified within polynomial time, but not necessarily be computed within
+   this polynomial time.
+3. coNP - Basically if some langauge A contains a string w and A is in NP, then it has a coNP language ~A such that
+   for each ~w that is not in A, ~w is in ~A, i.e. ~w ∈ ~A <=>_def ~w ∉ A.
+
+3. P Complete - First is that this problem is in P, second is that all the P problems are reducable to this
+   problem in polynomial time.
+4. NP Complete - First is that this problem is in NP, second is that all the NP problems are reducable to this
+   problem in polynomial time.
+5. coNP Complete: Basically a coNP that is also NP Complete. If a problem is NP Complete, it's complement then is
+   coNP Complete. Although it is widely believed that coNP != NP, but that they overlap, and P is in both.
+When deciding a language with a decider, the language's time complexity is determined by the best decider we could
+come up with, i.e. the one with the fastest big O time.
+
+One of the millenia prize problems is whether P == NP, which basically asks if all the polynomial verifiable
+problems can also be computed within polynomial time. Also, if you think that P == NP, then you are a retard
+basically. The problem is we can't prove that P != NP. If any NP-Complete problem is proven to be in P, then
+P == NP, and if the problem is proven to not being in P, then P != NP (not sure about this second part tho).
+
+Also, some notation on what the "big union" is and how it is denoted (and how it defines some of these classes):
+1. P Class = ⋃_(k ∈ N) TIME(n^k) which is basically saying that P = TIME(n^0) ∪ TIME(n^1) ∪ TIME(n^2) ∪ ...
+2. NP Class = ⋃_(k ∈ N) NTIME(n^k), i.e. NP = NTIME(n^0) ∪ NTIME(n^1) ∪ NTIME(n^2) ∪ ...
+
+Class P is defined with the help of determenistic turing machines. If we change the definition from "determenistic"
+to "non-determenistic" then we will get the definition of class NP. It is as if splitting into multiple branches
+(i.e. multiple configurations) at some point during the time that our turing machine processes an input. This is
+a property found in exponential time complexities.
+
+Remember the TIME(f(n)) that we defined? Well that is the definition for all the determenistic time complexities,
+i.e. a language containing all the decidable languages. However, we also define NTIME(f(n)) which are languages that
+are recognizable, this is useful for defining NP since it wasn't proven that P == NP. So, NTIME(f(n))) is more like
+TIME(f(n)) for each branch that we got basically (making it exponential).

@@ -1,0 +1,20 @@
+--- SLD Resolution ---
+There is something called Horn Clause which is like a clause with at
+most one positive literal. If it has exactly one positive literal and
+nothing else, then it is called a definite clause.
+
+In what's called a logic program, these definite clauses are like
+facts, what we know must be true for a formula to be valid. And
+the horn clauses are like what can be derived, so like rules.
+
+Remember that in a horn clause we can have at most 1 positive literal,
+so something like {A, -B, -C, ...} is a horn clause, we think of it as
+a formula that goes like (B, C, D, ...) -> A.
+
+There is also what's called a goal or a query clause which has the form
+{-A, -B, -C, ...} so no positive clauses at all. So if we can use this
+and all its resolutions to eliminate a clause one by one from it using
+horn clauses, then we can in the end always get to an empty clause.
+
+It's best to see the screenshot example since it will take too long for
+me to explain it here, just read this and look at it at the same time.

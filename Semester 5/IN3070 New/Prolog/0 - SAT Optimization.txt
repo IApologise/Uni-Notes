@@ -1,0 +1,142 @@
+--- Smullyan's Categories ---
+When working with SATs and Calculi, there are rules that are
+often repeating (or I guess so). Anyways, Smullyan has made
+categories for those, we will look at Sequent Calculus LK for
+convenience. These are then used to describe methods for SAT
+algorithms to improve their efficiency and make them faster.
+
+For example, DPLL is an algorithm that uses Simplifications
+and Cuts. In addition to that, CDCL also uses Pruning and what's
+called Clause Learning.
+
+Category α:
+This is a family of rules that simply take a step forward such
+as an AND-left and OR-right rules in Sequent Calculus LK. These
+don't add new branches, just change form of propositional logic.
+
+Category β:
+This is a family of rules that is taking a step forward, such as
+category α, but this is also a family that splits into branches.
+
+Category γ:
+This is a family of rules that applies to variables. This is also
+a family of rules that applies substitution, and to be more precise,
+a term substitution, like [x\f(a)] and [y\g(f(z))] type substitution.
+
+Category δ:
+This is a more narrow family of rules similar to caregory γ since it
+also applies to variables and quantifiers alike. It is also about
+substitutions, but those substitutions must introduce new constants
+into the mix such as [x\a] and [y\c] as long as both a and c are fresh.
+
+
+
+--- Simplification ---
+Take for example a sequent p, q ∧ (r → s ∧ p), Γ ⊢ ∆. Since we
+already assume p, in the next formula q ∧ (r → s ∧ p) we can
+replace p with ⊤ instead in that same formula. This evaluates to
+q ∧ (r → s), so we simplified the sequent into p, q ∧ (r → s), Γ ⊢ ∆
+which is easier to prove.
+
+This is the simplification method, you look at what's already known
+to be ⊤ and/or ⊥, substitute for other formulas, and evaluate to
+see if anything has improved, worst case scenario it stays the same.
+
+Another this we can do is instead is to branch, we can compute the two
+possible interpretations I instead, so we check for when the literal
+is both ⊤ and ⊥. This one is guaranteed to make varying, but progress
+none the less. It is literally the same as branching, but promising.
+
+With this we can add four new rules to Sequent Calculus LK for example.
+Note that A[B] denotes that in formula A we assume that I ⊨ B. Also,
+I made up names for them, I honestly don't know what they are called.
+
+A[B], B, Γ ⊢ ∆       A[¬B], Γ ⊢ B, ∆
+-------------- -LL   ---------------- -LR
+ A, B, Γ ⊢ ∆           A, Γ ⊢ B, ∆
+
+B, Γ ⊢ A[B], ∆       Γ ⊢ A[¬B], B, ∆
+-------------- -RL   ---------------- -RR
+ B, Γ ⊢ A, ∆          Γ ⊢ A, B, ∆
+
+If it's easier, L and R are directions, left and right. The first
+letter tells on which side A[B] is, and the second one where B is.
+Where B is interpreted by I, and A[B] is the formula we use it on.
+Note that whenever the second letter is L, I ⊨ B, and R ↔ I ⊨ ¬B.
+
+With this method we can actually avoid branching from time to time.
+Like we will probably have to do it at least once, but might not need
+to later due to these simplification rules (and the first method).
+
+
+
+There is also a way to simplify the Resolution Calculus with this
+simple method. In a clause set S we can take any clause C. Now, C
+either contains some literal L, or it doesn't. If it does, we can
+remove C altogether by assuming C[L]. Since it's valid it doesn't help
+us to prove unsatisfiability. However, if C contains ¬L, then by assuming
+C[L] we can resolve it on C (itself) and remove ¬L from C (we keep the
+rest though). Note that we do not keep the old copy of C (it's redundant).
+
+So whenever we assume C[L] and L is in C it's called unit subsumption,
+whenever C[L] contains ¬L and we keep everything except for ¬L in C,
+then it's called unit resolution.
+
+
+
+--- Cut ---
+This is a rule that lets us take a shortcut when proving SATs by
+first proving a lemma, and then using it later to shorten the proof.
+For example, take A, A → B, B → C ⊢ C. In this example, instead of
+applying the arrow left, splitting the branch, and negation rules,
+etc. we simply prove A, A → B ⊢ B, and then introduce B as a lemma
+in the second branch like B, B → C ⊢ C. I removed A here because
+it is no longer useful here, but we usually keep those because we
+can't foresee what is and isn't relevant right away.
+
+Here is the full visualization of this in Sequent Calculus LK:
+    ... ax          ... ax
+-------------   -------------
+A, A → B ⊢ B   B, B → C ⊢ C
+-----------------------------
+    A, A → B, B → C ⊢ C
+
+
+
+--- Lemma Generation ---
+Similar to cut rule, we can introduce lemmas whenever we refute
+a formula too. So in an example with A ∨ B, Γ ⊢ ∆ we can add a
+lemma ¬A to the right branch side or ¬B to the left one, so we do
+
+ Γ, A ⊢ ∆   Γ, ¬A, B ⊢ ∆         Γ, A, ¬B ⊢ ∆   Γ, B ⊢ ∆
+-------------------------   OR   -------------------------
+      Γ, A ∨ B ⊢ ∆                     Γ, A ∨ B ⊢ ∆
+
+This is similar to lemma generation, but instead of proving A
+we refute it instead (since it is on the other side now).
+
+
+
+--- Pruning ---
+With this method we are basically trying to spot contradictions early
+on and discard them, like a whole branch in the Sequent Calculus LK.
+
+Like, take A ∨ B, B ∨ C ⊢ A for example. We can see that the second
+part doesn't even contain A, so it can never prove it in the first
+place, so we can discard it and simplify to A ∨ B ⊢ A. If we are
+smart about the ∨-left rule, then we may also spot that B doesn't
+contain or isn't A, so we just keep A.
+
+The point is not to prove the validity of A, but to find a satisfying
+interpretation. We may spot the falsifiability of a branch early on,
+and refute it (if we want just satisfying examples).
+
+
+
+--- Clause Learning ---
+Just mentioned, not explained unfortunately. What was mentiond is
+Stalmarck's Method which is patented, does some merging after the
+cut rule. Didn't analyze what makes it faster though.
+
+What I need to know is that CDCL is the refined version of DPLL
+which uses that was DPLL used and more, namely pruning and this.

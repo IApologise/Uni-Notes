@@ -1,0 +1,99 @@
+--- Multimodality ---
+The goal of multimodality is:
+- Have multiple solutions so we have more diversity and less exploitation
+- Reason: Environment might get different or be different
+
+Implicit Approach:
+- Achieves the goal during a parent selection stage
+- It works by producing more of the unique offspring
+- This way, the pressure does not get lower, the sample is
+
+Explicit Approach:
+- Achieves the goal during a survivor selection stage
+- It works by separating the competition into different groups
+- This way, different solutions compete locally for the optimum
+
+
+
+--- Implicit Algorithms ---
+
+Automatic Speciation
+- Choose parents of similar geno- or phenotypes
+- That is done either through an extra genome (id) or similar solutions
+
+Geographical Separation
+- Simply divide the simulation into multiple parts and run it in parallel
+- This is done in hopes of getting different solutions from each simulation
+- After we sometimes send some of the competitors between islands
+
+
+
+--- Explicit Algorithms ---
+
+Fitness Sharing:
+- Share a portion of the fitness score with other similar solutions
+- Ensures bad solutions are dropped out, and the good, but different, are kept
+
+To share a fitness we need to define how far apart these solutions can
+be from each other such that they are considered similar or in same group.
+once we have the distance d, we define a function share(d) which gives us
+a multiplier. So for a solution x where the old score is s and new is s'
+becomes s' = s / sum(share(d(x, y))) where y is a solution that satisfies
+share(d) = if d < b then 1 - (d / b)^a} else 0. Here b and a are two
+parameters that we can tune, b for neigbour recognition, and a for
+how little rising distance between x and y matters.
+
+Crowding:
+- The offspring compete with the closest parent so the competition is local
+- Solutions are even more isolated with their groups than in Fitness Sharing
+
+
+
+--- Hybrids ---
+
+Hybradisation:
+Whenever we combine evolutionary algorithm with some
+more specific and determenistic solutions to the said
+problem, so we add some knowledge to the model first,
+then the AI becomes more specialized, but also better
+at this specific problem solving.
+
+Memetic Algorithms:
+This is basically the algorithm that introduces
+hybradisation to AI. So it is like doing a local
+search to modify the AI manually, if AI is better
+then we keep the change, otherwise we ignore them.
+
+Also note that memetic algorithms often use Lamarckian
+Evolution (debunked but useful here). So as the AI is being
+tested it also learns and some modifications are attempted
+to be made to make it better within the environment which
+are then passed down to the offsprings. So like embedding
+the environmental changes into the DNA (not possible irl).
+
+
+
+--- Multi Goals ---
+
+Multi-Objective Setting Dominance:
+Whenever we want to maximize two things that might not
+go well hand in hand with each other for example maximize
+capacity and minimize size (more capacity -> more size)
+we compare the solutions in the following way: If solution
+X is better than Y in everything, then X dominates Y.
+If X is strictly better in at least 1 characteristic than
+Y then X also dominates Y. This domination is then used to
+help compare the solutions.
+
+Weighted Sum:
+One of the solutions to tackle problems where compromises
+between goals should be made is to create a weight such
+that a goal x is worth n, and goal y is worth m. And
+then we combine them into a single goal to maximize.
+
+Pareto Front:
+This is a set of solutions that are not dominated
+by anything in Multi-Objective Setting Dominance.
+Saving a bunch of solutions that are not dominated
+via elitism and then choosing one from the pareto front
+is great since it also includes lots of variety.

@@ -1,0 +1,7 @@
+Patch notes:
+26 and 30 - Improved both max() operators.
+28 - Don't see the problem there, no errors and answers are right. I added some tests to verify and still, no issues were found. (Unless I changed it and I forgot)
+32 - Pretty sure I did define the sorts. I don't understand what else I had to do...
+63 - Finally got it right (I believe)
+71 - Added answer
+82 - Fixed. Also added a python program (main.py) that I developed to verify the solution

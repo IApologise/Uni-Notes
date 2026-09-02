@@ -1,0 +1,32 @@
+--- Assets, Threat Actors, & CIA ---
+Where there are assets we want to protect, there is security mechanisms that protect it from threats caused by
+attackers. I.e. malicious actors that threaten those assets. So, this is what we want to do:
+1. Figure out what we want to protect, i.e. what are our assets and their value.
+2. Build countermeasures based on the knowledge of what we think the attacker may be capable of.
+
+When we are talking about security and asset protection we separate it into these 3 axioms we call CIA:
+C: Confidentiality - Assets are to be accessed by an authenticated and authorized entity.
+I: Integrity - Restricted assets are not to be accessed by an unauthorized entity.
+A: Availability - Assets are to be available for access by an authorized entity at all times.
+
+Note how Authenticity is a key aspect in all of those. Privacy is mostly a part of confidentiality and is about
+access (I.e. reading part, not just the writing part which is what Integrity is about I presume?). Obviously to
+verify authenticity some private information must be given, so they kinda clash, but up to the point we are certain.
+Lastly non-repudiation which is about denying access for unauthorized entities, same goes for if we think that the
+private information used to authorize has been compromised & such.
+
+Motivations for attack can be many, but usually it is some monetary gain. Sometimes it is revenge or some
+religious/political motive, but it might also be just for the fun of it which is actually not as uncommon as you'd
+imagine, but rare still...
+
+
+
+--- Vulnerabilities, Strategies, & Classifications ---
+Attack classifications & strategies: P.S. Those achieve different goals
+1. Service: DOS & DDOS, usually using botnets & zombies - i.e. infected devices.
+2. Communication: Eavesdropping & Modification, possible with MiTM - can do Sniffing, Packet Replay, etc.
+3. Stored Data: Vandalism, Deletion, Ransomware, Espionage, etc. Usually via backdoors, or exploits in supply chain.
+
+There is a famous example of hacking the cameras from all around the world since they got access to the internet,
+act as end-to-end devices, and although slow can be turned into massive botnets to send mass requests which even
+CloudFlare and Google struggle to keep up with. This DDOS attacks are very effective and can be bought, cheap >:)

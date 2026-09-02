@@ -1,0 +1,4 @@
+Whether something is true, false, or undecidable
+is the heart of provability. Is something sound,
+complete or both? Can we derive everything from
+nothing or is it pure fantasy?

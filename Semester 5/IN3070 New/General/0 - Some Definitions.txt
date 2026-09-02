@@ -1,0 +1,14 @@
+Equivalence connective: The order in which operations are usually
+applied such as (A ∨ B ∨ C) ≡ (A ∨ (B ∨ C)) where ∨ is right-associative
+and (A ∧ B ∨ C) ≡ ((A ∧ B) ∨ C) where ∧ takes precedence priority.
+
+Material implication: A → B is called material implication because
+it is not intuitive at first. It does not say "If and only if A then B",
+what it actually says is "if A then B", but B might also be true from
+other sources and does not mean that whenever B happens, so does A.
+
+Decision procedure: An algorithm is considered a decision procedure
+for some sub-set U of some set F consisting of propositional formulae.
+That is, as long as for some arbitrary element A that is in F, the
+algorithm terminates and returns True whenever A is in U, and false
+when A is not in U. For example, Truth Table is a decision procedure.

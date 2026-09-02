@@ -1,0 +1,162 @@
+--- 1a & 1b) Coding MVA (Simplified)
+omod MVA is
+  protecting NAT .
+  
+  --- Copy pasted
+  sort OidSet .
+  subsort Oid < OidSet .
+  op none : -> OidSet [ctor] .
+  op _;_ : OidSet OidSet -> OidSet [ctor assoc comm id: none] .
+  
+  --- Message wrapper
+  sort MsgContent .
+  op msg(_to_from_) : MsgContent OidSet Oid -> Msg [ctor] .
+  ops request vote release : -> MsgContent [ctor] .
+
+  --- States
+  sort State .
+  ops before wait inside after : -> State [ctor] .
+
+  --- Defining node
+  class Node | state : State, votingSet : OidSet, votedBy : OidSet, votedFor : Oid .
+
+  --- Variable declaration
+  var OL : OidSet .
+  vars O O' : Oid .
+  var MC : MsgContent .
+
+  --- Helper equation
+  op inSet : Oid OidSet -> Bool .
+  eq inSet(O, none) = false .
+  eq inSet(O, O' ; OL)
+   = if O == O' then true else inSet(O, OL) fi .
+
+  --- Rulesets
+  rl [requestAccess] :
+     < O : Node | state : before, votingSet : OL >
+   =>
+     < O : Node | state : wait, votingSet : OL, votedBy : none >
+     msg(request to OL from O) .
+
+  crl [vote] :
+      msg(request to OL from O')
+      < O : Node | votedFor : none >
+    =>
+      < O : Node | votedFor : O' >
+      msg(vote to O' from O)
+  if inSet(O, OL) .
+
+  crl [getVote] :
+      msg(vote to OL from O')
+      < O : Node | state : wait, votedBy : OL >
+    =>
+      < O : Node | state : wait, votedBy : OL ; O' >
+  if inSet(O, OL) .
+     
+  rl [execute] :
+     < O : Node | state : wait, votingSet : OL, votedBy : OL >
+   =>
+     < O : Node | state : inside, votingSet : OL, votedBy : OL > .
+
+  rl [exit] :
+     < O : Node | state : inside, votedBy : OL >
+   =>
+     < O : Node | state : after, votedBy : none >
+     msg(release to OL from O) .
+
+  crl [clearVote] :
+      msg(release to OL from O')
+      < O : Node | votedFor : O' >
+    =>
+      < O : Node | votedFor : none >
+  if inSet(O, OL) .
+
+endom
+
+
+
+--- 1c) Initialization
+omod MVA-INIT is
+  protecting MVA .
+
+  op n : NzNat -> Oid [ctor] .
+  ops n1 n2 n3 n4 : -> Oid [ctor] .
+
+  op init : -> Configuration .
+  eq init =
+    < n1 : Node | state : before, votingSet : n2 ; n4, votedBy : none, votedFor : none >
+    < n2 : Node | state : before, votingSet : n1 ; n3, votedBy : none, votedFor : none >
+    < n3 : Node | state : before, votingSet : n2 ; n4, votedBy : none, votedFor : none >
+    < n4 : Node | state : before, votingSet : n3 ; n1, votedBy : none, votedFor : none >
+    msg(request to n1 ; n4 from n1) .   --- Starter message
+
+endom
+
+--- Simple initialization process
+search [1] init =>! C:Configuration .
+
+
+
+--- 1d) Quiz 1
+--- the vote rule can be applied to every single one for example,
+--- but because the most amount of nodes reached by the vote is 2,
+--- 2 becomes the answer. That is the max we can reach.
+
+
+
+--- 1e) Quiz 2
+--- It alternates infinitely in a specific sequence.
+--- There may occur a deadlock, but in theory it can
+--- go forever: before -> wait -> inside -> after -> ...
+
+
+
+--- 1f) Quiz 3
+--- Yes. Since a node requires the approval of all the other nodes,
+--- and all the nodes may request a vote, each one may get only 1
+--- when in reality 2 or more may be needed.
+
+--- To check whether a deadlock may be achieved
+--- simply using search in 1c. It works since it
+--- does loop infinitely by default. So deadlock
+--- is the only way for it to halt.
+
+
+
+--- 1g & h) Quiz 4 & Quiz 5
+
+search init =>* C:Configuration .
+
+--- P.S. I tried many other methods but to no avail.
+--- I am just bad at using search I guess, or idk.
+--- I am not sure if there is a way to do it properly.
+--- I couldn't figure it out.
+--- I wish there was a proper tutorial on the syntax.
+--- Couldn't use Solution or that stuff either.
+--- Maude simply didn't recognize them.
+
+
+
+--- 1i) Quiz 6
+
+--- 1)
+--- I won't be explaining since I already
+--- have talked about some of them before.
+
+--- a) Reachable
+--- b) Guaranteed, Reachable
+--- c) Reachable
+--- d) Reachable
+
+--- 2)
+
+--- a) I don't think that it holds. There really is no guarantee
+---    that the second part happens which is what is stated (I think).
+
+--- b) Well, either the first one holds forever or the second one happens.
+---    Since the first part is active by default, and the second part is
+---    the alternative to the first part, then it is undeniably true.
+
+--- c) This is a yet another, and more obvious pair of statements.
+---    That is undeniably a response pair, since it can not stay in
+---    execution part and will leave eventually.

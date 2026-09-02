@@ -1,0 +1,23 @@
+This is a continuation of SQL Core file.
+All the syntax rules there also apply here.
+
+
+
+Helper Instructions:
+| INTO {Table}  ->  Table the values will be inserted into
+| VALUES ({Row data}) ->  Values inserted into a new row or series of rows
+
+
+
+Instruction Examples:
+|
+| INSERT INTO Students
+| VALUES (0, 'Justas', 'Simutis', '19-12-2005'),
+|        (1, 'Julijus', 'Simutis', '12-01-2007'),
+|        (2, 'Jogaila', 'Simutis', '25-01-2011');
+|
+| INSERT INTO AllStudents
+| SELECT S.ID, S.Name
+|   FROM Students2025 AS S
+|        INNER JOIN TakesCourse AS T ON (S.ID = T.ID)
+|  WHERE T.Semester LIKE '%2025';

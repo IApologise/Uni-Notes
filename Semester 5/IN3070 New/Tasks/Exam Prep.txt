@@ -1,0 +1,61 @@
+--- Basics ---
+
+Models:
+- Interpretation
+- Model Creation
+
+Substitutions:
+- Substitution & Unification
+- MGU (Most General Unifier)
+- Variable Renaming & Algorithm
+
+Decidability Recap:
+- Propositional Logic (True)
+- First-Order Logic (False)
+- Reason: Functions & Variables
+
+Decidability Of:
+- Sequent Calculus LK
+- Resolution Calculus
+- Modal Logic
+- Intuitionistic Logic
+- Prolog
+- ALC
+
+
+--- Pure Calculi ---
+
+Sequent Calculus LK:
+- Syntax and Semantics
+- Soundness & Completeness
+- Konig's Lemma
+
+Resolution Calculus:
+- Clause Form Transformation
+- Syntax and Semantics
+- Soundness & Completeness & Compactness
+- Herbrand Universe (all possible formulae)
+- Fair derivation (e.g. maximal derivation)
+- Lifting Lemma
+
+Modal Logic:
+- Kripke Model Construction
+- Model Interpretation
+- Sequent Calculus K
+
+Intuitionistic Logic:
+- Syntax and Semantics
+- Sequent Calculus LJ
+
+
+
+--- Calculi Programs ---
+
+Prolog:
+- SAT Optimization Techniques
+- SLD Resolution
+- Syntax & Semantics
+
+ALC:
+- Labels, Roles & Concepts
+- Syntax and Semantics

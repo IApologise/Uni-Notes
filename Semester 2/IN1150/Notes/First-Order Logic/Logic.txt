@@ -1,0 +1,107 @@
+Constant: a, b, c, Alice, Bob, Eve
+Something that is already set in place and can not change.
+It can still be interpreted by a model.
+
+Variable: x, y, z
+Unlike constants, it can change during evaluation.
+It serves as a place holder for any constant in our domain.
+
+Function: f, g, h
+Like mathematical functions where you take in arguments
+as inputs, in our case it can be constants or variables,
+and then evaluates the inputs and then outputs a result.
+
+Term: t, u, v
+A constant, a function, a function of a function, etc.
+It must be closed, so no loose variables can be included.
+To clarify, it can not contain the relation, and can be made
+of any number of constants and functions in any manner.
+
+Predicate: P, Q, R
+A special type of function that evaluates to a boolean.
+Kind of like a statement evaluation "Is x human -> ⊤, ⊥".
+
+Relation: R, S, T
+Same as predicate but the arity is always 2 or more.
+
+Atomic-Formula: φ, ψ, θ
+A single relation that is made out of only terms.
+
+Formula, Compound Formula: F, G, H
+A bunch of atomic-formulas clumped together. There is
+no difference between a formula and compount formula.
+The only possible difference is that by a "formula"
+one may mean atomic-formulas or compound formulas based
+on context, or both of them.
+
+
+
+Note that the logical connectives are the same in first-order logic
+as well. It basically extends predicate logic.
+
+
+
+Quantifier: Binds variable next to it to the logic next to it
+1. Universal Quantifier: ∀
+For all {x} it is such that ... is true
+2. Existential Quantifier: ∃
+There exists an {x} such that ... is true
+
+Whenver variables in formulas are introduced, initially
+these variables are considered to be free in a formula.
+So for example P(x) has x as a free variable.
+
+Whenever substituting x with a direct example only the
+free variables can be replaced, bound ones can not.
+
+When a variable is bound by a quantifier and is used in
+some formula or part of it, then that part is quantifier's
+scope. It is like a placeholder, an invisible or a non-existing
+variable. In that part the variable is considered bound.
+For example ∀xP(x), here x is bound by ∀ quantifier.
+
+Therefore, substituting the x when it is bound doesn't make
+any sense, since it is technically not there to begin with.
+
+So, if that part has all of its variables bound then it is
+considered closed under itself. If the whole formula has
+no free variables left, then the whole formula is closed.
+E.g. there were no real variables to begin with to replace.
+
+But sometimes they can be substituted, though carefully such
+that the original statement is preserved. For example, there
+∃xP(x). Here, the formula says that there exists x such that
+P(x) is true. So we can replace it with a new constant that
+actually makes it true. The result doesn't change.
+
+It can also be done to universal quantifiers, but harder.
+Take ∀xP(x) for example. Since x can be any term, the formula
+says that it is true for all, then we can choose a single
+example term t such that P(t) is true. Here, showing that
+P(t) doesn't hold is equivalent to proving that ∀xP(x) fails.
+So it still has its uses and much can be done.
+
+
+
+Substitutions:
+Let s and t be terms, and x be a variable.
+We can create a substitution s[x/t] where in
+all occurances of x in s, x is now t.
+
+Note that the substitution applies only on free variables.
+The form s[x/t] is not a convention that is universally
+accepted, sometimes s[t/x] is written instead of a s[x/t].
+
+
+
+
+Here is the precedence:
+1. Constants
+2. Predicates
+3. Parantheses
+4. Negation
+5. Quantifiers
+6. Conjunction
+7. Disjunction
+8. Implication
+9. Bicondition / Equivalence

@@ -1,0 +1,64 @@
+There are 5 integer types in C which can also be used for whatever.
+1. char: 1 byte in size, often used to store a single character
+2. short: 2 bytes in size
+3. int: at least 2 bytes in size
+4. long: at least 4 bytes in size
+5. long long: at least 8 bytes in size
+
+These values are signed by default meaning that they have a single bit reserved for a negative sign, like char
+being from and including -128 up to and including 127. If you want only positive you can specify that by writing
+"unsigned" for example "unsigned short = ..." so that it goes from and including 0 up to and including 255. You can
+specify that it is signed, but it is signed by default unless you need to clarify.
+
+There are also 3 float types which are signed and can not be treated as unsigned (I think).
+1. float: 4 bytes in size
+2. double: at least 8 bytes in size
+3. long double: at least the size of double
+
+Also, void is also a datatype and it has size 0, sometimes 1. For me it is 1 but for IFI Machines at UiO it is 0.
+However, it is strange for void to take up 1 byte of space. The reason for this is that in GNU C it treats
+sizeof(void) as sizeof(char) for some reason, but this is a lie. In default C and C++ this does not compile.
+
+
+
+Note that even though something is at least x bytes in size, these are the default:
+64-bit Linux/macOS:
+- int: 4 bytes
+- long: 8 bytes
+- long long: also 8 bytes, indifferent from long
+64-bit Windows:
+- int: 4 bytes
+- long: also 4 bytes, indifferent from int
+- long long: 8 bytes
+Older/Embedded systems:
+- Varies wildly, check using sizeof(datatype) method
+  where "datatype" is the type of data you want to know
+
+With floats it is almost always 4, 8, and 16 in size for float, double, and long double.
+But in embedded systems and old ones it can also vary wildly like 4, 4, 4 or 4, 4, 8 or 4, 8, 8.
+Most common is 4, 8, 12 (except for 4, 8, 16 which actually is the most common).
+
+
+
+Whenever printing using printf(), to output values use % sign and specify the type of value you want to print out.
+For example, to print a character use "%c", for both short and integer use "%d", for long use "%ld" and "%ldd" for
+long long. Here is an example: "printf("%c%c!\nI am %d years old.\nMy sign is: %c\nBye!", 72, 105, 20, 20);". If
+the value is unsigned, instead of using %d use %u. So %u, %lu, and %llu.
+
+For floats use %f for default print, %g for shortest way to print it (like instead of 1.200000 write 1.2), and %e
+for an exponential symbol for large numbers like 1.200000e+00 (same as 1.2). All of them have their respective
+float, double, and long double version: %f, %lf, %llf, %g, %lg, %llg, %e, %le, %lle.
+
+Note that sometimes instead of writing %ll? where ? stands for whatever type you want, you write %L? instead. So
+for example instead of writing %lld, you sometimes have to write %Ld instead. This might vary too, like %lld being
+correct for integers but %Lf being correct for floats in one and the same compiler, but not %Ld and not %llf.
+
+
+
+By the way, these are all the characters in my computer (note, some are unprintable):
+   ☺ ☻ ♥ ♦ ♣ ♠ ♫ ☼ ► ◄ ↕ ‼ ¶ § ▬ ↨ ↑ ↓ → ← ∟ ↔ ▲ ▼   ! " # $ % & ' ( ) * + , - . / 0 1 2 3 4 5 6 7 8 9 : ;
+< = > ? @ A B C D E F G H I J K L M N O P Q R S T U V W X Y Z [ \ ] ^ _ ` a b c d e f g h i j k l m n o p q r s t u
+v w x y z { | } ~ ⌂ Ç ü é â ä à å ç ê ë è ï î ì Ä Å É æ Æ ô ö ò û ù ÿ Ö Ü ¢ £ ¥ ₧ ƒ á í ó ú ñ Ñ ª º ¿ ⌐ ¬ ½ ¼
+¡ « » ░ ▒ ▓ │ ┤ ╡ ╢ ╖ ╕ ╣ ║ ╗ ╝ ╜ ╛ ┐ └ ┴ ┬ ├ ─ ┼ ╞ ╟ ╚ ╔ ╩ ╦ ╠ ═ ╬ ╧ ╨ ╤ ╥ ╙ ╘ ╒ ╓ ╫ ╪ ┘ ┌ █ ▄ ▌
+▐ ▀ α ß Γ π Σ σ µ τ Φ Θ Ω δ ∞ φ ε ∩ ≡ ± ≥ ≤ ⌠ ⌡ ÷ ≈ ° ∙ · √ ⁿ ² ■
+It goes from and including -1 up to and including 256, then it loops back.

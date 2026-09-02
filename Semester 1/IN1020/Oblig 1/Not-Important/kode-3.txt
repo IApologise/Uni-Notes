@@ -1,0 +1,67 @@
+Instructions for use:
+
+Step 1: Write in PLU code
+Step 2: Write in the amount of said items
+Step 3: Repeat Steps 1-2
+
+Case 1: If you want the output go to step 1 and type in 0
+Case 2: If the PLU was not found in the database you return to step 1
+
+
+
+The code:
+
+back INP
+STA plu
+INP
+STA amount
+
+LDA 
+
+
+
+
+sum DAT 0
+amount DAT 0
+plu DAT 0
+
+tpi DAT 2
+ls DAT 405
+DAT 7
+DAT 307
+DAT 4
+DAT 303
+DAT 10
+le DAT 0
+
+
+
+Explanation of the data structure:
+{sum} is the total sum of the items.
+{amount} is the total amount of said items.
+{plu} is the most recent plu code.
+{tpi} (Traits Per Item) - tells the code how much data is tied to each product.
+In this case we have a plu code and a price. In total: 2.
+The data of the products goes as following:
+1. PLU code
+2. Price
+Then the next product is described in the same manner.
+{ls} (List Start) - Points towards the start of the list containing product data.
+Respectively, {le} (List End) - signifies the end of the list.
+
+
+
+Reasons why it is future proof:
+- Easy to add more data (if u know where to)
+- Has lots of space; lots of potential data
+
+Reasons why I don't like it:
+- PLU is not directly tied to the information about the product
+- More dependent on proper syntax when adding new data. Matrixes - less so
+- Can't flex on how cool and complex the code is
+- Need to explain to others how the data is structured
+
+Reasons why I like it:
+- It is faster which is why I opted for this solution instead of matrixes
+- Easier to code, spares me more time (task says I am lazy... roleplay)
+- Requires less space = more data can fit

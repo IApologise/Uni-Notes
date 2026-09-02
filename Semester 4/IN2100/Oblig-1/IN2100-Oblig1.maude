@@ -1,0 +1,228 @@
+--- Note: Dependencies were copy pasted, some created
+--- Note: Comments starting with --- are my own comments
+
+--- Importing...
+load less-than.maude .
+load list-nat1-public.maude .
+
+
+
+--- Exercise 9: Implementation of monus, min, odd, even.
+fmod NAT1 is extending NAT< .
+  ops _monus_ min : Nat Nat -> Nat .  --- Operators have two inputs of type Nat and output a single Nat.
+  ops odd even : Nat -> Boolean .     --- Operators take Nat as input and output a Boolean.
+
+  --- Some variables
+  vars M N : Nat .
+  var B : Boolean .
+
+  --- Explaining monus
+  eq M monus 0 = M .
+  eq 0 monus M = 0 .
+  eq s(M) monus s(N) = M monus N .
+
+  --- Explaining min
+  eq min(M, 0) = 0 .
+  eq min(0, M) = 0 .
+  eq min(s(M), s(N)) = s(min(M, N)) .
+
+  --- Explaining odd
+  eq odd(0) = false .
+  eq odd(s(0)) = true .
+  eq odd(s(s(M))) = odd(M) .
+
+  --- Explaining even
+  eq even(0) = true .
+  eq even(s(0)) = false .
+  eq even(s(s(M))) = even(M) .
+endfm
+
+--- Some test commands:
+red s(s(s(s(s(0))))) monus s(s(0)) .
+red s(s(0)) monus s(s(s(0))) .
+red s(0) monus s(0) .
+red min(s(0), s(0)) .
+red min(0, s(s(s(0)))) .
+red min(s(s(s(s(0)))), s(s(0))) .
+red odd(0) .
+red even(0) .
+red odd(s(s(s(s(0))))) .
+red even(s(s(s(s(0))))) .
+red odd(s(s(s(s(s(0)))))) .
+red even(s(s(s(s(s(0)))))) .
+
+
+
+--- By the way, I realised that ceq exists
+--- This could have made it all so much easier ;(
+--- Realised during exercise 10
+--- P.S. I finished this task and did not use ceq...
+
+--- Exercise 10: Implementation of empty?, rest, last, reverse.
+fmod LIST-NAT1 is 
+  protecting LIKHET .     protecting BOOLEAN .
+  sort List .
+  op nil : -> List [ctor] .
+  op __ : List Nat -> List [ctor] .
+  op length : List -> Nat .           *** No of elements in a list
+  op concat : List List -> List .     *** Concatenate two lists
+  op insertFront : Nat List -> List . *** Insert element first in the list
+  ops first last : List -> Nat .      *** First/last element in a list
+  op empty? : List -> Boolean .
+  op rest : List -> List .            *** Remove first element.
+  op reverse : List -> List .         *** Reverse list
+  op _occursIn_ : Nat List -> Boolean .
+  
+  *** More specifcally for lists on totally ordered underlying domains:
+  op max : List -> Nat .              *** Largest element in list
+  op isSorted : List -> Boolean .     *** Is the list sorted (increasing order)
+
+  vars N N' : Nat .
+  vars L L' : List .
+
+  eq length(nil) = 0 .
+  eq length(L N) = s(length(L)) .
+  eq concat(L, nil) = L .
+  eq concat(L, L' N) = concat(L, L') N .
+  eq insertFront(N, nil) = nil N .
+  eq insertFront(N, L N') = insertFront(N, L) N' .
+  eq first(nil) = 0 .                 *** Default/error value
+  eq first(nil N) = N .
+  eq first(L N N') = first(L N) .
+
+  --- Explaining empty?
+  eq empty?(L) = not 0 < length(L) .
+
+  --- Explaining rest
+  eq rest(nil) = nil .
+  eq rest(nil N) = nil .
+  eq rest(L N N') = rest(L N) N' .
+
+  --- Explaining last
+  eq last(nil) = 0 .
+  eq last(L N) = N .
+
+  --- Explaining reverse
+  --- The idea is to take last element from list and put it as first in another list
+  --- That is why I defined and made splist for this purpose only.
+  --- I was struggling for hours trying to do it without it.
+  --- P.S. I started today, yeah...
+  --- Not just coding, but learning IN2100 as well, didn't touch the subject until today.
+  --- That said, I really enjoy coding in it :D lots of freedom.
+  --- Also, ChatGPT is completely useless for this, couldn't explain anything correctly.
+
+  op splist : List List -> List .
+  eq splist(L N, L') = splist(L, L' N) .
+  eq splist(nil, L) = L .
+
+  eq reverse(nil) = nil .
+  eq reverse(nil N) = nil N .
+  eq reverse(L N) = splist(L, nil N) .
+endfm
+
+*** To avoid too much writing when testing, we just define three constants
+*** list1, list2, and list3 and test them out.
+
+fmod TEST-LIST-NAT1 is
+  protecting LIST-NAT1 .
+  ops list1 list2 list3 : -> List .
+  eq list1 = (nil s(0) s(s(0)) s(s(s(0))) s(s(s(s(0))))) .
+  eq list2 = (nil s(0) s(s(0)) s(s(s(0))) s(s(0)) s(s(s(s(0))))) .
+  eq list3 = nil s(s(0)) .
+endfm
+
+*** Some test commands:
+red length(list1) .
+red length(list2) .
+red length(list3) .
+red length(nil) .
+red concat(list1, list2) .
+red insertFront(0, list1) .
+red insertFront(0, nil) .
+red first(list1) .
+red first(list3) .
+red last(list1) .
+red last(list3) .
+red rest(list1) .
+red rest(list3) .
+red reverse(list1) .
+red reverse(list3) .
+red 0 occursIn list1 .
+red s(s(0)) occursIn list2 .
+red max(list1) .
+red max(list2) .
+red max(list3) .
+red isSorted(list1) .
+red isSorted(list2) .
+
+
+
+--- Exercise 13: Implementation of inorder, postorder, weight, reverse.
+fmod BINTREE-NAT1 is
+  protecting BOOLEAN .
+  protecting NAT1 .
+  protecting LIST-NAT1 .
+ 
+  sort BinTree .
+  op empty : -> BinTree [ctor] .
+  op bintree : BinTree Nat BinTree -> BinTree [ctor] .
+  ops preorder inorder postorder : BinTree -> List .
+  ops size weight : BinTree -> Nat .
+  op isSearchTree : BinTree -> Boolean .
+  op reverse : BinTree -> BinTree .
+
+  vars BT BT' : BinTree .
+  vars N N' : Nat .
+  eq preorder(empty) = nil .
+  eq preorder(bintree(BT, N, BT')) = 
+        insertFront(N,          *** Root first, then left and right subtrees:
+                    concat(preorder(BT), preorder(BT'))) .
+  *** ...
+  eq size(empty) = 0 .
+  eq size(bintree(BT, N, BT')) = s(0) + (size(BT) + size(BT')) .
+
+  --- Explaining inorder
+  eq inorder(empty) = nil .
+  eq inorder(bintree(BT, N, BT')) = concat(inorder(BT), insertFront(N, inorder(BT'))) .
+
+  --- Explaining postorder
+  eq postorder(empty) = nil .
+  eq postorder(bintree(BT, N, BT')) = reverse(insertFront(N, concat(postorder(BT'), postorder(BT)))) .
+
+  --- Explaining weight
+  eq weight(empty) = 0 .
+  eq weight(bintree(BT, N, BT')) = (weight(BT) + N) + weight(BT') .
+
+  --- Explaining reverse
+  eq reverse(empty) = empty .
+  eq reverse(bintree(BT, N, BT')) = bintree(reverse(BT'), N, reverse(BT)) .
+endfm
+
+*** Define some trees to test:
+fmod TEST-BINTREE-NAT1 is
+  protecting BINTREE-NAT1 .
+  ops tree1 tree2 : -> BinTree .  *** The first one corresponds to one in book
+  eq tree1 = bintree(
+              bintree(empty, s(s(0)), bintree(empty, s(s(s(0))), empty)),
+              s(s(s(s(0)))),
+              bintree(
+                bintree(empty, s(s(s(s(s(s(0)))))), empty),
+                s(s(s(s(s(s(s(0))))))),
+                bintree(empty, s(s(s(s(s(s(s(s(s(0))))))))), empty))) .
+  eq tree2 = bintree(
+              bintree(empty, s(s(0)), bintree(empty, s(s(s(0))), empty)),
+              s(s(s(s(0)))),
+              bintree(
+                bintree(empty, s(s(s(s(s(s(0)))))), empty),
+                s(s(s(s(s(0))))),
+                bintree(empty, s(s(s(s(s(s(s(s(s(0))))))))), empty))) .
+endfm
+
+red preorder(tree1) .
+red inorder(tree1) .
+red postorder(tree1) .
+red size(tree1) .
+red weight(tree1) .
+red isSearchTree(tree1) .
+red isSearchTree(tree2) .
+red reverse(tree1) .

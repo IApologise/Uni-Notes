@@ -1,0 +1,39 @@
+Pumping Lemma is used to check which languages are not regular languages, as in it is impossible to create a DFA or
+an NFA or a GNFA such that the restrictions are obeyed. For example, it is impossible to create a regular language
+having an equal amount of 0's and 1's in a word, and thus there can't exist a DFA or its equivalent that recognizes
+that word (same for the other way around).
+
+
+
+Pumping Lemma goes like this: Let M be a DFA with p amount of non-dead states. If we have a regular language A which
+is accepted by M, and the word w in A has more letters (total word length is n) than there are states p in M, then M
+must have loops, e.g. edges that go to the states already visited before. When we visit the state we already visited before this is called a Pigeonhole Principle. Anyways, with this we can conlude that A must have infinite possible
+variations of similar words like 010, 0110, 01110, 011110, ...
+
+Formally this is defined as: If there is w in A, and the DFA M's non-dead state count is less than there are words in
+w (and that M accepts w), then we can split the word w into 3 parts, x, y, and z, as in w = xyz (a concatenation of
+x, y, and z). Once that is done, we can guarantee the following to be true in A (e.g. that words with these
+properties are also accepted by M and are part of A):
+1. x(y^i)z is in A for every i >= 0. So, if for example x=01, y=1, z=10, then 0110 is equivalent to xy^0z, 01110 is
+   xy^1z, 011110 is xy^2z, and so on...
+2. |y| > 0, e.g. the looping part can not consist of only empty strings. Otherwise we wouldn't have known about it.
+3. |xy| <= p, which means that the loop pattern (and the start of the word) can not be longer than there are the
+   amount of states (denoted as p) in A.
+
+Basically, x is the "before loop" part, like 01 from 011110 example, y is the "loop" part like 11 from the same
+011110 example, and z is the "post loop" part like 10 from the exact same 011110 example.
+
+Anyways, all of this is useful for when we want to show that something can not become a regular langauge by showing
+that all of these 3 points can not be valid at the same time. However, this method is reduntant for when the longest
+word w in A's length is shorter than or has an equal length to the DFA M which accepts it. Because duh...
+
+
+
+Important note: Pumping Lemma is not an "if and only if" statement. Pumping Lemma (abbreviated to PL) is only useful
+for creating contradictions, it itself can not prove something, only disprove it. So we have to construct our own
+smart cases and pick smart words that are most likely to successfully create a contradiction.
+
+Anyways, to let's sum up with the practical use of all of this. Let's say you want to create a Regex that accepts
+some certain pattern, but of course you are struggling. To not waste your time further you decide to prove that it
+is impossible to create such a Regex. That or if you want to prove your superiority or that what the management asks
+of you is logically impossible.

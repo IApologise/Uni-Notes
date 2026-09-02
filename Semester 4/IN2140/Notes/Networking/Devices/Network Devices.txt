@@ -1,0 +1,70 @@
+--- Modulator Demodulator (Modem) ---
+Converts data traveling from cables, phone lines, fiber optics, etc. (i.e. analog signals) into a data that can be
+understood and used by a device (i.e. bits). It also does the same for when data must be sent through the internet.
+This device handles all of the layer 1 (physical layer) of the ISO OSI Layers model.
+
+
+
+--- Switch ---
+Manages all the connected devices within LAN directly through wired connection (i.e. ethernet). Since it directly
+connects to each device it uses MAC Addresses to send data right to the correct device and port (no broadcasting
+like with IPs) which results in a dedicated bandwidth for each device and thus no signal collisions.
+
+Each device within LAN has a Local IP Address which is the address system used to send data to a device. It keeps
+track of a Local IP Address <-> MAC Address map through what's called an ARP to figure out who to send the data to.
+A reminder that this is done to isolate connections for speed. To figure out its own Local IP Address it and other
+devices use what's called an RARP. So, it handles all of the layer 2 (data link layer) of the ISO OSI Layers model.
+
+
+
+--- Router ---
+Whenever data comes from a Modem it is Router's job to send the data to the right receiver within its LAN that it
+mananages and creates through what's called a NAT. So whenever a device within LAN wants to reach the internet, the
+router does it on its behalf. Within LAN it dynamically assigns Local IP addresses to each device through what's
+called a DHCP and routes the data between them, including sending data to and from the modem for internet access.
+This device handles all of the layer 3 (network layer) of the ISO OSI Layers model.
+
+This device creates, manages, and makes use of its routing table for faster routing within its LAN and outside it
+as well (internet is just a bunch of routers so doing that increases speed and reliability). For each destination
+it has a list of potential routers it can forward the data to, all of which reach the destination of course.
+
+Most devives that are marketed as a "Router" are actually a device that is a Modem, a small Switch, and a Router
+all in one. It also includes a Wi-Fi access point which uses electromagnetic waves with a radio frequency to
+broadcast data to a single device at a time. This is done so that these waves don't interfere with each other which
+as you can imagine makes it much slower than a wired connection through a Switch. It also has a hardware like
+firewall built into it as well. Lastly, since it is a switch as well it also does ARP, even through Wi-Fi which a
+switch can't do (I believe), and since it is a router it doesn't do any RARP and doesn't forward any ARP requests.
+
+Since this device also often comes with a Hardware Firewall it also does Port Forwarding which restricts receiving
+data to and sending data from certain ports to the internet. Whenever you want to set up a server accessible from
+the internet, the process that hosts the server must have its IP:Port whitelisted to establish a TCP connection.
+
+
+
+--- Wireless Access Point (WAP) ---
+This device connects to a router through an ethernet cable and allows other devices to connect to it wirelessly
+(spreads router's Wi-Fi coverage). It does not manage the routing itself, that is still the router's job that it
+is connected to. So it is simply an extension of a router to boost its wireless coverage and connection count.
+
+Range Extender and Repeater are similar devices, but they connect to a router through a wireless connection and
+simply re-broadcast the signal instead of a wired connection. That makes them much slower, but easier to setup.
+
+
+
+--- Firewall ---
+There are Hardware Firewalls and Software Firewalls. Hardware Firewalls manage the IPs and Ports that go to or come
+from the internet (Port Forwarding). Software Firewalls do the same but unlike Hardware Firewalls are located on
+the end-devices themselves. This allows Software Firewalls to manage exactly which apps can and can't send data,
+because ports don't bear the information on which app sent it, just the process id which doesn't tell much about
+it really. It also restricts sending data not only to the internet, but also to LAN stopping it before any signals
+are sent. Lastly, Software Firewalls use the end-device's CPU and RAM, but not much... Businesses often have
+multiple hardware firewalls within their LAN for more control in order to isolate and minimize breach severity,
+and also utilize firewalls which look into the application data itself, not just the IP and the Port.
+
+
+
+--- Network Interface Controller (NIC) ---
+It actually goes by many similar names, but this is its formal name. It is a hardware part often built into the
+motherboards that converts bits into Wi-Fi (radio waves) and ethernet (wired electrical signals). This is also
+where the MAC Address can be found since each NIC comes with a unique identifier combination. Each ES (End System)
+and each IS (Intermediate System) has a NIC.

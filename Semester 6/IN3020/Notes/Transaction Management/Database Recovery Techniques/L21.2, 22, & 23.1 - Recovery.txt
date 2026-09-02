@@ -1,0 +1,147 @@
+--- Lecture 21.2 ---
+We have already looked at some of the concurrency control during transaction management. Note that the transaction
+management itself covers the Isolation and Consistency of the ACID's principles, whilst the concurrency control
+covers Atomicity and Durability aspects. "L21.2 - Plan.png" is a roadmap and a bullet point of what we will need
+to know, note that in section 2 ARIES is the best option and each of these protocols is a hierarchy building on the
+previous protocol's ideas.
+
+If you don't remember the types of failures that can occur, check out "L21.2 - Failure Types.png" for a reminder.
+Also, remind yourself of the 3 recovery types: Easy, Hard, and Impossible. Easy is when the recoverability is
+classified as "cascadeless". Hard is when there are cascades and it is then simply "recoverable" but not
+"cascadeless". Impossible is not even "recoverable". Also, "strict" is basically when recoverability isn't even
+required (I think), so it is also automatically "cascadeless" and "recoverable" as well (it is a hierarchy).
+
+Now let's begin. So, with recoverability and transaction management systems we did not consider one thing: cache.
+when we do read(X) and write(X), we don't write to the disk actually (but the transactions think we do), we
+actually get the data from and write to the cache (because speed). After some time or under some condition, we do
+synchronize the disk with the info found in the cache (not immediately because disk access is slower than cache).
+Until then, cache is considered "dirty" due to asynchronization with the disk. Note that cache is electricity
+dependent, and crashes may cause these committed changes to be lost (durability is compromised). So, the solution
+is to keep the logs of actions transactions did, so we may continue where we left off. Also, sometimes some
+processes are not recoverable from the logs and must be done anew.
+
+P.S. cache is defined as "a collection of buffers/pages, a.k.a. blocks in main memory ...", so RAM, and CPU cache,
+etc. "... with corresponding blocks on disk". Basically, the requested data by the transactions is loaded into
+the "cache" in sizes of blocks found on disk (i.e. request just X -> get the whole block of data within which X
+is). Note that this loaded data stays there for future use, unless too little memory space left, then we replace
+some unused or least frequently accessed and such (depends on the algorithm - IN2140 covers this), this process is
+actually called a "flush", e.g. flushing cache's buffer. Note that not all data can be flushed, because the changes
+in the buffer might not have been registered on the disk yet, so the algoritms may differ, but we got 2 main ones:
+1. In-place flushing: Basically we keep a dirty bit and check it before flushing, if dirty bit is 1, then we save
+   the changes to disk and then flush. Otherwise, if the dirty bit is 0 we just flush. Most popular method btw...
+2. Shadowing: Basically the same as in-place flushing, but when the dirty bit is 1 instead of rewriting the
+   original data on disk, we create a new version of it and save it on the disk, so we have this version and the
+   old version on the disk. This way no logging is needed for recovery. But if that is the case, I think I
+   misunderstood the problem with recovery and cache then, or perhaps that literally is the log itself? Idk...
+
+As for the flushing algorithm we use LRU (Least Recently Used is flushed). However, for efficiency we optimize it
+to work with databases by giving DB's data its own dedicated cache, indexes its own cache, relations, logs, etc.
+This is called Domain Separation, and we need this because "choosing a domain may depend on the replacement policy"
+or whatever... I think that this also means that each one gets its own LRU specific policy.
+
+These specific flushing algorithms are further improved by additional methods like Group LRU, Hot Set (LRU), Clock
+Sweep (Least Used), and DBMIN though DBMIN will not be covered. Group LRU is basically a dynamic cache separation
+(not really sure how this grouping works and thus benefits the system's efficiency). Hot set is basically adding a
+priority to some buffers saying "hey, please don't flush this one if you can, unless you really have to", so if the
+cache is full of these buffers, it might flush them anyways, otherwise look for one with lower priority to flush.
+Hot set is used for when some cached data is really important and should not really be flushed... Clock sweep is
+basically counting how many times the buffer was used. If used increase the counter, if not then decrease it, the
+buffer with the least counter is flushed. P.S. Hot Set can be combined with others (it is more of a property).
+
+
+
+--- Lecture 22 ---
+The way we recover from the committed data in cache being lost is via logs and checkpoints. Logs are write only
+for the transactions, and read only for the recovery system which keeps track of all the things that transactions
+have written to the cache and which versions they've read as well as the older committed values that got rewritten.
+The new commits and version reads are needed to Redo a transaction in case it wasn't done committing or the
+commits weren't saved to the disk, and the old values are needed to Undo actions in case a transaction is aborted.
+
+By the way, log is saved and stored on the disk which means that if the disk is damaged it may also be affected
+just like the disk that stores the committed data. Same goes for cache, because logs are first changed in cache
+and only then saved to disk. And whenever some cache (not the log) is flushed, so should be the log, but the log
+first in order to recover and ensure synchronization. As to why we keep the log in the first place and not just
+flush the cache (which we do each time we flush a log), that's because the vice versa doesn't always apply. Log
+often has a single dedicated buffer which is flushed very often, more than the changes done by transactions. And
+since logs only keep the commits (unlike buffers with committed data which also have lots that is most likely
+irrelevant) they are more much more efficient. So whenever a log flushes, it isn't necessarily the case that some
+other buffer (where transactions originally committed to) is also flushed. Also, keeping read versions is only
+needed if cascades exist.
+
+Of course the schedule never stops and the system is always running which may result in logs being absurdly huge
+to the point that if our system crashes after a week or consistent work recovering from the beginning (according to
+the logs) is going to take absurd amounts of time. To make it more efficient we create "checkpoints" which is
+basically when we suspend transactions for a few seconds from working, then we flush the whole cache (and thus the
+logs too), and then resume the work. This is typically done every few minutes to make recovery fast and is saved
+inside a log (as a part of it). Note that there are tricks that we may use to make it such that checkpoints won't
+need to suspend transactions (optimization).
+
+So yeah, that is it for the concepts, and now we are going to look at the hierarchy of protocols that I talked
+about where ARIES is the bottom one and the clear winner (worst first, each one expands on previous's ideas):
+By the way here we will be assuming that strict two-phase locking transaction management protocol is used.
+
+1. Shadowing - Basically when we flush we don't overwrite the old version, so all these old versions act as logs
+   and checkpoints. If all a transaction commits then its old version is deleted and only new one is kept which
+   defines the next checkpoint basically (more like an updated version of a checkpoint). The disadvantage is
+   obviously the space that is taken, older versions are not ordered in the disk, and requires some "complicated
+   garbage collection", again most likely due to deleting old logs and we don't know their order, so...
+
+2. Deferred Update - Here the idea is to flush only once the whole transaction commits and is done which is
+   essentially creating a checkpoint. That is unless it crashes whilst doing that, which is possible since a log
+   is just a single buffer, but all of the transaction's commits scattered across multiple buffers might not finish
+   saving into the disk (due to there being possibly multiple buffers and a crash between them). That is when we
+   do a Redo. The transactions that commited some stuff but not all are essentially never saved on disk, and thus
+   it is as if none of their commits ever happened (no Undo needed). The downside is the log's cache size since
+   all of the changes in those many buffers should fit into a single buffer (might not fit).
+
+3. Immediate Update - Basically the system at some point (maybe after some time or some number of commits) decides
+   to flush everything and create a checkpoint. At that point all the transactions are paused, commits are logged
+   and the log is flushed (i.e. write ahead first). Once a transaction decides to commit first its changes are
+   logged and the log is committed (standard procedure). Once a flush of everything is done that is considered a
+   checkpoint, and when a single transaction has fully committed that is also a checkpoint. Basically everytime
+   a flush of a non-log buffer is done is a checkpoint (in all these protocols before and future ones too). So
+   here we do both Undoing and Redoing.
+   
+   You can actually check out an example "L22 - Immediate Update.png" where in the Deferred update we didn't even
+   need to bother about T4 and T5, but now these have to be actively Undone. As for T1, T2, and T3 we simply have
+   all of them flushed and the checkpoint is actually at T2, or do a Redo based on what the log says (same as in
+   Deferred Update). The difference is that some of the T4 and T5 commits are be flushed; Essentially making the
+   protocol worse than the Deferred Update? Well it is a trade-off, Deferred Update doesn't need to Undo anything,
+   but the Immediate Update doesn't limit the log's buffer size, basically creating checkpoints once the log's
+   buffer is full, a luxury that Deferred Update can't do and thus won't be able to include all the changes.
+
+4. Fuzzy Checkpoints - Basically we solve the problem of having to suspend the transactions. What we do is we flush
+   buffers as they are being changed by the transactions (so in parallel with the transactions). It will take
+   longer due to it being done in parallel, and we can even have multiple checkpoints being done simultaneously.
+   To fix this we simply point out in the logs when the checkpoint N starts and when it ends. The last one to end
+   successfully (without crashing before it is completed) is the one we go from, everything that the crashed
+   checkpoint had flushed is Undone, as well as everything that has to be undone in the checkpoint we chose.
+
+5. ARIES - It stands for Algorithm for Recovery and Isolation Exploiting Semantics (whew... what a long name). It
+   has a lot of improvements which are not discussed or pointed out unfortunately, but the only one that is
+   mentioned is how we do checkpoints (we improve the Fuzzy Checkpoints here). The idea is that instead of flushing
+   everything which is what Immediate Update does, we instead save a table of all the current dirty buffers into
+   our log (also fuzzy). So everything that is not in the log is flushed and saved on the disk, what is in the
+   table are the dirty buffers which need to be recovered (either Redone or Undone). All of this simply makes the
+   checkpoint making much faster.
+
+P.S. If you are confused after all this and not sure what Undone or Redone is or such, ask yourself this: Why do
+we need logs in the first place? Then, what are checkpoints? Now I will give you a reminder: Atomicity has to be
+upheld, meaning that either the whole transaction commits, or none of its commits are done. That is what the Undo
+and Redo is for. Undo is for when all of the transaction's commits were not flushed, thus not checkpointed, and
+thus have to be undone to respect the atomicity. Redo is for when the whole transaction committed, but wasn't
+flushed and thus not checkpointed, so it has to be Redone since it technically succeeded, but durability was
+compromised during this saving process.
+
+
+
+--- Lecture 23.1 ---
+You can check out the example of an ARIES recovery protocol (the log table) in the "L23.1 - ARIES Example.png".
+For a detailed explanation you should check out the lecture video itself or ask AI (but lecture is better).
+
+Now we briefly move on to other considerations. Now remember that all of this requires some preparation, and here
+we only considered cache crashing and not disk corruption and such (here both the changes and the logs can be
+corrupted which is most likely not recoverable whatsoever). Most is usually fixed by creating backups of logs or
+whole databases. The golden rule from a YouTube video that I've heard is "3 Backups to Media and 1 Off Site.",
+what is the "Media" and "Off Site" I don't know... But the song is great! Usually these backups are stored in
+different geographical places, it was pointed out that the sub-terrarean sites are safer.

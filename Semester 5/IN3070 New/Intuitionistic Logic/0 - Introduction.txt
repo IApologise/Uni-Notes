@@ -1,0 +1,54 @@
+--- Belief ---
+Intuitionistic Logic is about believing in constructive proofs. This means that if
+we are able to prove (A or -A) being valid, then we must be able to prove that either
+(A) or (-A) themselves are valid. In this belief we reject the idea of existence of
+some value N for with some unique property for example if it can not be constructed.
+So we reject the idea that (A OR -A) is valid if we can't prove (A) or (-A).
+
+Here is an example: Does there exist x^y = z such that both x and y are both
+irrational numbers, and z is rational? Here is the formal proof: Let x and y be
+sqrt(2), then z becomes sqrt(2)^sqrt(2). Now, z is either rational or irrational,
+if z is rational, then we've proven that there exist x and y such that z is
+rational. However, if z, which is sqrt(2)^sqrt(2), is not rational, then let x
+now be sqrt(2)^sqrt(2). Now, z becomes (sqrt(2)^sqrt(2))^sqrt(2) = sqrt(2)^2 = 2,
+so z is now rational.
+
+As you can see, this can be translated into either sqrt(2)^sqrt(2) being rational
+makes the proof valid, or sqrt(2)^sqrt(2) being irrational makes it valid, e.g.
+(A OR -A). But, we couldn't prove either (A) nor (-A). So, we don't know if
+sqrt(2)^sqrt(2) is rational or irrational. which means that one of those cases is
+not a valid proof, but a combination of these two proofs proves that x^y = z where
+x and y are irrational and z is rational exists.
+
+This is something we refuse to accept as a valid proof because neither of those
+two case proofs are proven to be valid or invalid. At least one of these two proof
+cases should be proven to be valid or invalid, and it should be per definition. In
+our case, it can't be that in some cases A is True or -A is True, it must be either
+one of those two. We don't want to use invalid logic in our proofs.
+
+
+
+--- Final Comments ---
+Although I do understand the logic behind it, I still find it to be perfectly fine.
+Yes, we are using something that is possibly wrong, and we know for a fact that at
+least one of those two is. But, we also know that it doesn't matter which one, this
+is not our goal, our goal was to prove (A OR -A), and not either A or -A.
+
+Unless we can encounter contradictions using (A OR -A) in logic, we should stay
+confident and work with it. Either until this contradiction is discovered, until
+a detail was missed, or a mistake in our way of thinking is pointed out to us.
+
+It sounds strange that we can't prove A nor -A and be able to prove (A OR -A) at
+the same time, but to me it isn't counter intuitive or weird, it is brilliant. I
+wonder, if something similar can be true for our world? Are there mysteries we will
+never be able to find out, only their aftermath perhaps? Fabulous, truly...
+
+Although intuitionistic logicians would simply withold their judgment, they don't
+jump to conclusions. To me, it just seems that either (A OR -A) is fruitless or
+encouraging. It might not give proper examples, but it might be able to prove that
+something is possible, like the proof I showed earlier, and it should be, right?
+
+As ChatGPT describes it: "Intuitionism is about proof, classicism is about truth".
+"Intuitionism prevents proofs that couldn't be in the first place". To them, (A OR
+NOT A) is meaningless until either (A) or (-A) is proven, until then A has no truth.
+So A is neither true nor false, it simply doesn't exist until proven otherwise.

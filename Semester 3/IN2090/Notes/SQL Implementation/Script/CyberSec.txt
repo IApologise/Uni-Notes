@@ -1,0 +1,16 @@
+Access to the database must always be protected, we start with first steps in
+network security (accessibility step). We create firewalls and demand passwords
+from users, we check the automated scripts for dangerous code, we make sure that
+confidentiality, integrity, and accessibilty is there (CIA).
+
+In the database itself we define roles for users that want to access data. Some
+data is therefore whitelisted to certain users with certain roles and such. It
+would be smart for users to be able to have multiple roles (I think we do that).
+
+We also encrypt the data and hash passwords to make this work, but know that the
+user whose data we store is the owner of its own data and may request it at any
+time and has total control over it (or he shouls at least), including deleting it.
+
+There is also PostgreSQL commands for user creation and such in our database.
+We may grant access and roles or revoke them from users. Those grants are for
+users giving access to schemas, tables, certain commands and views, etc.

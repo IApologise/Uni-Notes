@@ -1,0 +1,229 @@
+--- Lecture 12.2 ---
+First rule: Don't use cartesian products unless completely necessary. Always use equi-joins, natural joins, etc.
+Basically minimize the rows and attribute types to check and such (and don't forget about creating indexes). Always
+make sure that the two expressions (the original and the supposedly faster one) are equivalent. The only real issue
+here is that we can't know which one is faster for sure without evaluating both and comparing the time (pointless
+in the first place, what's the point of optimizing if we evaluate not just the original, i.e. the correct one, but
+also the supposedly faster one in the first place?).
+
+For that we just try to predict which one of the candidates that we got from using some equivalences that we know
+(i.e. good heuristic) is most likely to be the fastest one (i.e. good cost function). Sometimes, for some specific
+cases we could look at the data of a table and make an educated guess, but looking into data is expensive, so we
+add it to the cost of optimization. The total cost is what we are trying to minimize here, both during optimization
+and during evaluation which has to be less than just evaluating the expression. Also, note that the heuristic, i.e.
+the amount of equivalent expression candidates, is infinite (just like a = a can be rewritten in infinite possible
+ways in math, like (a + 1) = (a + 1), sqrt(a^2) = a, etc.).
+
+You can check out the screenshot on good heuristics example in "L12 - Optimization Example.png". Note that the
+candidate 3 is not the better solution than candidate 2 if the table we get from the selection A=3 on R. However,
+if we know that A is a primary key or in any other way that the selection results in a small table, then it is
+more efficient than the candidate 2. Not only that, there are like more things going on like saving the part of
+the result and reusing it, pipelining, etc.
+
+The hard part is the estimation method, i.e. the cost function. I assume that we test it during development and
+tweak it, but as of writing this I am not sure how it works (maybe like a supervised learning AI). It could also
+be just giving scores to some general patterns and getting the equation's total sum, but idk.
+
+Now to the cost function part from the presentation. So, getting the estimated evaluation time accurately is not
+possible in practice, that is because a lot depends on the machine's parameters that is running the equation. When
+we will be creating a cost function, there will be advanced stuff we will not be designing it to consider like
+indexes, pipelining, and repetition of already evaluated intermediate steps. The things we will be considering and
+planning for can be seen in the screenshot "L12 - Cost Function Simple Goals.png".
+
+--- Lecture 13 ---
+The algorithm for cost function we are introduced is more simple than the one used in real DBMS, because the real
+ones also use what's called histograms as well as more data and thus more complex algorithms that connect
+everything, but the one we will talk about has a good balance or simple enough and good enough.
+
+The cost function outputs the estimated size of the table after each operation, that is our metric here. To make
+this function more accurate, we also estimate the number of tuples (rows) in the table, the average size of the
+tuple, and for each attribute the count of possible different values that are present in the table. So like if from
+all the rows in the table the values of a collumn A are only either 0 or 1, then the total count of distinct values
+in A is 2. These 3 are especially important for estimating the size (in bytes) after join operation was applied.
+
+These metrics are not computed on each table's update. It is often done like once a day during the least busy
+hours, and it is often done quickly. These statistics for estimates are updated and stored later for use. This also
+allows for more accurate estimates and data (since lots of databases are huge), even if data is slightly outdated.
+These values are used by the cost function to calculate the total metric (total size in our case) of the options
+provided by the heuristics which is then used to choose the most promising time-saving option.
+
+The cost function works as follows: First we got the general bag projection cost evaluation. For an example, check
+out the "L13 - Projection Estimation Example 1.png" where we first get the metrics, and then use them to calculate
+the estimation (i.e. total cost). The calculation goes as follows: The amount of tuples doesn't change (because
+bag), the tuple size is easily calculated by which collumns are selected, and the attribute values are assumed to
+be not changed (which leads to a slight mistake in the example estimation case). Total becomes Tups(R) * TupSize(R)
+and the Vals(R.X) become irrelevant in this case, but is updated and kept track of either way for other operators.
+So note that the total size isn't the total cost of the whole thing, we add the total size of each operation to the
+total which becomes the total cost function. So if we have a natural join after projection, we use the Vals(R.X)
+that we updated in there and calculate total cost of the selection and add its computed size to the total cost.
+
+Second is how the selection size cost is computed and metadata (i.e. temporary data of the metrics used during cost
+evaluation by the cost function) updated: The tuple size, i.e. TupSize(R), estimation remains unchanged. The total
+size becomes Size(σ(R)) = Tups(σ(R)) * TupSize(R). The only problem is that calculation of σ(R) varies depending on
+the attributes and constants mentioned in the condition which in the picture are denoted as A and c respectively.
+Anyways, "L13 - Selection Estimation Formulas 1.png" is where you can find the Tups(σ(R)) formulas, and note that
+Tups(R) / 3 is often faster in practice because of human behaviour and use of < instead of Tups(R) / 2 which is
+supposed to be more accurate, and some can be simplified to just Tups(R) if the Vals(R.A) is large enough. If an
+attribute A is not mentioned in the condition, then it can be calculated via Vals(σ(R).A) = Vals(R.A) * Tups(σ(R))
+/ Tups(R). If it is mentioned, then Vals(σ(R).A) = Tups(σ(R)). For a full example use, check out "L13 - Selection
+Estimation Example.png". Moving on, when it comes to combining selections, i.e. using NOT, AND, OR in σ like
+σ_(A AND B)(R) or σ_(NOT A OR B)(R), etc. they are mostly easy, so just check out "L13 - Selection Estimation
+Formulas 2.png" and "L13 - Selection Estimation Example 2.png".
+
+Next up, when it comes to estimating joins, we can just translate it to cartesian product which becomes simple
+multiplication between table tuples count and tuple sizes with some selection to simulate natural joins, but we can
+do better than that and optimize for foreign keys. So with Tups(R ⋈ S) and Vals((R ⋈ S).A) where A is S's foreign
+key (R.A REFERENCES S.A), then we know that Vals(R.A) <= Vals(S.A). If A is not a foreign key, (i.e. just an
+attribute in one of these tables that are not related) then we estimate Vals((R ⋈ S).A) = Vals(R.A) = Vals(S.A).
+For Tups(R ⋈ S) check out "L13 - Joins Estimation Formulas.png" and example "L13 - Joins Estimation Example.png".
+Take a look at one of the formulas in there with the "max()", the ideas behind these formulas can be easily used when having many references (i.e. multiple foreign keys) as shown in "L13 - Join Estimation Generalization.png".
+
+Lastly, we talk about the set theory operators which are: Union, Intersection, and Difference. The formulas are in
+"L13 - Set Estimation Formulas.png". The reason for Vals() being the way they are is because of how the 2 extreme cases may intersect with each other where we basically always have at least max(Tups(R), Tups(S)), and after that
+somewhere between 0 and min(Tups(R), Tups(S)) added, so on average we divide by 2. Thus, the whole formula for bag
+union is Vals(R ∪ S) = max(Tups(R), Tups(S)) + min(Tups(R), Tups(S)) / 2. The rest work on a similar logic.
+
+--- Lecture 14 ---
+When it comes to duplicate elimination operator, what we do is we basically have an unknown amount of attributes
+removed from R. So, Vals(δ(R.A)) = Vals(R.A) / 2, but just on average because it can be anywhere between 1 and Vals(R.A), just like it is an average in many other cases in previous formulas we've seen. Tuple size is not
+altered, and tuple count depends on whether bags are included, if so then it is / 2 as well. For grouping &
+aggregation it depends, if we don't have aggregation then it is just duplicate elimination with projection, i.e.
+γ_(A, B, ...)(R) = δ(π_(A, B, ...)(R)), but if we do have it, then the tuples count is same as without it, tuple
+size may change due to new or altered attribute types, and as for the attribute values, we get the following:
+Vals(γ_(f(A) -> X, ...)(R)) = Tups(γ_(f(A) -> X, ...)(R)) / 2 where f() is some aggregate function, beacuse we
+can't say much about it so we just assume that every aggregate value has one duplicate on average (1 original
++ 1 duplicate = 2 in total, so 2 times less unique values in total). We assume that since the amount for each is
+between 1 and Tups(γ_(f(A) -> X, ...)(R)), so again the avereage is Tups(γ_(f(A) -> X, ...)(R)) / 2.
+
+Next up and finally, histograms. These are basically the same as Vals(R.A), but for each unique attribute it also
+stores how many times it has seen it, so there shouldn't be a difference in time to update these values vs just
+Vals, and the more we can store and use at the same expense the better. Before that the Vals that we had assumed
+that all the amount of distinct values in each attribute was the same and didn't count em, when it could since it
+loops over the whole table either way to find all the unique ones (I think), i.e. it is O(n) with either Vals or
+Histograms. That way, with histograms the assumption of uniformity can be removed and more techniques (also more
+complicated and more varied), can be done. So it is faster, but must implement more cases for it to work. With
+histograms there is a small problem which is propagation, i.e. keeping track of how the data in histogram will
+change with each operation, that and the fact that we store more data. We might start with knowing for sure how
+many of each unique value we got, but due to uncertainties like we've seen before we estimate those too into ranges
+of values that we could have after propagation (depends on operations). We want this data to optimize the queries,
+but if we save too much data and do too many extra computations to keep track of the predictions we might as well
+just run the query itself and be done with it. Obviously none of that would be needed if people knew how to
+optimize everything themselves, but at that point even if you do it in C the non-repeating queries will take more
+time due to the need to thinking of an answer (even if you are quick) and writing the whole thing down. Besides,
+SQL is a bit flexible, and by choosing to optimize for big queries, the small individual ones won't notice a
+difference in performance.
+
+Finally we are done with cost functions. What we had described so far is considered a naive approach and real DBMS
+often use more as we've seen already. Next up we got good heuristics, but we won't look much into it yet. Fun fact,
+there is no algorithm which can tell if two expressions are equivalent due to time as a finite resource (cuz the
+problem can be reduced to Hilbert's 10th problem which has already been solved). But we don't need to worry about
+that cuz instead we just use some rewrite rules to simply redesign the one we already got instead. So there is the
+greedy heuristic option, which just does the rewrite rules until there is no imporvement (whether it creates just
+one or multiple branches is not specified, but probably it does branch multiple). For the common strategies and
+rewrite rules (i.e. equivalences) that we apply check out "L14 - Greedy Heuristic.png". Another thing to consider
+is the order of joining multiple tables together, that is where our estimates also come in handy. Also, note that
+R ⋈ S isn't computed equally to how S ⋈ R is, though the end result is the same, so our cost function doesn't
+differentiate between them.
+
+The next part is the continuation of a more complex cost function evaluation system, more complex than the logical
+query plan which is basically the RA tree that we make. It is used in cost functions and heuristics too, however
+there is also a physical query plan which is when we also got an algorithm for each operation included as well, so
+it is an extension of logical query plan. With physical query plans, same operations might use different algorithms
+based on data and how it is stored and accessed in practice (done differently for speed and such), as well as
+pipelining, i.e. when two operations can run in parallel, and due to some other specific edge-case scenarios.
+
+When looking at how fast some operations are implemented and efficient, we assume one thing: We review each
+intermediate step in isolation, i.e. we assume that we don't have the data at hand, so we access the disk, then do
+what had to be done, and write it back to the disk (assume no next step). We do that for each individual operation
+in our logical/physical query plan, hence why we call it intermediate and isolation.
+
+There is a new measurement we look at, not the size but the number of block I/O, i.e. writes and reads from the
+disk. This will replace what we used in previous lectures. I guess it is more accurate than what we had, but it is
+very similar, especially because we also assume that all the blocks are always filled 100% of the time with all
+that data. To be honest, as of writing this I haven't given it much thought, but I can't see the difference in
+practice right away whether we use size or this new measurement. Anyways, when using indexes we assume that it took
+no time to get the blocks at all (sure, I guess...).
+
+Now instead of storing TupSize(R) and Size(R), we replace those with Blocks(R) and MMBuffers (constant). Blocks(R)
+is the number of blocks we need to store the relation R, which is basically the same as Size. MMBuffers is the
+total memory we got on our disk, the amount is also specified in blocks. Note, the size of the block itself isn't
+mentioned at all, not even as a constant like MMBuffers is... Also, Tups(R) and Vals(R.A) are now exact values and
+not a range of or an approximate estimation. So the estimation is more precise now? I hope we'll see why and how...
+
+We also sort and hash the relation (sometimes useful). The sorting is done by a "Sort Scan" which is a process that
+sorts the relation R by some attribute R.A. The sorting algorithm used depends on whether the whole relation fits
+into a single disk, i.e. MMBuffers. If it does, then we just use some fast sorting algorithm like MergeSort, if it
+doesn't then we used what's called TPMMS: Two-Phase Multiway Merge Sort which can handle more blocks per MMBuffers,
+Blocks(R) <= MMBuffers^2 to be more precise, and it can be generalized to N-Phase too: Blocks(R) <= MMBuffers^n.
+Here is the algorithm for the TPMMS (i.e. 2PMMS) assuming one is already familiar with MS, i.e. Merge Sort:
+1. We use Merge Sort on each MMBuffers which makes it so each one is now sorted.
+2. In the main memory (which is also of size MMBuffers), load in the first block from each disk into a buffer.
+   This is the reason why MMBuffers^2 is the limit, due to taking 1 block from each of the other MMBuffers.
+   Note that main memory is basically the extra disk, i.e. MMBuffers that we use for these intermediate steps.
+3. Then we find the buffer with the smallest tuple (MMBuffers is made of buffers, each buffer holds 1 block, and
+   each block holds some number of tuples of R) and add it to the output buffer (one of the buffers in main memory
+   is reserved for this named output buffer, so the limit is actually Blocks(R) <= MMBuffers * (MMBuffers - 1)).
+4. Once the output buffer is full of tuples "flush it". If any of the other buffers are empty, load in the next
+   smallest block (i.e. next first) of the same MMBuffers that the empty buffer was loaded in with previously.
+Note that the sorting MMBuffers means that all of the tuples in first block are less than any of the tuples in
+second block, and so on... these blocks are within one and the same MMBuffers, i.e. disk. Also, the sorting doesn't
+have to be Merge Sort, just whatever is the fastest, I just used it here since it is more familiar and related
+here. By the way, apparently sorting is also used when doing some primary indexing.
+
+When it comes to the cost of doing this algorithm it is measured in the amount of blocks we had to load in, i.e.
+the I/O Reads & Writes. For TPMMS it is 3 * Blocks(R), 2 from the step 1 for both loading in and writing back to
+due to sorting and such, and 1 more to just load in from the steps 2-4, then we "flush" so we don't write it back.
+
+--- Lecture 15 ---
+Like mentioned before we also do hashing because some indexes are hash based. So the tuples are to be hashed, what
+we do is we have one buffer in our main memory dedicated to reading blocks, and the rest of the buffers are for
+blocks that are to be filled with hashes. The tuples in the reading block are hashed, and based on which hash has
+been given it gets assigned to a block. So think of it as Separate Chaining where each bucket is a buffer dedicated
+to the block, let's call them output blocks (i.e. all except for the reading buffer). This also means that the
+hash's Mod can't be more than MMBuffers - 1. Once the output buffer is filled it is "flushed" and a new empty one
+is there to take in the next batch. This continues until the reading buffer is empty. The only thing I don't
+understand is if the output block (the one with hashes) accepts only a single duplicate hash value, or a range of
+duplicates because I struggle to remember why and how we even use the hashes at all. The cost for this algorithm
+is just Blocks(R).
+
+Now the evaluation of projection and selection takes just 2 buffers, one input and one output where we perform the
+necessary operations on the tuples inside. The cost for selection without index and for projection it is Blocks(R),
+for selection with index it depends on the condition and the type of index. With duplicate elimination we must make
+sure that there are no more duplicate tuples in other blocks which means processing as much of the disk as we can
+all at once. So we have one read buffer and the rest are output buffers that we fill with tuples only when it is
+the first time we see that tuple, which results in a limit of Blocks(δ(R)) <= MMBuffers - 1. The cost, i.e. the
+amount of I/O reads done is Blocks(R). For when we got more unique tuples than the MMBuffers - 1 can fit, we use
+TPMMS with duplicate elimination added in the step 3, i.e. duplicates are not added, i.e. just ignored. The
+consequence is obviously that the cost is 3 * Blocks(R) and the limit is Blocks(R) <= MMBuffers * (MMBuffers - 1).
+Similarly we do pretty much the same when using duplicate elimination in hashing (we just use the hash based
+algorithm instead). All similar ideas to duplicate elimination with grouping and aggregation as well.
+
+For set theoretic operators we got this: With union between R and S, we load in the smallest of the two, i.e.
+min(R, S) and output them all (keep stored in memory too). Then we have one more read buffer that reads the other
+relation and outputs the tuples that were are not in the buffers, once that one read buffer is empty we get the
+next block of the that same other relation (we need to store the lesser relation so no duplicates are outputed).
+The bag union is simply having one read buffer and outputing all the tuples then get the next block of either
+R or S. Sort based algorithm (TPMMS) with unions is pretty much the same, just sort each individually and merge,
+similarly with hash based as with duplicate elimination (we were not looking at the bag versions). All these costs,
+limits, ideas are similar to what we've seen before, and are similar to the intersection and difference operators
+too. With joins, the idea is similar to the union one, we just don't output the R/S immediately and instead output
+the joined tuples one by one. Note that in all these cases we had 1 read buffer and 1 output buffer. We can also
+juggle blocks with natural join (called nested loop), this increases the cost to Blocks(R) + Blocks(S) * ⌈Blocks(R)
+/ (MMBuffers - 2)⌉, but decreases the requirement of free buffers needed to just 2. I am too lazy to figure out why
+it works, so just check out "L15 - Nested Loop Natural Join.png".
+
+--- Lecture 16.1 ---
+In PostgreSQL there is also an "EXPLAIN" command which you add at the start of each command that you want to get
+the estimation for. I can add "VERBOSE" to the "EXPLAIN" command to get even more information on how the cost
+function is evaluated, and everything else that is predicted. There is also an "ANALYZE" command to compare the
+estimation with the result to see how well the prediction matches the reality. There are also programs that help
+to visualize the large requests to help understand them better. There are also constants that the PostgreSQL
+collects such as the cost of using operator X on the machine's CPU, or the cost of getting a page from memory,
+or block from disk, and these can also be divided into the types of data structures used such as some blocks being
+stored sequentially, whilst the rest are stored in some other way, and much more... These are usually gathered by
+the PostgreSQL program and updated automatically, but can be manually set (reasons as to why might differ).
+
+To be honest I will not remember all these formulas, so when I will have to revisit it all, just check out the
+"L14, 15 & 16.1 - Lecture and Formulas.pdf" where you can find all the details. At the end are the ones I spent
+least amount of time covering, so check those out. Note that some slides will be available on the exam, especially
+those with the equations and formulas so that we don't have to remember them all.

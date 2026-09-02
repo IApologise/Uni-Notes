@@ -1,0 +1,84 @@
+Cryptography:
+This is a way to hide a message from unwanted
+listeners/readers. It is a method that lets us
+now that even if our message has been received
+by bad actors, they won't be able to read it.
+
+Note that encryption only ensures confidentiality
+and not integrity, authenticity, traceability,
+and reliability, only confidentiality.
+
+
+
+Symmetrical Cryptography:
+This method requires that the secret key is
+already been delivered to the right people
+before with success. Then it is as simple
+as encrypt, send, decrypt.
+
+Blockcipher is when a chunk of the message gets
+encrypted with an encyrption key of fixed size.
+
+Streamcipher is when the message gets encrypted
+one letter at a time with a combination of
+pseudo-random keys and XOR gates. Each message
+has a unique pseudo-random key generated which
+is done by using a secret key + a nonce. The
+nonce is sent publicly to the receiver so it
+may generate the same pseudo-random key and
+decrypt the message (attackers can't because
+they do not have the secret key which is seed).
+
+
+
+Assymetrical Cryptography:
+Here the user and the server both have 2 keys,
+private and public. Both are just numbers which
+can be used to both encrypt and decrypt data.
+
+To set this up the public key is sent over an
+open channel, this way the server now can send
+data to the user freely without worries since
+it is encrypted and only the user can decrypt it.
+
+Same goes for a user that wishes to send data to
+the server, user uses server's public key to
+encrypt, and server decrypts with its own key.
+
+However, in practice, to make it simplier, both
+assymetrical and symmetrical methods are used
+in combination as a hybrid. How? Not sure. Perhaps
+they just use assymetrical way to send the
+symmetrical keys to each other for speed.
+(P.S. I was right, big brain moment)
+
+
+
+Post-Quantum Cryptography:
+Can solve at O(sqrt(n)) instead of O(n) speed
+which is faster and does come in clutch. We will
+therefore need to increase the bits used from 256
+to 512 bits to stay safe at the same rate.
+
+
+
+Terminology:
+If we have text S transformed into cypher text C
+by using encryption function E by a key k, then
+the formal way to write it all would be:
+- C = E(S, k), same for decryption.
+
+Using XOR:
+- S ⊕ k ≡ C,   S ⊕ k ⊕ k ≡ S
+- C ⊕ k ≡ S,   C ⊕ k ⊕ k ≡ C
+Here k can be used as a key to both
+encrypt and decrypt the message S.
+This is used in streamciphering.
+
+
+
+Cryptography methods:
+- Transposition: Shift text letter positions
+- Substitution: Switch around the alphabet
+  Weakness: letter frequency analysis and
+  repetitive patterns, easy to brute force.

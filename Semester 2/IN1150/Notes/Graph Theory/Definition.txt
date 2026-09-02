@@ -1,0 +1,4 @@
+Graph theory is a drawing of connections between points.
+So when drawing a graph, you have nodes •, and lines to
+connect them together —. It is mainly used to help
+visualizing the problem and looking from other angles.

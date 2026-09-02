@@ -1,0 +1,50 @@
+--- SAT ---
+Modal logic can be used as an SAT. Basically, if in all the worlds of all the
+possible Kripke models the formula evaluates to true, then the formula is valid.
+It is satisfiable if it evaluates to true in all the worlds under at least one
+such model.
+
+Here is an example: We got a formula A = □(p -> q) -> (□p -> □q). To prove
+that it is valid we assume that in our model I_M = ((W, R), {I(w)}_(w in W))
+w forces □(p -> q) and that w forces □p due to implications. From there
+we must show that □q can be concluded. Due to □(p -> q), there exists a world
+v that forces p -> q, and due to □p there exists a world v that forces p. So,
+to prove q we needed to prove p first, which we did, and thus, v forces q,
+e.g. □q has been concluded (because v was arbitrarily chosen).
+
+
+
+--- Local and Global Consequence ---
+There are 2 ways to define consequence (entailment ⊨) in modal logic. First is by
+defining a set of formulae U. U ⊨^L A (U locally entails A) where A is some formula
+if, for any Kripke model M, and any world w, all formulae (premises) in U are True
+at that same world w. Note that A is entailed within that world w just like U is.
+
+Second is by defining a set of formulae U (again). Next, a formula A is a global
+consequence (entailment) denoted U ⊨^G A if, for any Kripke model M, in all the
+worlds w in W_M, U is True. Note that A is now entailed in all M's worlds like U.
+
+Important note, In this course the local and global entailment roles are reversed.
+So local is global, and global is local. Therefore, if usually we say that "if
+U ⊨^G A, then U ⊨^L A, and not vise versa" then in this case it is "if U ⊨^L A,
+then U ⊨^G A, and not vise versa". Also, apparently the deduction theorem does
+not hold for U ⊨^L A (so a global consequence in this course's case).
+
+Oh and by the way, if we have created I_M, then we evaluate formulae based on
+the world we choose, so it looks like I(w)(A) where w is a world in W of I_M,
+and A is some formula that we input. In the world w, atomic formula are
+already interpreted, so all that I(w)(A) does is it interprets it as I_w(A).
+So remember, worlds are their own interpretations.
+
+
+
+--- Frames & Logics ---
+A Frame is basically a Kripke model M = (W, R, V), but without the V, so we don't
+know what these worlds interpret and how. We don't know for example if in a world
+w_0, p is true or false, same for w_1 and for q and so on. So for example, if for
+every possible evaluation of p in V, of all the worlds w in W, it turns out that
+I(w)(□p -> p) is True, then we know that our frame (W, R) is reflexive.
+
+Anyways, these frames define what type of Kripke model we are dealing with. This
+way we can identify structure and relations and such. For more details, check out
+the modal logics for transitivity (K4), reflexivity (T), etc.

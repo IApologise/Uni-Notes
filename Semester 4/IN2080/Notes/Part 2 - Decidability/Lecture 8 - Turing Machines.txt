@@ -1,0 +1,31 @@
+Next up, turing machines. We know that there are some languages that context-free grammars can not create, i.e. there
+isn't a push down automata that can accept it. These are called non-context-free languages or NCFL for short. but
+turing machine is able to produce and recognize such languages. These are also sometimes called turing-acceptable languages or TAL for short (I guess).
+
+A turing machine basically has infinite memory (in form of a tape) and a pointer that can move across it reading and
+writing to each memory cell it desires at any time. However, it can hold only one memory cell of information after
+reading the cell at a time. It is similar to a PDA, but there we had a static pointer. For simplicity, we start with
+a pointer at its left edge and say that it is infinite on the right. Just like in PDA and DFA it has states. However,
+it always has 2 states named q_A and q_R. When it reaches q_A it accepts the input and halts, when it reaches q_R it
+rejects the input and halts. These are meant to be the only halting states. As for the input, it is just a tape with
+the input written in it starting from the left edge and nothing more, i.e. the rest is empty.
+
+During a transition between two states, the machine first reads then writes. Just like in a PDA, there is no limit
+to the amount of transitions between these two states that there can be. A transition is described as follows:
+δ(q, a) = (q', b, D) where q is the initial state, a is the read cell, q' is the state we transition into, b is what
+we write to that same cell that we read, and then D where we finally move the pointer either left (L) or right (R).
+All of this is considered a single atomic action. While the machine is on we repeat this action starting from the
+edge. Only once it reaches either state q_A or q_R it halts.
+
+In drawings the transion between two states is denoted as "a -> b, D" where a is what we read, b is what we write,
+and D is the direction, either L for left or R for right. Empty cells are denoted as either "ε" or "⊔". Another note
+is that the function L(G) which creates a language may also be written as L ⊆ Σ* where Σ is our alphabet.
+
+A turing machine is formally defined as (Q, Σ, Γ, δ, q_0, q_A, q_R) where Q is a set of all states that the machine
+has, Σ is the input alphabet (we do not allow ⊔ there), Γ is the tape alphabet (which always has ⊔, and Σ ⊆ Γ), δ
+which is the set of transitions between states Q, q_0 is the start state, q_A is the accept state, and q_R is the
+reject state also known as dead state. Note that "L" and "R" function in the δ's alphabet as pointer directions.
+
+Note that just like NFA and PDA we may branch here. Whenever we do it is because we have multiple transitions to
+choose from which need the same read value and same state. Such TMs are called NTM (Non-determenistic Turing
+Machine), and whenever there is no branching possible in our TM we call those DTM (Determenistic Turing Machine).

@@ -1,0 +1,37 @@
+Først og fremst er det nevnt at modeller er ikke alltid "sanne", men "nyttige" for noen istedet. Jeg vet ikke helt
+hva er ment med dette, men jeg tror at vi får se det senere mens jeg skriver...
+
+UML (Unified Modeling Language) diagrammer deles inn i fire typer:
+1. Use Case (Brukmønster) - Viser hva systemet kan/bør gjøre (dets funksjonalitet), samt samspill mellom systemet
+   og brukere (og andre systemer også).
+2. Sekvensdiagram - Samme som Use Case men mer detaljert sånn som hvilke objekter, klasser, og metoder man har.
+   Men merk at disse er brukt for å vise frem hvordan systemet skal fungere, ikke hva som eksisterer liksom.
+3. Klassediagramm - Viser samspill og relasjoner mellom klassene (arv, implementering, osv.) og metoder.
+4. Domenemodeller - Basically klassediagrammer men uten metoder, og litt mer spesifikk (lages før klassediagramm).
+5. Aktivitetsdiagram - Hvilke prosesser forretning og dets arbeidere jobber med.
+
+P.S. Alle disse diagramene er ofte brukt sammen, så man ofte har en Sekvensdiagram, og en Klassediagram, osv. Enten
+fordi at de er ment til å bli lest av forskjellige folk med forskjellig bakgrunn eller fordi at de komplementerer
+eller nevner det som blir ikke nevnt av de andre diagrammene. Poenger med alt dette er å forstå hva man vil, og å
+forenkle og kategorisere ulike prosesser og sånt.
+
+I Use Case diagrammer hvor aktører er involvert skiller vi mellom to typer:
+1. Primære aktører - Disse har egne mål som vi følger og prøver å oppfylle i systemet vårt. En eksempel kan være
+   en lånekonsulent sammen med en søker som vil få en lån.
+2. Sekundære aktører - Disse har ikke egne mål, men er nødvendige for å realisere de primære aktørenes mål. En
+   eksempel kan være en kredittbyrå som kommuniserer med en bank som gir lån til lånekonsulenten og søkeren.
+Men leg merke til at banken kan også regnes som primær aktør. Dette er fordi at banken vil tjene penger som er en
+vel definert mål, men dette kommer an på hva systemet er mest opptatt av.
+
+I tillegg til det vil jeg nevne at Use Case diagrammer kan beskrives også i tekstlig form (ikke alltid som bilder
+med piler og tekst bobbler). Dette også gjelder "alternative flytt", sjekk ut bilde eksempler for mer detaljer...
+Som du kan se er den ganske lik den tekstile formaten, men inkluderer også hva som skjer dersom noe går annerledes.
+Merk hvordan disse alternative flytt ligner mer på sekvensdiagrammer enn de ligner på use-case diagrammer.
+
+
+
+Når vi modelerrer så vil vi oppnå disse to målene for å forenkle hele systemutviklingen:
+1. Høy kohesjon - Et objekt bør ikke ha mange metoder/ansvar (både funksjonelle og ikke-funksjonele), i.e. lav
+                  antall metoder/ansvar objektet gjør.
+2. Lav kobling - Et objekt skal ha et begrenset antall koblinger/referanser (dependencies) til andre objekter.
+Merk at et objekt er en instans av en klasse, sånn som i Python gjør man "MyObject = MyClass(...)".

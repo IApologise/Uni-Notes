@@ -1,0 +1,29 @@
+Factoring is used whenever we want to simplify or merge two
+clauses in a straightforward way where it couldn't be otherwise
+through normal resolution steps if we also wish to preserve the
+freedom of variables along the way.
+
+For example, let's say we got {{p(x), p(y)}, {-p(u), -p(v)}}.
+We could do it the normal way like this (this won't work):
+1. p(x) V p(y)
+2. -p(u) V -p(v)
+3. p(y') V -p(v') by resolving 1 and 2 with x\u
+4. p(x') V p(y'') by resolving 1 and 3 with u\y'
+5. -p(u') V -p(v'') by resolving 2 and 3 with y\v'
+6. p(y''') V -p(v''') by resolving 4 and 5 with x'\u'
+7. ...
+As you can see, nothing changes and we are still stuck.
+This remains regardless of the combinations that we try.
+
+Also, remember that each variable is bound by a different universal
+quantifier, hence the reason why we denote those new variables through
+' symbol like y into y' (since it was not substituted for nor changed).
+
+To fix this we factor, meaning that we create a copy and apply a
+substitution on it. This way we can get p(x') by factoring 1 with
+x\y. So, let's see how it works in the previous example clause set:
+1. p(x) V p(y)
+2. -p(u) V -p(v)
+3. p(x') by factoring 1 with x\y
+4. -p(u') by factoring 2 with u\v
+5. Ø by resolving 3 and 4 with x'\u'

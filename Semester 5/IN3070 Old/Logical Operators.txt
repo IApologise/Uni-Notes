@@ -1,0 +1,52 @@
+Not: ¬
+  F -> T
+  T -> F
+
+Or: ∨
+  FF -> F
+  FT -> T
+  TF -> T
+  TT -> T
+
+And: ∧, &
+  FF -> F
+  FT -> F
+  TF -> F
+  TT -> T
+
+Implies: →, ⇒, ⊃
+  FF -> T
+  FT -> T
+  TF -> F
+  TT -> T
+
+Biconditional: ↔, ⇔
+  FF -> T
+  FT -> F
+  TF -> F
+  TT -> T
+
+Exclusive or: ⊕
+  FF -> F
+  FT -> T
+  TF -> T
+  TT -> F
+
+
+
+Order of operation from high to low:
+¬, ∧, ∨, ⊕, →, ↔
+  
+
+
+Membership: ∈
+  Instance on the left is a part of a set on the right.
+  In other words, A ∈ B means that A is in a set B.
+
+Universal quantifier: ∀
+  Comes with a variable on the right, e.g. ∀x
+  The symbol itself means "true for all".
+
+existential quantifier: ∃
+  Comes with a variable on the right, e.g. ∃x
+  Used to avoid ambiguity.

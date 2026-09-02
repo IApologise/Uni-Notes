@@ -1,0 +1,20 @@
+--- Motherboard ---
+Look at the "Old Motherboard Achitecture.png" and read this. Now, the motherboard connects all the parts together and
+links them, such as CPU being able to access memory and do other tasks like network related and such. CPU goes into
+the "Pentium 4 socket", RAM goes to "RAMBUS RDRAM" which has 4 slots which often come in pairs called banks, so 2
+banks. Then there are "PCI Connector slots". Note: PCI often means additional internal hardware such as GPU, SSD,
+Network Cards, etc. Motherboard also has external I/O slots for mouse, keyboard, headphones, etc. I/O Controller Hub
+is handling PCI connections and I/O connections communication with the CPU, whilst Memory Controller Hub handles what
+has to be done fast, which is mostly CPU communication to RAM.
+
+Note that today, Graphics Cards go into a special PCI slot which is PCIe x16 which is the same as PCI but "express",
+meaning that the communication to the CPU is faster, today CPU doesn't use any hub and communicates to the GPU
+directly, otherwise a Memory Controller Hub is used for older versions. SSDs however are controlled by an I/O Hub,
+so not all the PCI slots are controlled by one and the same hub.
+
+The blue lines indicate stuff that I guess I am not obligated to know about, but I do know some of it.
+
+Anyways, this was the old motherboard architecture, In the modern ones the Memory Controller Hub is part of the CPU,
+and as mentioned before there is a PCIe x16 slot for a GPU which communicates with the CPU directly. RAM is still
+using the hub, but the memory hub is inside the CPU. The I/O Hub has been expanded (btw, pheripherals means I/O stuff
+like mouse, headphones, keyboard, etc.

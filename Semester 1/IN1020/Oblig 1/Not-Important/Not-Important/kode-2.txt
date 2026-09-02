@@ -1,0 +1,52 @@
+BRA start
+reset LDA case1
+OUT
+
+start INP
+STA plu
+
+LDA load
+STA product
+
+product LDA
+BRZ reset
+SUB plu
+BRZ continue
+
+LDA product
+ADD traits
+STA product
+BRA product
+
+back LDA case2
+OUT
+
+continue INP
+BRP skip
+BRA back
+skip SUB traits
+BRP back
+
+ADD traits
+ADD product
+STA trait
+
+trait LDA
+OUT
+HLT
+
+case1 DAT -1
+case2 DAT -2
+
+load LDA ls
+plu DAT 0
+
+traits DAT 2
+
+ls DAT 405
+DAT 7
+DAT 307
+DAT 4
+DAT 303
+DAT 10
+le DAT 0

@@ -1,0 +1,79 @@
+--- Graph Types ---
+
+Simple graph:
+A graph that doesn't have any of this: loops,
+parallell edges, direction, and weight.
+
+Cycled graph:
+A cycle is a walk where we end up back
+at one of the nodes visited before.
+
+Connected/Coherent graph:
+If there exists a walk that goes through all
+of the nodes of the graph, then it is connected.
+
+DAG (G stands for graph):
+Directional, acyclic (not cyclic) graph. Note
+that all directional trees are DAGs, but not all
+DAGs are trees. That is because in a tree each
+node can have only one parent node, but in a DAG,
+nodes can have many parents.
+
+N-Connected graph:
+If we can remove any node from the graph, and it
+stays connected, then the graph is 2-connected. If
+we can remove any 2 nodes, then it is 3-connected.
+This goes on and on.
+
+Spanning tree:
+A tree from a graph (meaning that some edges are
+removed) where all the nodes of a graph are used.
+Note that no new edges can be added, only those
+that the graph had can be used to make a tree.
+
+
+
+--- Node & Edge Characteristics ---
+
+Parallell edges:
+Whenever there is more than one edge between two nodes.
+
+Simple Loops:
+Whenever there is an edge that points to itself.
+
+Directional edges:
+Whenever an edge is described as a tuple instead of a set.
+In those cases an edge like (u, v) where u and v are nodes
+describes a connection from u to v, but not vice versa.
+
+Weighted edges:
+Whenever an edge has a value which can be described in
+a way that I am not familiar with yet, but I assume that
+it is for me to choose whatever I feel like it.
+
+
+
+--- Other Definitions ---
+
+Connected components:
+In a graph, whenever there is a path from one node to
+another then both are one and the same component. That
+is how we count them at least. I guess this way we can
+identify if graph is connected.
+
+Strongly connected components:
+Similarly to connected components, strongly connected
+components is basically the same but for directional
+graphs, it is no longer about the graph being connected,
+but that we can go from A to B and back from B to A.
+That was an example of a strong component in directed
+graphs. So, (a, b) and (b, a) must exist in E, not just
+one of those, both have to, to count as a component.
+
+Topological order:
+It is a set of all the directional graph's nodes placed
+in an order such that there is no case where we got an
+edge A -> B in our graph, and there is a {..., B, A, ...}
+in our set at. We can only have {..., A, B, ...} in set.
+This can be done by a TopSort algorithm or something like
+that in O(n) time complexity, and pretty easily to be fair.

@@ -1,0 +1,33 @@
+Configuration is a snapshot of the current state, pointer's position (also called scanner head), and the tape as well
+as the data within it. This is the same as letting the whole turing machine run for a while, and then pausing it at
+some point and taking a peek at what is going inside at the moment, and then doing whatever like letting it continue
+doing whatever is was. I am not sure if the configuration allows us to do anything illegal like editing the tape data
+to see how it would act in an unusual setting. Anyways, to denote a configuration, we simply write the tape data, and
+put in the state the machine is in right before the symbol that the scanner head is pointing at. For example, if we
+want to denote a configuration of a turing machine M that is in state q_3 with the tape (a, b, b, _, a, _, _, _, ...)
+where the pointer is at position 2 (starting count from 0), then it will look like this: "a b q_3 b _ a" where "_"
+is a blank. When we write by hand, the spacing between these symbols doesn't have to be this big, but not quite like
+writing a single word. This notation is useful for when we want to manually simulate the turing machine.
+
+We know that the tape is infinite (as we defined it in this course) in only one direction, so what if we want to move
+left when we already are at the left edge? What we do is that we simply don't move at all, so the pointer stays (even
+though per definition it can't). Since we also can't denote an infinite amount of blanks in the tape, we simply don't
+denote it, so "q_0 a a b  _ _ _ _ _ ..." becomes just "q_0 a a b".
+
+To denote that a turing machine M accepts an input w, we write M <=>_def w where <=>_def denotes that there exists
+a series of configurations C_0, C_1, ..., C_N where C_0 is the M's start configuration on input w, C_i yields
+C_(i + 1), and C_N is the last configuration which has an accept state (also called an accept configuration). To
+denote that it doesn't, we write M <≠>_def w, where the only change from <=>_def is that the last configuration C_N
+has a reject state, i.e. C_N is a reject configuration. By the way, I am not sure if "_def" part is necessary.
+Also, you can think of it as a history if what has happened already (even if not halted yet). Also, note that
+sometimes we say that this series of configurations is a tableaux, i.e. the configuration that goes from C_0 to
+C_N. I am not sure if the tableaux must have an end or not though...
+
+We already know what a recognizer is: A turing machine M that accepts all inputs w (and thus halts) of the language
+that it generates (kind of trivial to be honest), but may not necessarily always reject and thus halt in general. A
+reminder to the language hierarchy: First we got Regular Languages (RLs), then we got Context-Free Languages (CFLs),
+then we got decidable languages also called Recursive Languages (RLs as well), and then the recognizable languages
+also called Recursively Enumerable Languages (RELs). It can be divided into more parts, like Context-Sensitive
+Languages (CSLs) which are between Recursive and Context-Free, and Determenistic Context-Free which (DCFLs) are
+between Context-Free and Regular as well as one more which are those that are outside even the RELs, such as the
+halting problem (literally).

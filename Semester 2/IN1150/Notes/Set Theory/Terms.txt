@@ -1,0 +1,171 @@
+Element: a, b, c, x, y, z
+A something, can be anything like a digit, number,
+shape, letter, drawing, absolutely anything we want.
+
+
+
+Set: M, S
+A list of non repetitive elements denoted as {...} where
+... are the elements are separated by a comma (,).
+
+
+
+Empty Set: Ø
+This is a special type of set that has no elements in it.
+So it looks like this: {}, but we write just Ø for short.
+
+
+
+Universal Set: U
+It is just a regular set that has a specific use. Its goal
+is to show what the "world" is, if there is a counter-example
+of some arbitrary set S, and the example includes elements
+not present in a set U, then it is invalid.
+
+
+
+Arity:
+If a function or a relation or anything takes in an input then
+the amount of inputs it takes is called arity. If a no inputs
+are being taken in then the arity is either 0 or it doesn't exist.
+
+
+
+Tuple:
+Tuples are like sets. They have elements but instead of curly
+brackets, arrow heads are used instead, so not {}, but <>.
+The difference between a tuple and a set is that tuples
+are ordered and can have duplicates inside them. That's it.
+
+
+
+Relation: R
+Relation is a set of tuples. It is used to show that a
+is connected to b in some way, that they are entangeled.
+It may be because both are letters, it may be because
+from a you can get b, or vice versa, etc. The point
+is that in <a, b> for example, you can get from a to b.
+Not necessarily back from b to a, <a, b> ≠ <b, a>.
+
+
+
+Function: f, g, h
+Function is an operator of sorts. It takes an input be
+it an element or anything else, applies its own rules to
+it and modifications, and then gives back the result as output.
+
+Arity of a function may be of any size, that is to be defined
+properly on use. To define a function you give it a set of inputs
+that it can have, then the set of outputs that it can give. At
+the end give it a relation to tell it how modifications shall be
+made, example: "f : {1, 2} -> {2, 3} where f = {<1, 2>, <2, 3>}".
+Here we gave it first set as input, second as output, and a relation.
+
+
+
+Algebraic Structure:
+This is basically when you have a set which is used as both your
+inputs and outputs, and at least 1 operator that can be used
+on this set. Then you have an algebraic structure.
+
+
+
+Group:
+A group is an algebraic structure where all of its operations are
+associative, have an identity element, and all of their elements
+have an inverse. If group's operations are also commutative, then
+the group is said to be "abelian" ("abelsk" in Norwegian).
+
+
+
+Equivalence relation: ~
+Equivalence relation is used to abstract. It is also used
+to make connections. So if there would be no equivalence
+relation, then no things would be similar in any way to each
+other. That is not the case in our world.
+
+So basically it denotes that two elements, sets, etc.
+are equivalent or related to each other in some way.
+so if there is some set {M} where {x ∈ M} and {y ∈ M},
+then we can say that {x ~ y} because both are in {M}.
+
+It is also important to note that in equivalence relation,
+the relation must be: reflexive, symmetrical, and transitive.
+Otherwise it doesn't make sense to talk about equivalences.
+Think of reflexivity, symmetry, and transitivity as bicondition.
+
+Instead of ~ of course you may use a relation itself to create
+a set of equivalence classes named quotient set as a result of
+ this operation, so {M / R = Quotient Set}.
+
+
+
+Equivalence class:
+The equivalence class is the set {M} where if {x ∈ M},
+and for each {y} that is also in {M}, {x ~ y}.
+In other words: {y ∈ M | x ~ y}.
+
+Basically whenever you want to use the equivalence relations
+to get lots of stuff together and categorize them in a set,
+that set is called an equivalence class.
+
+So for example if we have a set of Dogs and Cats,
+we now want to categorize them and thus create a new set
+named Animals where we put all Dogs and all Cats in it.
+That set is now an equivalence class. So we created an
+equivalence relation between Dogs and Cats.
+
+
+
+Quotient Set:
+If we have some other set S where some of the elements
+from S are related to some of the other elements in S.
+And say we want to get these classes, so a set of sets,
+then we denote it as such: S/~
+
+This returns a set of sets, where sets in a set are
+equivalence classes from set S. So for example if we
+have a set of life L = {Flower, Grass, Tree, Humans, Dogs, Cats},
+and we want a quotient set (so equivalence classes of L), we do
+L/~ which returns {{Flower, Grass, Tree}, {Humans, Dogs, Cats}}
+because {Flower, Grass, Tree} are all plants, and
+{Humans, Dogs, Cats} are all animals. So we basically
+divided the set into plants and animals classes.
+
+It can also be written in a different way. We look at Flower
+first as such: [Flower] = {Flower, Grass, Tree} since flower
+is related to Grass and Tree. We get exactly the same result
+if we do [Grass] and [Tree]. Same goes for [Humans], [Dogs],
+and [Cats] where we get {Humans, Dogs, Cats}.
+
+Now when we combine them we get that our set of equivalence classes
+becomes {[Flower], [Grass], [Tree], [Humans], [Dogs], [Cats]}, or
+{[Flower], [Humans]} for short since the rest are identical. Of
+course the end result is {{Flower, Grass, Tree}, {Humans, Dogs, Cats}}.
+
+When creating a quotient set, especially when using a modulo operator
+in mathematics, we write it in a similar way. Say we got a set ℤ
+which is a set of all integers and we want to apply a modulo arithmetic
+on all of those numbers, so mod(n). Then we write ℤ/≡. Some also
+write it as ℤ/n or ℤ/nℤ.s
+
+
+
+Partition:
+This is like a set of equivalence classes, but without repetitions.
+So a quotient set, but again, without repetitions. In other words
+An element x that is in some arbitrary equivalence class can not at
+the same time be in another equivalence class. At the same time,
+partitions must cover all elements in a set. So, to sum up,
+no overlaps, but includes everyone.
+
+A funny consequence of such definition is as follows:
+if we have a partition set X of a set S, then a union (∪)
+of all the subsets of X becomes S, and an intersection (∩)
+between X and S becomes an empty set Ø. Sometimes this is
+also referred to as its definition, not sure about empty sets.
+
+Partitions are also often compared using a refinement (⩽).
+More on refinement in the Logic section of Set Theory.
+Anyways, using a refinement will cause a result in form of
+a Hasse or a Young Diagram (pictures in Set Theory).

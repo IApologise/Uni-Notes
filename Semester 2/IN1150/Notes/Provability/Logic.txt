@@ -1,0 +1,26 @@
+Turnstile: ⊢, ⊬
+This symbol denotes a logical consequence or specifically, a syntatic
+consequence. If what is on the left can be proven or is derivable,
+then what is on the right side of it can as well. This is a deduction
+method. Note that provability doesn't indicate that it is ⊤ nor ⊥.
+
+
+
+Double Turnstile: ⊨, ⊭
+This symbol denotes a logical consequence or specifically, a semantic
+consequence. If what is on the left is ⊤, then what is on the right
+side of it is as well. This is also a deduction method. Note that it
+says nothing about provability or derivability for that matter.
+
+If in a set of premises in a model ℳ we can show that
+(ℳ ⊨ P) ⇒ (ℳ ⊢ P) holds for our conclusions P then it
+is said that our model ℳ is sound, meaning that everything
+that is provable is actually ⊤.
+
+If the same thing is ⊤ just the other way around, so for
+(ℳ ⊢ P) ⇒ (ℳ ⊨ P), then it is complete. Meaning that
+everything that is ⊤ can be proven.
+
+If both hold, so (ℳ ⊢ P) ⇔ (ℳ ⊨ P) then it is both sound
+and complete. For instance, math isn't sound nor is it complete.
+But first-order logic was proven to be both sound and complete.

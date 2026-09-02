@@ -1,0 +1,63 @@
+--- Introduction ---
+Intiutionistic Logic is similar to that of Modal Logic. Instead of Kripke Frames,
+we have Intuitionistic Frames F_J which are built the same way as Kripke Frames.
+The only difference is that F_J is a specific type of Kripke Frame, an S4 meaning
+that it posesses an accessibility relation R being both transitive and relfexive.
+
+
+
+--- Interpretation ---
+Note that when we interpret in intuitionistic logic, meaning I_J is equal to
+(F_J, {I_C(w)}_(for each w in W of F_J)) where I_C is just a normal interpretation
+where ALL functions and predicates are defined, and ALL constants and propositional
+variables are given a value. It is also called constructive interpretation.
+
+Also, remember that any interpretation can't have domain D where |D| = 0
+(e.g. domain D can't have no elements). Remember that I = (D, i) where i is
+what defines everything and what assigns values.
+
+
+
+--- Forcing Relation ---
+Remember that forcing relation denoted as ⊩ is the same as ⊨ except that it is
+local for some world w, whereas ⊨ is like for every world w. Anyways, the AND and
+OR rules are the same as in Modal Logic. NOT and IMPLIES are different, they require
+the inclusion of accessible worlds v from w, world w is where it takes place btw.
+
+So, for w to force -A, denoted as (w ⊩ -A), all the worlds v accessible from w must
+revoke (not force) A, denoted as (∀v(v ⊮ A) where (w, v) is in R). So, w ⊩ -A if
+any of the accessible worlds v from w do not have v ⊩ A, if at least one v does
+have v ⊩ A, then w can't ⊩ -A, so w ⊮ -A.
+
+For implication we do something similar (since not is included). To be more precise,
+for w to force (A -> B), all the worlds v accesible from w, whenever v forces A
+(v ⊩ A), then v must also force B (v ⊩ B). So if v ⊩ A but v ⊮ B, then w doesn't
+force (A -> B) denoted as w ⊮ A -> B.
+
+Unlike in Modal Logic, we don't have boxes [] and diamonds <>. They are now
+quantifiers, [] is like a universal quantifier, and <> is an existential one.
+So, w ⊩ ∃xA if w ⊩ A for some substitution [x\d] where d is some constant from
+our world's evaluation or its domain.
+
+Similarly for w ⊩ ∀xA, but we look at all the accessible worlds, not just the
+current one, so if v ⊩ A[x\d] where d is evaluated or in world v's domain, v is
+in W, and (w, v) is in R. Note that if the world w or v do not have d evaluated,
+then the substitution is ignored I guess and the world is not taken into account.
+
+
+
+--- Satisfiability & Validity ---
+To show that some formula F is satisfiable we must show that for some interpretation
+I of intuitionistic model J, this model I_J validates F, denoted as I_J ⊨ F. To
+show that the interpretation I_J validates F, I_J(w, F) = ⊤ is the requirement that
+must be satisfied for each world w in W_J. So I_J must show that F is True in all
+its worlds w. If that is the case, then F is satisfiable (globally and such).
+
+To show validity, all Kripke Frames J must show satisfiability of F under all the
+interpretations I of J. If none Kripke models I_J can show satisfiability, then
+that is how we show unsatisfiability. Similar process for showing invalidity.
+
+Remember, J in this context is some Kripke Frame, I is each world's interpretation
+of that Kripke Frame J which makes it a model denoted as I_J. Hope it clears it up.
+So, whenever we say for every I_J, we mean for every combination of I and J, and
+for some I_J, we mean for any combination of I and J.

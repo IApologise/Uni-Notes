@@ -1,0 +1,31 @@
+Whenever we work with turing machines we can also consider some with multiple tapes. The way these work is similar, we have a head on each tape and read all simultaneously: δ(q, a_1, a_2, ...) = (q', b_1, b_2, ..., D_1, D_2, ...).
+As you can see we also move all of them simultaneously and write to them too. So in normal turing machine the δ
+function is defined as δ : Q × Γ → Q × Γ × {L, R}, but in multi-taped turing machines (MTTM) it is defined as δ :
+Q × Γ^n → Q × Γ^n × {L, R}^n where n is the number of tapes we got in out turing machine. I have asked myself what
+the benefit of these multi-taped turing machines is, and there is... None! But I guess it may be easier to work
+with? So, there is a theorem that states "For each multi-taped turing machine, there is an equivalent single-taped
+turing machine". Just like how some DFA always has an NFA equivalent and such.
+
+By the way, whenever we work with turing machines it is assumed that we work with determenistic turing machines.
+Otherwise it is always mentioned that it is non-determenistic. Note that non-determenistic here implies that there
+is a moment where we have multiple choices to make when transitioning between states, just like NFAs do (and DFAs
+that don't), same for accepting which is also done similarly to how NFA does it. Also, a reminder that the language
+is turing recognizable if there exists a turing machine which always halts whenever it does accept (not necessarily
+when it does not recognize an input though).
+
+Note that since non-determenistic turing machines may have multiple choices to make, we must point that out and as
+δ : Q × Γ → Ρ(Q × Γ × {L, R}) where Ρ is the power set of course, e.g. Ρ(A) = {x | x ⊆ A} for some A and x. When
+it comes to noting series of configurations, we do it similarly as to how we do it with NFAs, simply branch. Which
+we often draw as a tree with start at the root (top), and whenever it halts (accepts/rejects) we show the path and
+the leaf node. The paths that lead to no halts are simply denoted using an infinity symbol (or "..." if there is
+some pattern that branches infinitely in some pattern I guess).
+
+Lastly we got Enumerators which is a third variant of turing machine we'll learn (MTTM being first, and non-
+determenistic being second). Enumerators have no inputs nor any accept/reject states, just normal states and an
+empty tape (starts out always empty). It is also connected to a printer, so it can output stuff, and all it does
+is just print out its tape. Thus, it is always constant, and its purpose is usually to be created to print out all
+of some language's entries, one word at a time. So each tape output is a word in some language it defines.
+
+So basically we got that DTM <-> MTTM <-> NTM <-> E, where DTM stands for determenistic turing machine, MTTM for
+multi-taped turing machine, NTM for non-determenistic turing machine, and E for enumerator. As you can see all of
+these are equivalent, meaning that all may always generate some language L accepted by some other one of the bunch.

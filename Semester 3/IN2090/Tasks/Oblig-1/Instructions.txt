@@ -1,0 +1,16 @@
+Step 0: Run db.bat to start entering the database
+Also, accept authentication request on my phone.
+
+Step 1: Log into the remote computer at UiO
+| Computer9471753711
+| Computer9471753711
+
+Step 2: Navigate to Desktop
+| cd pc
+| cd Desktop
+| ls
+Then, continue navigating to wherever you need to
+
+Step 3: Log into your own database
+| psql -h dbpg-ifi-kurs03 -U justassi -d justassi
+| Computer9471753711

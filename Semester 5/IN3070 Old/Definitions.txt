@@ -1,0 +1,15 @@
+atomic: Of simplest degree (like axiom).
+
+propositional: Can either be true (T) or false (F).
+
+formulae: A structured expression.
+- {a} is a formula 
+- {a ∨ b} is a formula
+- ...
+
+eigenvariable: a variable that is bound by a quantifier.
+- for example: ∀x or ∃y where x and y are eigenvariables.
+- quantifiers: ∀ - true for all, ∃ - true for at least one.
+
+Free variable: A variable that is not in the scope of a quantifier.
+Bound variable: A variable that is in the scope of a quantifier.

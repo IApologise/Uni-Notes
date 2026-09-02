@@ -1,0 +1,31 @@
+As we know to prove the validity, a lack there of, and everything
+in between, we can use sequent calculus LK where we got sequents
+(logical consequences), and branches (splits like in a tree).
+
+A sequent is a single logical consequence such as Γ ⊢ ∆.
+But, in this course we use ⇒ instead of ⊢ for some reason.
+
+Branches is whenever a sequent splits into two sequents later.
+To prove the validity (tautology), all branches must be closed
+by an axiom rule, to prove satisfiability at least one should.
+
+To show falsifiability we must fail in closing one of the axioms
+or prove validity of a negated form. For a contradiction, we must
+either fail to close all the branches, or prove validatity of the
+negated form. So it is similar to falsifiability.
+
+Note that the sequent can be closed by an axiom rule only
+if all the assumptions on the left hand side Γ are interpreted
+as ⊤ (as it should be), which results in at least one of the
+of the formulas in ∆ to also be ⊤ (again, as it should be).
+
+If we want to show a countermodel (invalidity) then we must
+show an interpretation I where I(A) = ⊤ for all formulae A
+that are in Γ, and that I(B) = ⊥ for all formulae B in ∆.
+
+Technically, using sequent calculus LK we show provability,
+but the system is sound (I guess) so whenever we prove something
+we also validate it. We should show validity and falsifiability
+through a concrete example interpretation or example model. for
+example: Take p, p → q ⊢ q. An interpretation that validates it
+would be I ⊢ p, and I ⊢ p → q. All that is left is to show one.
