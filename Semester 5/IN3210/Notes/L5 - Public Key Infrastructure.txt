@@ -1,0 +1,65 @@
+We have solved confidentiality and integrity, but the only thing we didn't consider is our public key being
+spoofed by an active attacker, and if that happens then the attacker can simply use their own private key and
+basically become the MiTM. That't what we need to solve to establish a HTTPS, so HTTP & TLS for a secure
+connection, and that is where the certificates come in.
+
+A certificate is a digital signature of a public key, which means that we use someone else's public key to assert
+that this public key we got can be trusted. So we need proof that some website Alice really is Alice and not spoofed by Eve. Note how that creates a problem of getting that someone else's public key. But Bob which is the
+one that signed the Alice's public key is assumed to be trusted. In fact Bob is signing everyone's public
+keys once they have proven themselves to him. Since nobody can vouch for Bob, he is considered a root-CA, who is
+someone everyone simply trusts, like Microsoft for example is a root-CA. There aren't many like Bob, so his
+public key can simply be added manually and maintained in OSes, browsers, and various apps.
+
+Trust has multiple steps: You trust Bob who signs the certificates (your choice, like trusting microsoft's PCs
+and their OS to have non-malicious entities), and Bob must verify each website that tries to get its certificate.
+To verify the website and grant it a certificate, Bob requests owner of the domain (i.e. website) to do something
+which only it can do like add a new HTML file just for that. There are more ways, but I don't remember...
+
+Root-CAs may be overwhelmed (though in reality it does not happen, but good design is always appreciated), so to
+fix that root-CAs can issue CA certificates that allow other websites to also vouch for someone, these are called
+intermediate-CAs. Getting a CA certificate is supposedly hard, and none of these intermediate-CAs have their
+public keys in the OS or browsers & such (there are simply too many). So instead the browser for example tries to
+see who the intermediate-CA got its certificate from, and it goes along this chain until it finds one issued by a
+root-Ca it has in its database.
+
+For that the certificates have additional information. Today's format is called X.509 I believe which has a bunch
+of information about who issued the certificate, how and who to contact if an intermediate-CA went rogue, who the
+certificate was issued for, and for how long it is valid (to prevent indefinite misues in case of losing one).
+
+Here are some of these variables one will find in the X.509 certificate:
+- Subject: The website the certificate applies to (which DNS and its domain name).
+- Algorithm: Which algorithm is used to create the digital signature (like RSA for example).
+- Issue/Subject: info about the website like location (why though?).
+- Validity: how long it is used for (like if RSA is broken or u gave it away u got 1 year to misuse that).
+- Public Key: The public key of the subject (kinda the goal here).
+
+Some intermediary CAs are insecure, lie, or can be bribed to create false certificates for malicious users. To
+avoid that there is a system called (CAA) which idk what is, how works, nor is it really that secure but it is
+used today. But today's actually good and modern solution is CT (certificate transparency), which is basically
+a public log of all the certificates today (a website), and each website creator goes and checks if anyone has
+falsified their certificates so it may report it, but I don't really know how that reporting is done, works, and
+if it prevents users from connecting to the wrongly certified websites. The problem is bribery and illegal stuff
+which is where the falsified certificates are intentionally aren't put in this global website containing "all"
+certificates. The fix is to make CAs to require the confirmation of the log servers (which can also be bribed?),
+but not all may be bribed at once so we actually log it on to many log servers from different companies (usually
+just 2 as of today). Today browsers check that themselves I think, i.e. it must be logged? Well at least FireFox
+managed to check that itself, somehow...
+
+
+
+Notes:
+- If the website does not use TLS, i.e. it is just HTTP and the connection is not encrypted, then most browsers
+  raise a warning near the address link (url). That is because TLS is kinda the default now.
+- Operating systems have a list of root certificates, but some apps and browsers have their own instead of OS-es.
+- Root certificates are self signed. If I were to self sign my public key to create a certificate it would yield
+  nothing unless it would get added in my OS-es or browsers database of root-CAs.
+- If certificate was stolen or such the certificate can be revoked. To check if it was revoked each time a
+  certificate is to be verified by Alice at the Bob's website. Though a certificate validation can be
+  compromised (today too), so OS-es and browsers simply ignore the certificate validation process (not a joke).
+  But at least FireFox doesn't ignore that (checked by professor during lecture).
+- "Let's Encrypt" is an entity that gives certificates for free (still need to pass a check). It is an app you
+  install on your server that verifies all of the stuff and renewes the certificates too, automatically. The
+  problem of that is the verification process which still allows for spoofing...
+- badssl.com is a website that tests the browser and other security stuff (like when it should complain and warn).
+- CA/Browser Forum is where all the popular websites & such come together to agree on stuff, like certificate
+  lifetime which will be reduced from a year to 47 days in like 2029.
