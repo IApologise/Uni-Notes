@@ -1,0 +1,3 @@
+prefix-based: kinda good but suffix is faster
+suffix-based: fast algorithm, horspool is fastest in most cases
+hash based (actually just an example and very inefficient, the point is you can represent strings as numbers and do some math on that)
