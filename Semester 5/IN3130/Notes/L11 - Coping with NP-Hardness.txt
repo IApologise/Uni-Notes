@@ -1,0 +1,63 @@
+We have looked at the problem called Knapsack before which is where a robber must steal the max value of items
+from the available bank, but each item has a weight and the robber can't carry more than its max weight value.
+We have seen how the algorithm for this is in O(W * n) from our dynamic programming approach. However, it is
+still exponential because of the W which is the maximum capacity we may carry, and n is the number of items
+available to choose from. We look at the input size, and the way W is encoded as the input. For instance, if
+we use base-10 alphabet for our Turing machine to encode W of 1,000,000 as 1000000, we get that |1000000| = 7.
+That 7 * n is the linear bound, but in reality it represents the 1,000,000 capacity states per item, or more
+precisely, it is O(10^log_10(W) * n) where W is the correct encoding of that number now. That is the actual
+complexity and as you can see it is exponential. The issue here is the way we represent the numbers. The number
+1,000,000 doesn't make the input of size 1,000,000, but 7 in our case. And because we judge the speed based on
+input size, and because from 7 we need to actually do 10^7 = 1,000,000 checks, that is exponential.
+
+The example with DP (Dynamical Programming) of the Knapsack problem is a classical example of a Pseudo-Polynomial
+time algorithm. If some NP-Complete problem has a Pseudo-Polynomial algorithm then it is also said to be Weakly
+NP-Complete or to be in FPT (whatever that stands for). Here is a formal definition of what Pseudo-Polynomial
+means: Let I be an instance of some problem L, and by instance I mean some concrete w in L. Then, let max(I) be
+the maximum numerical value found in I, assuming that I contains one of course, or that our max(I) utilizes some
+comparator producing a strict order for each combination. A Pseudo-Algotithm is an algorithm that is in
+O(|I|^a * max(I)^b) where both a and b are some constants in the natural numbering system, which result in
+polynomial scaling. For comparison, P is defined as O(|I|^a) in our case, but with Pseudo-Polynomial we allow
+some exponential wiggle room via max(I)^b. Not all exponential algorithms are Pseudo-Polynomial, but those whose
+encoding represents some larger value are.
+
+
+
+At the end of the day, not all problems may require perfect solutions. Some are just good enough. We may
+approximate to a different problem, or do a sub-perfect algorithm that just gets stuck in local optimum, but is
+still good enough. If some solution is at most worse than the perfect solution by some factor a, then the
+approximated solution algorithm is called an a-approximation. For example, if the worst approximation algorithm
+gives a value of 5 when 10 was the best and our goal is to maximize this value, then a = 10/5 = 2-approximation.
+
+Also, remember the Monte Carlo and the Las Vegas algorithms from previous lectures? That is a yet another way
+to cope with problems like these, and Monte Carlo specifically is used in cybersecurity for prime number
+generation, which is very neat. Question: Can they test though whether it is valid though in P? This way another
+one could be generated and there would be no risk, but some inconsistency. That'd make a Las Vegas algorithm...
+
+
+
+Lastly we look at Tree-Decomposition, which is a way to think of a graph as a tree. The nodes in the tree of
+some graph are called bags which only contain the G's vertices. A tree T of some graph G is valid only if T
+satisfies the following conditions:
+1. Coverage - Every vertex of G appears in at least one bag.
+2. Edges - For every edge (u, v) in G, some bag contains both u and v.
+3. Connectivity - For each bag A and B containing vertex v all bags along the path from A to B must contain v.
+Tree-Decompositions are useful to solve the problems via dynamic programming by essentially solving the bag
+first and using recursion and such for the rest of the bags.
+
+P.S. I didn't really look into how to create a DP from these Tree-Decompositions, and AIs didn't explain it
+well. Not even with the easier Nice Tree-Decompositions which we will look into next...
+
+Nice Tree-Decompositions are Tree-Decompositions where each bag is either of the three types:
+1. Introduce Node - This has one child and its bag contains all the vertices of the child plus some other one.
+2. Forget Node - This has one child and its bag contains all vertices of the child minus some other one.
+3. Join Node - This has two children whose bags are identical to this one.
+In addition to that, all Nice Tree-Decomposition's root and leaf nodes have empty bags (sometimes just root).
+Nice Tree-Decompositions are easy to reason about and construct a DP from. Using this technique we can construct
+an O(2^w * n^c) Dynamic Programming algorithm to solve some NP-Complete problem.
+
+A Tree-Decomposition's Width is defined by the bag holding most vertices minus one. A graph's Tree-Width is the
+smallest Width of all of its possible Tree-Decompositions. Graph's Tree-Decomposition can be found if we know its
+Tree-Width w in 2^O(w) * n^k. Note that the graph that is a tree already has a Tree-Width of 1. Also, any
+Tree-Decomposition can be turned into a nice one in linear time, O(k * n) to be exact where k is the Width and
+n is the amount of vertices.

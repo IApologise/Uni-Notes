@@ -1,0 +1,46 @@
+This is something we have already learned at IN3070, but I am not sure in how much detail I explained it all
+back then, so let's do it again. Besides, maybe there was something we missed. First of all, the SAT problem is
+where we have a set of boolean variables U, and a collection C consisting of clauses over U. The clause consists
+of a disjunction of literals, and the literals are the given variables or their negated form. The goal is to
+satisfy C, i.e. find a configuration of variables that satisfy the conjunction of all the clauses found in C.
+This type of given statement is also said to be in CNF (Conjuctive Normal Form).
+
+There is also an extension of SAT called SMT (Satisfiability Modulo Theories) which is about determening whether
+a mathematical formula is satisfiable. It is a more generalized problem than SAT which includes integers, real
+numbers, lists, arrays, bit vectors, and strings, and is based on first-order logic. Though it does not include
+the quantifiers. An example of a tool that is built for that is Z3 which is an SMT solver.
+
+Moving on, here are the SAT solver algorithms:
+1. DPLL - It stands for Davis Putnam Logemann Loveland, where it searches based on backtracking. The idea with
+   brute force is to set all the variable's boolean values, and check whether it evaluates to true or false.
+   Here the idea is to set just one of the variable's boolean value, and based on that simplify the formula.
+   Once the formula has been simplified it checks whether that simplified version is satisfiable or not via
+   recursion, i.e. we repeat this process. The simplification itself does 1. Unit Propagation which is where if
+   we have a clause with just a single literal, then all the clauses containing that literal are removed, and all
+   the clauses containing the complement of that literal have that complement removed from them. And 2. Pure
+   Literal Elimination which is where if there is no complement of a literal in C, then all the clauses
+   containing that literal (not its complement) are removed. Though I have to say, perhaps we try to simplify
+   first and then start assigning a boolean to our first variable, and then have this sequence repeat. Note that
+   if the configuration is found to be unsatisfiable, then we go back and try a different assignment. If there
+   are no more decisions to make, then it is unsatisfiable. Note that a decision doesn't always have to be made,
+   since once UP or PLE simplifications take place the removed literals set that variable's value.
+
+2. CDCL - It stands for Conflict Driven Clause Learning, and is an extension of the DPLL algorithm where in
+   addition to DPLL it also learns from the contradictions. Basically whenever a configuration fails and is
+   unsatisfiable, when we backtrack DPLL doesn't save the information why it failed. So what we do is we add
+   a new clause consisting of literals which caused the contradiction, and we negate them all to.
+
+3. Schoning's Algorithm - It works by first assigning each variable a randomly chosen boolean value. Next we
+   check if it is satisfiable, if it isn't then we do the second: Choose the unsatisfied clause and flip a
+   random value from that clause, then check again. We repeat loop starting from step 1 some constant number
+   of times given by the input. Step 2 is repeated by the amount variables there are in the clause, which for
+   3-SAT for example is 3. Algorithms like that which aren't certain to find the correct answer but instead
+   have an increasingly higher probability of doing so in polynomial time are called Monte Carlo Algorithms.
+   This randomness is resembling the Markov Chain (i.e. random graph walk) on the Hamming Distance (i.e. the
+   number of incorrectly assigned variables, if there is a solution at all of course).
+
+There are more types of algorithms other than the Monte Carlo Algorithms described above in the 3. section, and
+those are tehe Las Vegas Algorithms which always return a correct answer but may run for a random time. Anyways,
+another example of using Monte Carlo Algorithm is to find a Hamiltonian Path using a propabilistic approach. If
+the given answer is slightly incorrect we use a minor correction algorithm, if that is not enough we use the
+normal exponential time one. And although the maximum time is still exponential, the expected one is linear.

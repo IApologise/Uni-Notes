@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="assignment.TriesTest$TestClass2" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-10-01T21:05:55" hostname="IAPOLOGISE" time="0.017">
+  <properties/>
+  <testcase name="testLookUpInter()" classname="assignment.TriesTest$TestClass2" time="0.009"/>
+  <testcase name="testLookUpAl()" classname="assignment.TriesTest$TestClass2" time="0.001"/>
+  <testcase name="testPrintTree()" classname="assignment.TriesTest$TestClass2" time="0.001"/>
+  <testcase name="testLookUpW()" classname="assignment.TriesTest$TestClass2" time="0.001"/>
+  <testcase name="testLookUpInterney()" classname="assignment.TriesTest$TestClass2" time="0.001"/>
+  <testcase name="testLookUpAlgorithm()" classname="assignment.TriesTest$TestClass2" time="0.001"/>
+  <testcase name="testLookUpAll()" classname="assignment.TriesTest$TestClass2" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

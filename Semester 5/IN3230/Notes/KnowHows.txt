@@ -1,0 +1,88 @@
+--- Technologies ---
+
+    Memory Related Hardware
+1. Cache : Data directly and closely connected to the CPU for very fast access, limited in size.
+2.   RAM : Stands for Random Access Memory, it is slower yet larger than Cache. Data is fetched from it and loaded
+           into Cache once a relevant operation is performed on a given process.
+3.   HDD : Stands for Hard Disk Drive, both Cache & RAM lose information once electricity is out, HDD's doesn't.
+           The price is much slower speed but a much larger capacity & reliability.
+4.   SSD : Stands for Solid State Drive, its functionality is same as that of an HDD, but it is simply better.
+Note how the largest trade-off between memory storages is less Distance equals less Capacity but more Speed.
+
+    Compute Related Hardware
+1. CPU : Stands for Central Processing Unit, it operates on data sequentially using many different operations.
+2. GPU : Stands for Graphics Processing Unit, it operates on similar data in parallel using same few operations.
+         HDMI and DP cables can be connected to it to show the visual information on a monitor.
+Note that both CPU and GPU have Cache, and GPU also has its own RAM called VRAM (Video RAM).
+
+    Communication Related Hardware
+1.    Motherboard : Connects different hardware together and safeguards them. CPU socket which connects the CPU HDMI & DP for data transfer
+                    between the CPU's integrated graphics card, PCIE, includes some essentials on its own such as PCIe
+2.            NIC : 
+3. Ethernet Cable : 
+
+
+    Network Related Devices
+1.   Access Point : 
+2.          Modem : 
+3.         Switch : 
+4.         Router : 
+
+
+
+--- Measurements ---
+ 1. throughput :
+ 2.    goodput :
+ 3.  bandwidth :
+ 4.        MTU :
+
+ 5.     rwnd :
+ 6.     cwnd :
+ 7. ssthresh :
+ 8.      RTT :
+ 9.      RTO :
+10.     SMSS : Sender Maximum Segment Size = min(receiver max segment size, sender max segment size)
+
+PDU : protocol data unit
+SDU : service data unit
+SAP : service access point
+packet - UDP's layer (4) PDU
+segment - TCP's layer (4) PDU 
+datagram - IP's layer (3) PDU
+frame - MAC's layer (2) PDU
+light - Physical layer (1), adds no info just encodes and decodes existence/abscence of light as 1s and 0s.
+
+
+
+--- Techniques ---
+
+1. Buffer
+
+congestion control : 
+flow control : cc but only between A and B which are taken into account, the intermediary routers & ISes are cc
+
+    Congestion Control Techniques
+1. Fragmentation
+2. 
+3. PLPMTUD
+
+    AQRs:
+1. RED
+
+
+
+--- Specifications ---
+1. Ethernet Header : Operates on a data link (layer 2). It includes a Destination MAC Address 6 bytes in size, a
+   Source MAC Address also 6 bytes in size, Total Length 2 bytes in size, Upper Layer Data from 46 to 1500 bytes in
+   size, and a Frame Check Sequence (CRC) 4 bytes in size. Total size is 6 + 6 + 2 + (from 46 to 1500) + 4. A
+   Preamble (7 bytes) and a Start Frame Delimiter (1 byte) are always added before the frame header for clock sync.
+2. Wi-Fi Header : 
+
+RFC
+IEEE
+
+--- Terminologies ---
+1. ES : Stands for End-Systems, i.e. a system (such as a PC) with an initial source or the final destination of
+        a message. Routers for example are not an ES because they never initiate communication, only respond.
+2. IS : Stands for Intermediary-System. Those are devices which transport the ES's messages further until a final
+        destination is reached, if successful that is...

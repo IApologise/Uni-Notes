@@ -1,3 +1,4 @@
+--- Certificates & CAs ---
 We have solved confidentiality and integrity, but the only thing we didn't consider is our public key being
 spoofed by an active attacker, and if that happens then the attacker can simply use their own private key and
 basically become the MiTM. That't what we need to solve to establish a HTTPS, so HTTP & TLS for a secure
@@ -47,7 +48,7 @@ managed to check that itself, somehow...
 
 
 
-Notes:
+--- Notes ---
 - If the website does not use TLS, i.e. it is just HTTP and the connection is not encrypted, then most browsers
   raise a warning near the address link (url). That is because TLS is kinda the default now.
 - Operating systems have a list of root certificates, but some apps and browsers have their own instead of OS-es.

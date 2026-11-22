@@ -1,0 +1,41 @@
+Complexity is how fast a computer can solve a certain problem, decide to be more precise. Note that computability
+is about whether something can be decided or not, computable means decidable and uncomputable means undecidable.
+Now we will look at exactly how the Big-O notation is to be used. First we count the number of configurations to
+the halted state of a turing machine M, let that count be Steps(|w|) where w is the given input. With the Big-O
+we look at the worst-case scenario, i.e. the maximum number of steps for a given length |w| that the Steps(|w|)
+can possibly return. Based on the different lengths of each |w| from the max of Steps(|w|), we sum them all up,
+so like Steps(1) + Steps(2) + ... + Steps(n) where n is our variable and the n'th length of w. Based on whether
+it is an arithmetic or geometric sum we get the Big-O notation as a result. As an example consider a turing
+machine M that halts on |w| = 1 with at most 1 configurations used on all the possible w's of length 1. That
+makes Steps(1) = 1. For the next ones let's say that Steps(2) = 2, Steps(3) = 4, and so on. We see that it is a
+geometric sum and apply the mathematical formula taught in high-school and get that Steps(n) = 2^n. That is
+precisely what our Big-O notation now is, namely: Steps(n) ∈ O(2^n). Note that sometimes the pattern might
+consist of an if-statement such as Steps(n) = {n^2, n is odd AND n^2 - 1, n is even}. Another caviat is that
+we often care only about the scalability and not the start optimality, so Steps(n) = n^3/500 + 500n^2 would
+turn into a simple O(n^3), this also makes the Steps(n) with the if-statement given above just O(n^2) where we
+safely got rid of the if-statement altogether, for simplicity.
+
+Now that we know how the Big-O notation works, note that there is a language TIME which is in the decidable class
+and not in the recognizable one. TIME language is the language of all the TIME(t(n)) languages which are
+decidable by a turing machine in O(t(n)) time. So, TIME(t(n)) is the language that machines in O(t(n)) decide
+in t(n) time. Something that is decidable in t(n^2) is also decidable in t(n^3), so naturally O(t(n^2)) is a
+subset of O(t(n^3)), everything that TIME(t(n^2)) contains TIME(t(n^3)) also does, but also more than that, and
+the same goes for the O(t(n^2)) and O(t(n^3)).
+
+This way we can define the class P = U_(k ∈ N) TIME(n^k) where n = |w| and k is some constant. N here means the
+set of all the natural numbers, and U is the union of all the TIME(n^k) of every k. NP is the class of all the
+problems which are verifiable in P time. Another way to define NP is via NTIME (Non-determenistic TIME) as
+NP = U_(k ∈ N) NTIME(n^k) where NTIME(t(n)) is a set of langauges decided by some NTM (Non-determenistic Turing
+Machine) in O(t(n)) time.
+
+Now that you got the idea behind how complexity is calculated let's explain all the notations listed in the
+screenshot "L6 - Complexity Notations.png", list numbers everything in the same order, from top to bottom:
+1. f(n) ∈ O(g(n)): The Big-O explained above, that's what this abomination is: ∃c > 0∃N∀n ≥ N, |f(n)| ≤ c * g(n).
+2. f(n) ∈ o(g(n)): The Small-O. The mathematical formula is easy and explains it lim_(n -> ∞)(f(n) / g(n)) = 0.
+3. f(n) ~ g(n): lim_(n -> ∞)(f(n) / g(n)) = 1. Do not confuse this one with 6. More details on this there.
+4. f(n) ∈ Ω(g(n)): g(n) ∈ O(f(n)), which is basically Big-O notation but reversed.
+5. f(n) ∈ 𝜔(g(n)): g(n) ∈ o(f(n)), same as with 4. but with Small-O this time.
+6. f(n) ∈ Θ(g(n)): f(n) ∈ O(g(n)) & g(n) ∈ O(g(n)), which is less strict than the f(n) ~ g(n). The difference
+   between this and 3. is that in 3. the constant of the greatest polynomial in the function matters. For example
+   3n ~ 3n is true, whilst 3n ~ 2n isn't, ene though 3n ∈ Θ(2n) is. Note that 3n^2 + 2n ~ 3n^2 + n is still true,
+   only the highest growth factor matters here, follow the definitions precisely if confused, they aren't hard.

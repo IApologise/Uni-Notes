@@ -1,0 +1,104 @@
+--- Wireless Network ---
+Wi-Fi is basically a communication method which uses light waves spread to all directions to reach devices.
+Light frequency varies, Higher frequencies means faster data transmission, but the trade-off is a shorter range.
+Information is encoded from bits of data to light based on amplitude, and vice versa, i.e. decoded from light to
+bits. WLAN is what we call a part of a LAN that is using Wi-Fi technology. The communication standards, naming
+conventions, and protocols are decided by IEEE 802.11. There is also a technology called LiFi which uses a
+higher frequency light that is not able to travel through obstacles which is done to limit access.
+
+The device that creates a WLAN is called the access point (AP), and the devices that connect to it are called
+Stations (STA)s for short, the AP and the STAs connected to it all together is called a Basic Service Set (BSS). Then there is a Distribution System (DS) which is a medium (usually an ethernet cable) connecting different APs together into a single larger WLAN, and all of it together is an Extended Service Set (ESS), i.e. all the
+connected BSSes, i.e. all the APs and their STAs which make a single WLAN. Note that to connect to a Wi-Fi
+network an identifier is used called Service Set Identifier (SSID) which is the network's name, this is used
+to refer to the WLAN, but the AP is chosen automatically by the device based on signal strength.
+
+Note that BlueTooth is a different technology, albeit very similar to the Wi-Fi protocol. The difference is the
+limits in transmission speed, battery usage, and the fact that it is a Peer-to-Peer connection only, i.e. from
+an end-device to another end-device with no intermediate-devices inbetween. And yes, it is also encrpyted.
+
+
+
+--- Electro Magnetic Emanations ---
+Devices always emit some kind of data or give a hint to how the data is processed. For example different
+encryption methods and processes likely take different amount of time which in itself is a hint. As data
+travels within the computer, such as from a D/A converter to the PC's radio transmitter device, some information
+such as light waves may be emitted which can then be reconstructed by an outside device. TEMPEST is a guideline
+on how to prevent the leak of these emanations. The data emanated might not be encrypted yet (I believe that
+this is possible, yet I am not sure where exactly the encryption takes place). The point is that data can be
+emitted to the outside accidentally, perhaps the CPU does this whilst working on data without having it encrypted
+yet, I really don't know because that was not explained and is a specialized field on its own.
+
+
+
+--- Security ---
+Due to the way Wi-Fi works, eavesdropping and many other kinds of passive attacks can't be detected because
+that information is broadcasted and can be intercepted by everyone. But, if the leaked information is used in
+some way which may raise a suspicion or an active attack such as Dos is done, then it can easily be narrowed
+down to the device within the WLAN, which is at least somewhat helpful. Some passive attacks are: Eavesdropping
+& Traffic Analysis both of which basically listen to the packets sent and look at who sent to who, packet size,
+etc. Then there are active attacks such as: Masquerade which is basically spoofing, Rogue AP which is setting
+a malicious AP which may redirect to a malicious link (similar to MiTM but wih APs), Packet Replayability, Denial
+of Service (DOS) via Jamming for example, and Message modification & Unauthorized Network Usage (somehow). All
+of this is not preventable by TLS because for example AP redirection is still possible with TLS.
+
+First versions were WEP and WPA1 both of which aimed to secure the Wi-Fi network with encryption, integrity,
+and authentication, though WPA1 (or just WPA) was meant to be a temporary solution. Today however these are
+outdated and have some major vulnerabilities. WPA2 is more or less secure these days and is the most widely
+used, but there is also WPA3 which is more secure against password guessing attacks (brute-forcing).
+
+All this was necessary for encryption, intergrity, and authentication to be achieved for our Wi-Fi which
+is on a link layer (layer 2) which is what WPA is all about. All of this was not required for switches because
+we used ethernet cables and didn't need any authentication, but here we need to authenticate to the network &
+ensure confidentiality and integrity between the STA and an AP. This of course requires an authentication
+service (AS) that the ESS provides.
+
+WPA2 has two authentication modes, for personal WLANs called WPA2-Personal, and for enterprise WLANs called
+WPA2-Enterprise. To request access the device contacts the AP's uncontrolled port which creates a session key
+used to get through a controlled port which has access to the network. the WPA2-Personal requires a password
+from the device which it then combines with its SSID using a function called {PSK = PBKDF2(Password, SSID, 4096,
+256)} that generate a 256 bit Pre-Shared Key (PSK). As for the enterprises, an enterprise specific authentication
+method called EAP which is used by the STA from AP's uncontrolled port which is the AS to derive a Master Session
+Key (MSK) and from that a Pairwise Master Key (PMK). That then gives access to the DS, i.e. the internet.
+
+PSKs are not unique nor changed frequently which allows for: Captured authentication keys to be replayed for
+unauthorized access, be able to read everyone's data since there is no isolation, allows for packet modification
+& MiTM, 
+
+So, PSKs are used to create the previously mentioned session key (symmetric key) unique to each STA <-> AP pair.
+We call it Pairwise Transient Key (PTK) where {PTK = prf(PMK, "Pairwise key expansion", MAC_AP, MAC_STA,
+Nonce_AP, Nonce_STA)} where MAC are MAC Addresses, Nonces are pseudo-randomly generated values, and {PMK = PSK}.
+Nonces and MAC Addresses are shared between AP and STA (unencrpyted) where both generate PTK using the PSK/PMK,
+where again the PSK is only known to authenticated devices and the AP, and PMK only to the one authenticated
+device and the AP.
+
+From this PTK a Key Confirmation key (KCK) is generated which is used for proof and access through the
+controlled section (used for authentication and integrity) preventing unauthorized MiTM, Key Encryption Key
+(KEK) is also generated which is used for packet encryption for when multiple STAs want to use the same group
+key (like broadcasts, e.g. ARP) which prevents spoofing and eavesdropping, and the Temporal Key (TK) which is
+used for a single STA to AP encryption & integrity verification to prevent eavesdropping, replay attacks
+(because TK's keystream uses new nonce each time), and packet modification.
+
+Important note is that anyone that has PSK/PMK can read everyone's messages assuming they got the {MAC_AP},
+{MAC_STA}, {Nonce_AP}, {Nonce_STA} which could be received by simply listening to all packets since it is
+unencrypted. Not just that, all the stuff would be compromised, and active attacks will also become possible.
+Though if the PTK was made before the attacker was listening, then that is just bad luck. Either way this use
+of method is called a Path-To Attack Chain. For easier initiation of a Path-To Attack Chain (its first step)
+a Downgrade Attack may be used to go from WPA3 to WPA2 and exploit its vulnerabilities (if any, and lowre if
+possible of course).
+
+
+
+--- Notes ---
+3.1. By default in WPA2 at least 8 characters are required to have at least some brute-forcing protection.
+     Thought IEEE 802.11 (2024) states that even passwords of lentgh less than 20 are likely to be bruteforced
+     (assuming no gibberish). That is because bruteforcing of Personal WPA2s can be parallelized on GPU.
+3.2. A device might be connected to multiple networks simultaneously, like one via ethernet and one via Wi-Fi.
+     This creates an extra attack vector, so disabling dual connections or Wi-Fi is recommended and sometimes
+     even mandatory such that, for example, the company's firewall is always used. It also gives stability &
+     longer battery life. Cons: no failsafe, can't use wireless products such as Apple's AirPods & such.
+3.3. There was (maybe still is) a vulnerability in WPA2 where a replay of handshake message results in key
+     reinitialization which resets the IV (Nonce) which results in keystream being reused. We have C1 & C2 which
+     are cipher texts, and get C1 XOR C2 = (P1 XOR K) XOR (P2 XOR K) = P1 XOR P2. This is a substitution cipher
+     that can easily be guessed via frequency analysis.
+3.4. Note that PSK is always the same as PMK which is used to generate a PTK; Screenshot clarification. Also,
+     during PTK generation the string "Pairwise key expansion" is used to tell the session key type we generate.

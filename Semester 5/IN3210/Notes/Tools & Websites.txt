@@ -1,0 +1,10 @@
+--- Tools ---
+- Wireshark
+- iptables
+- nftables
+
+
+
+--- Websites ---
+- badssl.com
+- ssllabs.com

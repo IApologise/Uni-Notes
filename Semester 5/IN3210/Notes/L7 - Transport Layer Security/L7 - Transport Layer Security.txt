@@ -1,0 +1,113 @@
+--- TLS (Transport Layer Security) ---
+Today TLS is used pretty much everywhere, it has several versions but the old ones are mostly deprecated, i.e.
+shouldn't be used due to security reasons (probably). TLS 1.2 and 1.3 are used today, basically everyone supports
+TLS 1.2, and about 75% support TLS 1.3, the difference between the two comes later. Note however that about 20%
+also support TLS 1.0 and TLS 1.1, and nobody supports the older versions, i.e. SSL 2.0 & SSL 3.0 (SSL 1.0 was
+never published).
+
+HTTPS is basically HTTP over TLS, i.e. we have a TLS header that comes before HTTP (application data) and after
+TCP (port connection data). Some protocols may be combined with TLS, such as IMAP (idk what that is, wasn't
+explained) to create IMAPS which is basically HTTP over TLS and IMAP. Note that the professor said that HTTPS
+"usually" means HTTP over TLS, I might investigate the meaning of this... It was mentioned that TLS has some
+"sub-protocols" as a part of its header, but I don't think more was specified.
+
+
+
+--- Forward Secrecy ---
+Diffie-Hellman is a better way to exchange a secret value than the RSA because it requires less steps (RTT), and
+is therefore faster, and is safer than RSA. The secret is then used for authentication and integrity so that both
+sides may share their public keys. This way MiTM is impossible for an active attacker, otherwise the signature
+will expose spoofing and substitution of a key, where in RSA it was used for confidentiality. This difference is
+why DH has forward secrecy.
+
+Note that DH is just a method to exchange a secret to then create a symmetric encryption, whilst RSA is a
+standalone assymetric encryption algorithm. New DH is used for every new channel, i.e. is ephemeral, so it is an
+DHE. But today, we specifically use a version of DH called ECDH which stands for Elliptic-Curve Diffie-Hellman,
+so ECDHE.
+
+What's forward secrecy? That which RSA does not have. If the secret value exchanged during DH got compromised
+after the public key exchange, then all that the attacker will have access to is the digital signature that was
+created during that connection. By that point MiTM is too late to be done even if a digital signature could be
+spoofed (still possible to do before public key exchange though), and the digital signature doesn't allow us to
+decrypt any messages that both parties send or have sent to each other. That is forward secrecy, i.e. if security
+got compromised, then the messages before the compromise happened and had the chance to be used will not allow
+the attacker to view or temper with those messages in any meaningful way. New connections won't be compromised
+either because the DH is ephemreal (i.e. new secret value for each new connection).
+
+
+
+--- Updates & Compatability ---
+Different devices may support different algorithms, for that reason whenever a secure communication channel is
+to be established both sides must first agree on the algorithms to use. In TLS 1.2 there are about 20 algorithms
+in total comprised of encryption, modes, hashing, and signature algorithms. However in TLS 1.3 the choices are
+much more limited for security reasons, because some don't provide forward secrecy, can be cracked quickly, etc.
+Those that don't provide forward secrecy are usually used for signatures, like RSA. Today TLS 1.3 has 3 options
+which are ChaCha20, AES-128, and AES-256 all of which must use mode GCM for symmetric encryption, as well as
+SHA-2-256 and above & SHA-3-256 and above for hashing. Note that ECDHE is a must for forward secrecy, so that one
+is non-negotiable in the first place. By the way GCM is a must have because doing "MAC then encrypt" or "encrypt
+then MAC" is vulnerable to some attacks apparently, but when a XOR (or something) betweent them is sent then we
+are giving not enough info to break it, and enough to verify it (again, apparently).
+
+For a connection we must choose an initial authentication algorithm for forward secrecy, then a symmetric
+encryption algorithm for confidentiality, then the hashing algorithm for signatures and integrity. Because TLS
+1.2 supports RSA the handshake takes 2 RTTs (Round-Trip Times). The client first sends a list of its supported
+algorithms to the server (together with the connection request), and a pseudo-random value generated for use in
+the chosen algorithms. Server responds with chosen algorithms and its pseudo-random value as well as the session
+ID (Session layer data) and its public key with certificate. The client then verifies the public key using the
+received certificate, generates a secret value using the random values, and then encrypts it using the public key
+and sends it to server. After that both generate a secret key using same secret value.
+
+Then in TLS 1.2 client sends the "Change Cipher Spec" requesting server to switch to the agreed upon encryption
+method, and the server responds with its own "Change Cipher Spec", and to confirm that it works a "Finished"
+encrypted message is sent as well for verification. Note that this design is not essential, but is how TLS 1.2
+designed it. TLS 1.3 however assumes that the encryption starts right after key exchange. In addition to that
+TLS 1.3 also manages to do a handshake in 1 RTT because it guesses in which way the DH method is to be done in,
+generates a key pair, and sends the public key with the supported algorithms list. If the guess fails and the
+server does not choose the guessed method then we are at 2 RTT, but it often succeeds. And if the connection has
+already been done before, the server may have sent a resumption secret for the next connection that the client
+may use to initiate a 0 RTT with the server, i.e. send the resumption secret and encrypted data right after.
+
+Once all this was done you can view the connection's security which may looks something like this for TLS 1.2: "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384, 256 bit keys, TLS 1.2", and like "TLS_CHACHA20_POLY1305_SHA256, 256 bit
+keys, TLS 1.3" for TLS 1.3. Notice how in TLS 1.3 we do not say which algorithm is used for authentication (due
+to forward secrecy), that is because it is always ECDHE, but the method of establishing ECDHE might vary.
+
+
+
+--- Other stuff ---
+Because TLS was so secure ISPs couldn't look at the traffic and inspect it, i.e. government & companies lost some
+control. For that ETSI was created which had a feature used by "the good guys" that allowed for packet inspection.
+First of all this brought a lot of protest, second is that people were mass reporting security vulnerabilities
+which were actually a feature so that the spying could take place. I.e. the vulnerabilities could be used by
+"the bad guys" as well.
+
+A single device may wish to host multiple websites all of which want to have a secure connection, i.e. HTTPS on
+port 443. This is not possible since there can only be 1 process listening on port 443 per device. To fix that
+there are APIs such as Apache which create a single process listening on port 443 and runs the rest of the
+websites on different ports that it keeps a {Hostname : Port} map of for multi- and demultiplexing. Those can be
+done in multiple ways to prevent a single DDoS taking down other websites & such. Anyways, because of that getting
+the right certificate might be tricky since TLS comes before HTTP which is where one gets the hostname. So the
+TLS also includes the SNI field which specifies the hostname specifically, and yes it gets mentioned twice in a
+packet because of that. That way the right certificate can be acquired. P.S. DNS only resolves {Hostname : IP}.
+
+Certificates can be used to identify a website, which is what application layer firewalls may check for if some
+website X is blocked. Like if some device within LAN tries to reach this website X it will simply drop the packet
+and not forward it. P.S. This stuff doesn't belong in the TLS section, but it is when it was mentioned...
+
+
+
+--- Notes ---
+1.1. Today the word SSL means TLS. This is used rarely, and it may cause confusion or actually use SSL (unlikely).
+1.2. TLS operates on the transport layer, i.e. layer 4 of the OSI model. There is an alternative called IPSec
+     which operates on the IP layer, i.e. layer 3 of the OSI model.
+1.3. TLS is used over TCP, and TLS 1.3 can also be used over QUIC which is an extension of UDP. Actually, QUIC
+     requires TLS to always be used, but TCP doesn't require that.
+
+3.1. In TLS 1.3, guessing is done right quite often. It is 80-90% 1RTT, and 10-20% 2 RTT in case it guesses wrong.
+     Note that when guessing we send for multiple options at once in case parameters required are different.
+3.2. The fact that ECDHE is forced in TLS 1.3 means that any downgrade attacks are now impossible since there is
+     nothing to downgrade to, and as of right now ECDHE is secure.
+3.3. DSig stands for Digital Signature, obvious for me right now, but not sure about the future me.
+3.4. TLS 1.2 can be configured manually to only accept the same algorithms that TLS 1.3 does, and is often done so
+     such that every connection is secure because some TLS 1.2 approven algorithms are not really secure today.
+4.1. Connection can start not using TLS, i.e. just HTTP for example, but then switch to TLS secured one, i.e.
+     HTTPS, using the "STARTTLS" request (a command in terminal and just in general).

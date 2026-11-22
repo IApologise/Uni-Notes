@@ -1,0 +1,185 @@
+--- Congestion Control is Messy ---
+
+   Why Buffers?
+You know that routers have buffers in case a burst of packets arrives. This is helpful but it is best to keep these
+buffers relatively low. Some congestion control protocols don't account for that and simply send at the max rate
+they can like TCP Reno. Obviously if TCP Reno notices that the packets are lost then it reduces the sending rate
+temporarily. Bigger buffer obviously also means that the RTT isn't measured precisely which the TCP Vegas depends
+on, which is a yet another complication... So yeah, keeping the buffer low forces bad protocols like that to send
+less and back off more. Though the fact that routers should help with the TCP is kind of a backwards thing because
+routers are supposed to be only handling the IP dest and IP recv. Same goes to routers doing NATs (maybe?).
+
+
+   War for space.
+Note however that congestion control is more like a "wild west". For example, using TCP Vegas which looks at the
+RTT getting higher instead of packet loss lets it to detect buffer fills earlier and may adjust earlier, but then
+it loses against TCP Reno which does not stop and thus sends more packets than TCP Vegas. The result is queue that
+doesn't drain and losing access to the path through the router. So it solves nothing and loses to TCP Reno.
+
+LEDBAT which is when UTorrent came was like TCP Reno, but it basically had a limit below the max buffer size. It
+still loses against TCP Reno, but the idea is to keep some of the space desired. So if we are below a certain
+RTT, we increase our sending rate. The reason it is great is because it doesn't lose too much against TCP Reno,
+but when combined with other LEDBATs it is a huge win-win.
+
+
+   Ensuring fairness.  
+TCP-friendliness is when a TCP congestion control protocol does not get more throughput than the TCP Reno which
+is the default agreed upon protocol. So LEDBAT for example is TCP-friendly because it takes less than TCP Reno,
+but BBR is not because it might get more throughput than TCP Reno under the same conditions. Note that it is not
+the same as being fair, which is sending data such that the same throughput is achievable by other TCP protocols
+and other senders under the same conditions per router.
+ 
+Firstly, if some sender S1 has 1GB/s sending rate and some receiver R1 can only process 100MB/s then the sender is
+going to fill the router's buffer eventually. To fix that we simply send the next packet once the previous one was
+acknowledged for, which is basically the idea behind the sliding window.
+
+Next, let's say we now also have a sender S2 sending at 10MB/s to a receiver R2 via the same router which S1 and
+R1 use. If both use TCP Reno or simply won't back off and free up some buffer space (assuming router's buffer is
+filling up), then obviously S1 is way more likely to get a spot in the router's buffer. In that case the router
+can force some fairness by simply dropping the packets randomly to make space for the new ones. Since S1 gets more
+packets, S1's packets will be dropped more than S2's, thus naturally reaching an equilibrium of 50%. This method
+is called Random Early Detection or RED for short which is an example of an active queue management or AQM for
+short. RED is configurable via 3 parameters: Qavg, Qinst, and Wq. It is best to google those for more info.
+
+But what if there is a DDoS attack where the load is being distributed too little and the router simply can't
+handle it all? In case something like this happens the routers may also divide a single buffer into smaller buffers
+for each client. That way, if some server A is being DDoSed and router C is overwhelmed, client B will not feel
+any difference in its networking performance even though it also uses router C. This is called switching fabric.
+
+
+   AIMD reminder
+AIMD is what most algorithms on congestion control do today, which stands for Additive Increase Multiplicative
+Decrease. So whenever packet loss happens or RTT is increased (trigger depends on algorithm) then we instantly
+decrease the sending rate to a safe amount, like multiplying by 0.875 or so. And then with each packet we send
+some more next time (increases additively). This should naturally converge to an equilibrium, but in reality it
+doesn't... And I am unsure as to why. Probably because there are too many connections at play all using different
+CC algorithms as well as RED and more? Anyways, it is important to note that this method is slow when it comes to
+relatively fast links, and too aggressive when it comes to slow links. If your link can manage 1GB/s, then the
+download is very likely to end before the maximum is reached. So the new solution is to use a multiplicative
+increase and exponential decrease strategy (I think).
+
+
+   ECN & its role now
+ECN stands for Explicit Congestion Notification which is a bit in the IP layer that the router sets. ECN has CE,
+ECE, and CWR bits. So if a congestion is happening, router sets CE bit to "1", and the original packet still
+reaches the receiver. Then the receiver sends its packet with ECE bit set to "1" essentially telling the sender to
+"slow down". Then the sender sets CWR bit to "1" to let the receiver know that it slowed down. This is done because
+there are lots of ways in which the receiver may not send an ACK, and not just because of a congestion caused by
+the sender. Additionally, this method gives the warning earlier (probably). For example, the receiver might be
+sending too much instead, or like a firewall filter, or too many errors (checksum has limits), maybe packet is
+simply too large (PLPMTUD), receiver is overloaded with packets, sender's NIC hardware issues, DDoS, unstable
+route, etc. Funny thing is that not every client may understand what those ECN bits are, and for that reason we
+also need another bit which stands for "I (the client) understand ECN" and set that to "1". However, often ECN
+doesn't even reach the client for many reasons. For example: Firewalls, poor routing & VPN forwarding, not
+compatible with older routers, or maybe the client just doesn't want the ECN or isn't compatible, or has a proxy.
+
+
+   Delay-based congestion control
+Delay-based congestion control is basically when instead of looking at "are the packets dropped", which is kinda
+the default and what TCP Reno & others do, we look at "has the RTT increased". WebRTC for example is using some
+technologies and UDP where some delay-based CC (congestion control) is used. It is also convenient since it is
+built in to every browser already. It was experimented by Netflix in cloud gaming for example, where some PC runs
+a game and then simply streams whatever the screen would show to the user (and takes the user's inputs too).
+Although latency is still a slight problem (maybe?). Not sure how that would go with proxies though...
+
+
+   TCP's steady-state equation
+This is an equation (look at the screenshot) that was used by TFRC - TCP Friendly Rate Control (a CC) and GCC -
+Google's Congestion Control. The equation tries to predict the average throughput that we should aim for, and
+thus influences the control's sending rate. GCC is using this equation as a lower bound (i.e. minimum) for WebRTC.
+And since TFRC is trying to stay friendly it is using this as an upper bound (i.e. maximum).
+
+
+   Multiple TCP connections & switching
+Web browsers may open lots of tabs connecting to the same server multiple times. To avoid slow start and measuring
+the parameters for each connection separately, why not simply use TCB (TCP Control Block) which saves the info
+about a connection and reuse that info for a new connection to the same server (or path essentialy). This is called
+TCB Interdependence, and it not only learns from currently active connections (Ensemble Sharing), but also from
+the previously active connections (Temporal Sharing). With this tech our phones often switch from Wi-Fi to 5G
+without us noticing (or use both simultaneously). The problem is that we may use multiple TCP connections (which
+just share info) per application, and thus that is not really TCP-Friendly to other applications that use only one.
+And in the case of Wi-Fi and 5G, where both are used simultaneously, 2 connections are made: Wi-Fi & 5G per app.
+Now, if they share a router in their path, then the app gets double the throughput and thus isn't fair to others.
+I.e. it isn't TCP-Friendly. What's funny about it is that to download faster (because cwnd in TCP is possibly
+the bottleneck) we might do something like that on purpose by splitting a connection from an app into a 100 or
+more, basically we paralleralize it all where each connection needs to download from {data_n-1} to {data_n} where
+{n} is the n-th connection and {data_n = total_data * n / total_connections}. As you can see this is very cheesy.
+
+
+   Satellites & PEPs
+First of all there are LIOS and GIOS satellites where LIOS are low orbit ones, and GIOS are high orbit. LIOS are
+obviuosly faster, but so hard to maintain (must constantly adjust to face earth and have small area) that those
+aren't really used. The downside is that GIOS have terrible latency and are never really used in practice because
+of that. However, there is a thing called PEP (Performance Enhancing Proxy) which is a very funny thing. The sender
+installs one, and it works by taking the sender's signal and buffering it, then it spoofs itself to the sender as
+if it is the receiver with low RTT and as if it is able to accept high throughput. That is the "secret sauce".
+What really happens is the buffered data that was meant to be already received by the receiver has likely not done
+so yet, but is still on its way. So these devices basically lie to the client. This breaks the TCP's assumptions,
+and if a packet loss happens, then the proxy simply resends the previously buffered data again (it doesn't delete
+it unless an ACK arrived) and basically handles everything in secret such that the sender has no idea. All the
+sender sees is lower ping (a lie), and all ACKs, no packet loss & such (also a lie). So, with that in mind, the
+satellites can now be used via a PEP, even if installed somewhere down the line and not directly connected to
+the sender, but perhaps a router & such. And you know what is even funnier? QUIC is specifically encrypting some
+part of the data & headers (not sure which) specifically so that PEPs won't be able to do their thing, Haha!
+Though these PEPs also do some sharding (split the connection into multiple), which is a cheap trick but works.
+They also do have a high buffer for it to work, and spoof to the receiver as well, just some minor clarification.
+
+
+   Pacing & Use in Streaming
+Even though there may be a window size limit on how many packets can be in-flight at once, there is no limit
+before that and if the throughput changes at some point then the whole thing is still not uniform and may cause
+"micro bursts" potentially leading to delay or packet loss in case some router along the way whose buffers are
+getting kinda full or have a very small capacity. So to combat this we introduce pacing which is basically adding
+a limit on how much data can be sent per some time, this often results in 3 or so packets being sent at a time
+before a small pause.
+
+This was not possible before because of "clock granularity". This is how the problem is: A process sends 3 packets,
+then does nothing for e.g. 100 micro seconds, and then sends the next 3 packets and so on... The problem is that
+this uses 100% of the CPU where in those 120 microseconds nothing was done, so it basically never was a viable
+option. The second method was to send 3 packets, then ask CPU to wake the process up in 120 microseconds, but
+before the clock granularity was from 1 to 10 miliseconds, so the CPU would wake up the process not in 120
+microseconds as requested, but much later resulting in the need to send maybe like 30 packets at a time which
+would be the same as not doing any pacing at all since this amount is considered a micro-burst. These days however
+the clock granularity is fast enough for most cases. P.S. Numbers are taken from Claude when the sending rate is
+100 Megabytes per second. 1 Gigabyte per second would result in a clock granularity need of 12 microseconds.
+
+Because of how streaming services work, they often send a few video frames in advance and often without any pacing.
+Netflix, YouTube, and other SVoDs use TCP which might use sliding window but still sends at high rates such as 30
+Mbps in 1 second and then send nothing for 10 seconds before the next 10 seconds of a video will need to be
+preloaded. Why not stretch this over like 2 seconds instead drastically reducing packet loss frequency? We are
+not going to do anything in the next few seconds anyways and the sending rate is the same on average, so might as
+well. That is perhaps where pacing is most beneficial.
+
+
+
+--- Routing Strats ---
+Some vendors sell a bigger buffer on purpose because "bigger number = faster network", but that is only for the
+inexperienced people with monkey brains, and we call this bufferbloating.
+
+Sometimes instead of doing per receiver buffer when switching fabric, we do per connection buffer for further
+isolation. It works best when buffer size per connection ratio is carefully balanced. Which is perhaps the only
+advantage of having a bigger buffer (same for switching fabric).
+
+UDP's length is redundant, because apparently IP protocol also contains the length of the upper protocol, so we
+can simply do {UDP's length = IP's length - IP's header length}, because the IPv4 and IPv6 both contain an IHL
+which is the length of the IP header, and also they contain the total IP & uppper protocol length which is the
+"total length" parameter. Howerver, checksum is useful to restore data if corrupted, source port is mostly used
+in NATs and firewalls, and destination port is self explanatory.
+
+BBR is not seen as tcp-fiendly, and BBR is a special case because the point of it is to be aggressive. The reason
+behind BBR's aggressiveness is that it wants to get the max RTT to know when the buffer of a router is overloaded,
+and the rate to send at (due to competition at max buffer load). Because of that same aggressiveness it also
+doesn't go well with routers that do AQM, such as RED for example.
+
+Apparently TCP-Friendliness is a thing of the past now, and is not really something that is being thought about
+today. That is because algorithms like CUBIC and BBR are widely in use today, and as we've seen BBR is weird with
+TCP-Friendliness. This, and the fact that AIMD is slow/aggressive to some links. In addition to that, QUIC and its
+CC is being used today in some cases instead of TCP, and it uses both CUBIC & BBR. Also, QUIC is similar to UDP,
+but it has CC and more, idk what though.
+
+As of today, TCP Reno isn't popular anymore, yay! About 10% are using it, BBR reached about 10% too, and CUBIC is
+at 40%, TCP Vegas is about 3%, HTCP is at 3%, Illinois is at 3%, and the rest are unknown.
+lookup: Silly window syndrome.
+
+Datacenters were using some connection like LEDBAT first I think, that is where the inspiration to make it and use
+it in UTorrent came from. That is because there it was designed to be friendly, fair, and not fill buffers.

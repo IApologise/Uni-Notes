@@ -1,7 +1,16 @@
-combining turing machines is basically done by combining them (usually with union like for
-alphabets & such) except for the input, which is the same.
+Here we get a reminder of exactly how TMs work from IN2080, as well as the coding and configuration. Then there
+is the Church-Turing Thesis which states that anything that is computable can be done so with a Turing Machine,
+Lambda Calculus, and other languages I've mentioned before, i.e. TMs are complete, the problem is the computation
+which may never halt, regardless it is sound. We also are introduced a specific type of TM called a Universal TM
+U which simply takes a coding of a TM M and the input w and simulates w on M.
 
-When coding something we write <A> as you already know, but for multiple codings we write
-<A, B, ..., N> which is a short hand form of a more formal way, i.e. <[<A>, <B>, ..., <N>]>.
-This means that "[" and "]" become the part of its input alphabet. Like when a turing machine
-M takes in <M', w> and simulates it. So always a single coding.
+Also, combining languages is easy, both when it comes to the union and concatenation, same with other operations.
+The way we do it is as follows: We create C which becomes a product of both A's and B's states, alphabets,
+transitions, etc. with concatenation C simply combines A such that once A accepts we continue with B, and accept
+if B accepts. With union C accepts if either A or B accept, with intersection C accepts if both A and B accept,
+and with difference C accepts if A accepts and B rejects. With complement C accepts if A rejects, and rejects if
+A accepts, i.e. inverting the A's accepting and rejecting states.
+
+When coding something we write <A> as you already know, but for multiple codings we write <A, B, ..., N> which is
+a short hand form of a more formal way, i.e. <[<A>, <B>, ..., <N>]>. This means that "[" and "]" become the part
+of its input alphabet. Like when a turing machine M takes in <M', w> and simulates it. So always a single coding.

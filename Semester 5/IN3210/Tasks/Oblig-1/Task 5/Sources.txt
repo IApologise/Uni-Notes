@@ -1,0 +1,16 @@
+--- Note on the "Answers.txt" ---
+I've used wikipedia as a source to learn about the SYN cookies and all that is
+relevant to it, as well as the TCP reset attack. Check them out below (APA 7).
+
+--- Sources in the answer to the task 5a ---
+Wikipedia contributors. (n.d.). SYN cookies. In Wikipedia. Retrieved October
+30, 2026, from en.wikipedia.org/wiki/SYN_cookies
+Wikipedia contributors. (n.d.). SYN flood. In Wikipedia. Retrieved October 30,
+2026, from en.wikipedia.org/wiki/SYN_flood
+
+--- Sources in the answer to the task 5b ---
+Wikipedia contributors. (n.d.). TCP reset attack. In Wikipedia. Retrieved
+October 30, 2026, from en.wikipedia.org/wiki/TCP_reset_attack
+Wikipedia contributors. (n.d.). Transmission Control Protocol. In Wikipedia.
+Retrieved October 30, 2026, from
+en.wikipedia.org/wiki/Transmission_Control_Protocol

@@ -1,0 +1,109 @@
+--- Minimal Architecture vs How It Actually Is ---
+
+    ISO OSI Model.
+In the ISO OSI model of the network the trend is described as follows: We got some layer providing some service
+which is a header that is to be used during specific transportation moments. For example, MAC Address is a service
+provided at the data link (layer 2). This second layer is meant to indicate the next feasible hop between systems
+which includes both End-Systems (ES) and Intermediary-Systems (IS). Naturally it includes some information thus
+adding some extra temporary data to the initial message. The initial message, or rather the message before this
+layer's header was added is called an SDU: Service Data Unit whilst after is called a PDU: Protocol Data Unit.
+All in all these layers are supposed to be a communication scope, so even if there is repetition in the functions
+that are done, technically there isn't any since each one is used for their own scope, though sometimes lower
+layers look at upper layers because the functionality is poorly defined or because some shenanigans are happening.
+
+Following this logic if we have 2 applications trying to communicate with each other within the same device, the
+memory and the OS can make the IPC (Inter-Process Communication) happen by giving each application process a port
+which acts as an identifier of sorts for the two to be able to refer to each other or possibly other processes.
+This introduces Delimiting - Differentiating between an SDU and a PDU, Fragmentation & Reassembly - Adding and
+removing headers, Sequencing - preserve the order of sent vs received data, Flow Control - sending at a rate the
+receiver can take, Synchronization - making sure that both sides are at their respective states (e.g. send & recv),
+and of course the Allocation (and its Deallocation) of ports used for synchronization.
+
+Next is communication over the network which is where there is potential for the loss of data turing transmission.
+This adds the next layer, so we are at 4 now where 1st is the physical, 4th is the application data itself, 3rd
+are the ports, and 2nd is what comes now. The 3nd layer must be responsible for any errors which may have occured
+during the 1st layer's transportation since it isn't certain anymore. That is because now we transport data via
+wires or air, both at long distance, using light which can be interfered, merged, attenuated, distorted, etc. So
+our 2nd layer must be able to do everything the 3rd had, and some error corrections, data loss & duplicate
+detection, and Retransmission Control - recovering from lost messages.
+
+For more than one process per system we need Multiplexing & Demultiplexing. This is done similarly to how NAT is
+done in today's modems when going from LAN to Global internet communication, i.e. keeping track of eac connection
+using the source ID (IPv4 in our case), destination ID, and the connection ID (Port in our case).
+
+
+    Scaling our Network
+Moreover, what was not mentioned thus far is scaling. This is what the next layer is supposedly for which is meant
+for routing which we add between the previous layers 2 and 3. So 3rd -> 4th layer now, and the new layer 3 is now
+the routing layer. As you know a Mesh is very inefficient, so the goal is to distribute the load as much as
+possible between all the ISes. Something like a tree structure with some shortcut connections (in order to not
+overload the root IS) would work much better, something like the "Example Routing.png". However this of course
+introduces potential congestion during packet travel over this network as well as more places where errors might
+occur, so EFCP is needed once again, and more sophisticated congestion control is needed.
+
+Though implementations and tests are hard to do, because the network is very large and different in many ways,
+and a single significant change might not be obvious or work well with other implementations which complicates
+everything quite a lot. It might not even show initially that the solution worked or if there was any difference.
+
+Since there can be many ES- and IS-es the addresses can start to get a bit long since there is no lower scope,
+though with IPv4 we did make one which are LANs and NATs. Another solution to this scaling problem are simply to
+have more addresses which is what IPv6 is about (among other features).
+
+
+    Mobile IPs & Cellular Networks
+Mobile IPs are an extension of the normal IPv4s. Today Wi-Fi is used with mobile phones, and Wi-Fi handles the
+seamless transition from one Access Point (AP) to another as you move whilst always remaining connected to the
+same LAN without your IP changing. However, changing networks from one Wi-Fi network to another Wi-Fi network
+would cause a small pause whilst the device switches. Mobile IP changes that by having a single permanent IP
+address given by the home... modem? called "home agent". Other LANs also need to do this for this to work. So
+that whenever a device switches networks the new LANs agent assigns it a temporary IP. The home agent also
+receives this IP and forwards all packets it received which are destined to the device to this temporary IP
+(it creates a tunnel between it and the temporary IP once it is received). Thus it forwards all the packets
+eternally but the IP never changes so the current website one is connected to doesn't pause nor crash, thus
+making it seamless.
+
+The home & other agents like that mentioned above aren't common though, instead Cellular Networks do exactly this. There are these cellular towers which act as agents and we have an operator (the one we pay to have Wi-Fi anywhere)
+which acts as our home agent from the previous example. So we get a permanent IP given to the phone (when using
+mobile network) and the cellular network stations act as agents outside the home agent. For this reason using the
+mobile network even when at home to play with a friend that is literally next to you online makes the actual game
+data to go all the way to the closest cellular network tower, then to the operator, then to the internet. And if
+you friend also uses cellular network, then the game data goes back to some cellular network tower (likely the
+same one due to proximity), and only then transfer that game data to your friend's phone. And if the friend does
+not use cellular network then there is internet routing happening, which then arrives to the modem the friend's
+device is connected to, and then the game data arrives to the phone via Wi-Fi (or ethernet, depends on connection
+type, but typical phones can only do Wi-Fi & Cellular).
+
+
+    Router Routing
+Routers have a table. The table contains destinations that the packet wants to reach and the next hop it must take
+to reach that destination. Because routers are multihomed (have multiple interfaces, i.e. more than 1 ethernet
+connection or ethernet + wi-fi, etc.) they also have multiple IPs, hence the IP identifies not the node but the
+interface (for example a modem has both a LAN IP and a non-LAN IP from the devices on home network's perspective).
+P.S. routers always consult DNS first when a link is used such as "uio.no" for an IP address, forwarding doesn't
+require that since the IP is what is being forwarded and has already been fetched.
+
+Because addresses are per interface, to avoid reconnecting once an interface is down which might take many retries
+and a long time as well as resources of other nodes and a yet another DNS lookup, the solution is to use MPTCP
+which simply establishes multiple TCP connections, but doesn't send more than what a single TCP connection would
+to stay TCP-friendly (i.e. not increase the sending rate past what a single TCP-Reno connection could achieve).
+That is also how going from Wi-Fi to Mobile Network works, except there is an agreement between the two companies
+providing these services to share this information for mutual beneficion.
+
+
+    Difference from Recursive Model
+Today's internet is similar to the recursive model, but they aren't the same. The first thing is that we try and
+apply the least changes to the whole network, and instead try to make as many modifications to End-Systems as we
+can, unless the these changes can't be done in ESes, then we do them in ISes.
+
+Today it is very hard to introduce changes to the end-to-end (e2e) systems because of ossification because the
+routers and firewalls block so much of the data and throw packets away meant to reach the end-systems that it is
+hard to focus as much as possible to end-to-end systems. And they do that because they try to make the routing
+better and congestion control as well as for protection because some end devices do not follow all rules nicely.
+That is why they shouldn't pry into upper layers, and the solution is to of course encrypt everything so they
+have no choice but to do nothing and forward everything! That is what QUIC does at least...
+
+Another problem is the downwards compatability which is where reserved data in headers is being dropped. Usually
+these sections have potential to be used in future upgrades, but if IS assumes that it is always 0 and drops
+anything that isn't 0 then it creates an ossification problem. The solution to this is greasing which is basically
+everyone putting random garbage values there. Since everyone is doing it the ISPs must adapt and allow non-0
+instantiated values to pass.

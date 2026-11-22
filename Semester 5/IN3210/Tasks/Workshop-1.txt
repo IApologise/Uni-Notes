@@ -1,0 +1,31 @@
+--- Task 1: Crack Substitution Cipher Using Frequency Analysis ---
+First I googled "frequency analysis", "bigrams", and "trigrams" to get the frequencies.
+
+Then I simply started substituting using the "tr 'abc' 'def' < in.txt > out.txt" as an example where 'abc' are the
+letters I replace with 'def'.
+
+The substitution I found that made most sense was: abcdefghijklmnopqrstuvwxyz -> CFMYPVBRLQXWIEJDSGKHNAZOTU
+
+
+
+--- Task 2: Manual Encryption and Decryption ---
+First I checked out the manual and found the list of supported ciphers using "openssh enc -list" command.
+Then I started encrypting and decrypting, and for when the key or iv was too short I made it longer.
+
+1.e "openssl enc -chacha20 -e -in plain.txt -out cipher.bin \
+       -K 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef \
+       -iv 0123456789abcdef0123456789abcdef"
+1.d "openssl enc -chacha20 -d -in cipher.bin -out plain.txt \
+       -K 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef \
+       -iv 0123456789abcdef0123456789abcdef"
+in 1.e I encrpyted using chacha20, and in 1.d I decrypted the text encrypted by 1.e. (i.e. chacha20).
+To print out the result of a .bin file (from binary to string text) I did "xxd -p cipher.bin".
+
+2.e "openssl enc -aes-128-ecb -e -in plain.txt -out cipher.bin \
+       -K 0123456789abcdef0123456789abcdef"
+2.d "openssl enc -aes-128-ecb -d -in cipher.bin -out plain.txt \
+       -K 0123456789abcdef0123456789abcdef"
+Here I did the same as in 1. but I decided to choose the weakest supported encryption algorithm.
+
+--- Task 3: ---
+TC.

@@ -1,0 +1,117 @@
+--- How Mailing Works ---
+This is something I've never explained before, but basically whenever you hit send on an email our device has an
+application generally refered to as the User Agent (UA) which performs the underlying logic by formatting and
+sending the message to the next Mail Transfer Agent (MTA) which is its own end-system device. The MTA then
+attempts to send the message further to the next MTA, but if it isn't available at the time the mail data is
+simply stored and the MTA retries constantly (for hours/days) until it is. Finally the mail reaches the
+recipient's Mail Delivery Agent (MDA) which waits until the target UA becomes available to receive the mail.
+Note that the MTA and MDA have their own domain name types. DNS name has "NS", IP has "A", website server has
+"ORIGIN", and mail has "MX".
+
+Also, the application-layer protocol used to send mails from the UA and forward them between the MTAs up to the
+MDA is called SMTP which stands for Simple Mailing Transfer Protocol, however to receive one from the MDA the
+IMAP and POP3 are used. Though POP3 is old and such, so it's just IMAP now. IMAP has a port 143 and 993 if over
+TLS, as for SMTP it is 25 and 587 if over TLS, though for some reason MTA-to-MTA forwarding uses "opportunistic"
+TLS instead, meaning that TLS is used only if bots sides support it, otherwise it is sent without TLS, i.e. just
+plain text instead, even though there is TLS between the UA and the MTA, which does request, but does not
+guarantee that there is TLS along the whole mail travel path.
+
+Note that technically the UAs could perform the MTA's jobs, but it if one would close the UA or shutdown their
+devices after they hit sent whilst the recipient's UA is not available (e.g. not connected to network) then the
+mail contents would be lost and no mail would be actually sent after the user hit the "send" button. A nice
+addition is also that logic and security can be separated, all into a single server, which in my case is most
+likely my ISPs local MTA. That local MTA also has a good reputation, so it is more likely to not get blocked
+by other foreign MTAs for security reasons. The MDA is simply an MTA that does not forward data outwards, only
+waits for data to come from outside and forwards it to the recipient UA once available. All in all, the main
+purpose of MTAs and MDAs is to hold the mailed data until the recipient becomes is available such that the
+sender might just hit "send" and exit from the system/app/service.
+
+Often times there are only 2 MTAs involved (and always 1 MDA), those MTAs are sender's UA -> sender's local
+ISP's MTA -> recipient's local ISP's MTA -> recipient's local ISP's MDA -> recipient's UA. If you are using
+something like "@gmail.com" then it is google's MTA's and MDA's that are used instead of the ISPs. All mailing
+systems have their own MTAs and MDAs which hold the data and forward it once it is ready to be received. So
+those MTAs and MDAs don't have to be necessarily in the same network or physically close to the UA, other MTAs,
+and other MDAs. However, corporations like to have it in their DMZs under the same firewall for convenience
+for when they want their own mailing systems such as the UiO's "@uio.no", which has several MTAs for when you
+want a specific branch such as "@ifi.uio.no", or "@jus.uio.no", etc.
+
+Mailed data consists of 3 parts, MTA traversing history, Header, and Body. As the mailed data travels between
+the MTAs each one adds itself to the path telling us who the MTA received the mailed data from as well as the
+who the current MTA which received the mail data is. It includes the IPv6 address of the MTAs, connection type
+(such as TLS) the domain name of the MTAs, and the date with time and the time zone (UTC). The log may also
+include the machine's operatin system, ESMTP id, and more (details here aren't that important). The Header
+includes info on whether it is cypher/plain text, charset such as UTF-8, date & time (and UTC) the mail was
+written, sender and receiver mail names/domains, message title, and the addons used such as MIME v1.0. The Body
+is the message itself minus the title since that is in the Header section, and that's it.
+
+ESMTP is the extends the security of SMTP by adding authentication, unicode encoding, and secure transport where
+the MTPs may establish TLS handshake (but first need to request it and list the supported connections). Not sure
+if that may cause a downgrade attack though. As for MIME, that is the addon that allows the support of more
+characters such as "æ", "å", "ø", etc. as well as the inclusion of png files and other types of encoding by
+specifying boundaries in the Header which are used in the Body section.
+
+
+
+--- Security & Attacking Tricks ---
+Phishing is the most obvious attack that will always work as long as humans can be fooled (or make mistakes)
+by means which grant unauthorized access, such as links. Some domain links are obvious, some have to be looked
+at closer, and some are evil and use similar letters and phrases or typos such as the cyrillic "а" instead of
+the english one "a" which looks the same but have different IDs which to a computer look different. Though this
+usage of simillar letters is often pointed out by browsers today. Some domains may want to extract some info
+from you such as your password, and a simple link might not give enough access so usually they might lead you to
+a website that is made to be identical to the original from the human's point of view, so that when they enter
+their passwords the victims won't notice anything wrong at first. However, with DNS poisoning one may use the
+real link to the original website which will redirect to the attacker's one instead.
+
+Privacy Breach is the tracking of when and where the mail was opened. Mails that utilize HTML such as .png images
+with "src=https://..." force the mailing system to download the image from that website to show it to you. This
+means that once you open a mail the website image gets downloaded and gets to know the IP address (your device's
+approximate location). Not only that, each mail sent might utilize a different link which downloads the same
+.png image, but because the links differ the sender can know exactly which user that it sent mail to has opened
+it and when. This addition is typically called a "Token" represented as "...&auth=hash[e5be3db9]" which as you
+can see contains a 64 bit hexadecimal code as identifier. To counter this simply turn off image loading, but
+that is a quirk of HTML, who knows where else this may be used.
+
+Next is SPAM (with all caps for some reason). The reason people spam mails is because it is cheap and easy, and
+the companies don't risk anything other than their unauthenticated emails with no access to anything. Mails may
+travel via foreign MTAs (not just google's MTAs if you use gmail for example). Those free, open to public MTAs
+are called Open Relays, but one may restrict to accept mails only from certain types of domains which is how it
+mostly works today, e.g. @gmail.com allows to take @uio.no's mails and vice versa, but not @spammer.com's. This
+means that all MTAs have a sort of whitelist of domains they trust and are willing to receive data from. In
+addition to that and because of spoofing, getting blamed, use of own resources for forwarding, hiding attacker's
+IPs, spamming, etc. these Open Relays are very strict nowadays as well. So, MTAs are required to authenticate.
+The whitelisting is called Sender Policy Framework (SPF) and you can find which MTAs accept from which mails
+from the domain's DNS. For examples check the screenshots. Of course like with everything we got signatures
+Domain Keys Identified Mail (DKIMs) which the domain's DNS has a public key for which is used to verify the
+mail's contents. Lastly we got Domain Based Message Authentication, Reporting, and Conformance (DMARC) which
+is basically answering the "what happens if SPF or DKIM is missing?" question. Should we ignore and forward?
+Maybe reject and drop it? Also, it adds the check which verifies the "from:" found in SPF with the "from:"
+found in the mail's header (I believe).
+
+To sum it all up, nowadays the MTAs are wary of who the mails are coming from and must ask the MTAs to authorize
+themselves before their messages may be accepted by the receiving MTAs. The three requirements which are used
+to determine valid authentication are: SPF, DKIM, and DMARC. Note that all of that doesn't prevent spam emails,
+it just prevents unknown ones, i.e. unauthenticated ones. Though mailing systems still assume that users don't
+want any spam and so they inspect the mail's contents for some patterns, filter out unsubscribed ones, and there
+even is a "spam score" which adds/deducts points for how suspicious it is as a spam mail.
+
+Note that STARTTLS only works between the MTAs, each MTA decrypts it, reads data, encrypts it back, and then
+forward to the next MTA. But what if an attacker forced the STARTTLS to downgrade into plain text? That is where
+S/MIME and PGP come in meant for end-to-end protection. S/MIME encrypts data and signs them using the email's
+contents. It builds on top of MIME which means that the data travels as MIME parts. And since signatures are
+involved it relies on the certificates issued by the CA, same as with HTTPS. Though verifying a person instead
+of a website with certificates is arguably harder. Also, only the mail's Body section is the only one protected
+here since the rest needs to be used for authorization among other things during travel between the MTAs, and it
+also makes the key management a hassle. Though this is mostly solved by the enterprises that hvae their own CAs.
+Pretty Good Privacy (PGP) is an alternative to the S/MIME. Here each mail address has its own certificates, and
+others may choose sign to show that they trust it. That way a huge line of signatures is made which might
+contain the signature of someone you trust when you receive a mail from an unknown source. Though Due to some
+other difficulties and disadvantages the PGP is only used in small communities, and it also has vulnerabilities.
+
+
+
+--- Notes ---
+2.1. If you use Gmail, usually what the sender sees is one of the gmail's proxy server IPs and not your IP.
+     The image loading feature can be turned off altogether though if you don't want other information to leak.
+2.2. Malware and Fraud are most commonly found in mails. Some malware might auto-execute on arrival or by
+     simply opening the mail, and fraud is literally phishing or ridiculous mails such as the nigerian prince.

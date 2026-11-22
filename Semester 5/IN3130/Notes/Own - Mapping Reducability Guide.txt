@@ -1,0 +1,59 @@
+--- Introduction ---
+I find mapping reducability quite hard. The best way is to first write down all the info we know, and what must
+be done to complete the m-reducability and others such as p- and l-reducabilities. I will also give my own
+example of my own reducability that the AI fully approved, and will show the one that AI didn't approve.
+
+
+
+--- Theory ---
+The formal definition is simple, but first definitions of computation complexity classes:
+1. Polynomial (P) - Languages for which there is a turing machine M that decides them in polynomial time.
+2. Nondetermenistic P (NP) - Languages where a verifier TM M recognizes membereship in L in polynomial time.
+3. Complement NP (Co-NP) - Languages where a verifier TM M recognizes non-membership in L in polynomial time.
+4. NP-Hard - Every language in NP is polynomial time reducable to those in NP-Hard. NP-Hard Doesn't mean that
+   there is necessarily a verifier of it in polynomial time, i.e. NP-Hard may not be in NP and vice-versa.
+   NP-Hard problem can be not in NP, decidable, and undecidable. All P, NP, and Co-NP are decidable.
+5. NP-Complete - Languages that are both in NP and NP-Hard language classes, so also decidable.
+- New Terminology: Certificate - Input used on given verifier to verify its membership/non-membership in P time.
+
+More computational complexity classes: From top to bottom, each one above is a subset of the one below.
+1. PTIME - P and PTIME are one and the same class. It is also a subset of PSPACE.
+2. PSPACE - A language that some TM M decided, whose max filled cell spaces occupied (that is excluding 
+   unvisited blanks) was of polynomial size relative to the input in its tape. I also explained what space means.
+3. EXPTIME - A language that some TM M decided within exponential number of valid configuration steps, i.e. time.
+4. EXPSPACE - A language that some TM M decided, whose max space taken is exponential (relative to input ofc.).
+
+Now definitions of the language hierarchy within the world of TMs (no DFAs, NFAs, PDAs, etc.): Also in order.
+1. Recursive (REC) - L is in R if there is a decider TM M for L that only either accepts or rejects on input w.
+2. R Enumerable (RE) - L is in RE if there is a recognizer TM M for L, i.e. always accepts inputs belonging to L.
+3. RE Complements (Co-RE) - L is in Co-RE if there is TM for L which recognizes non-membership of input w in L.
+4. Non-RE (NRE) - Languages that are unrecognizable, i.e. for which there can't be recognizer of membership in L.
+
+Now definitions of reducibility and their formulas: Each one below also proves the one above.
+1. Mapping reduction, aka. m-reducibility (<=_m) - A language L1 is m-reducible to L2 if there is a mapping f(w)
+   that transforms an input w in L1 to an input f(w) in L2, and if w is not in L1 then f(w) is not in L2. i.e.
+   w in L1 <=> f(w) in L2. So one must show that f(w) is total and computable.
+2. Polynomial reduction, aka. p-reducibility (<=_p) - Same as m-reducibility, but f(w) now has a constraint where
+   it must be mapping from w to f(w) in polynomial time. So one must show that f(w) is in PTIME.
+3. Linear reduction, aka. l-reducibility (<=_l) - Same as p-reducibility, but instead of showing that f(w) is in
+   PTIME, we must show that it is in LTIME instead.
+
+Now for the formulas and Lemmas and such (or at least I call them that):
+1.1. If L is in RE, then ~L is in Co-RE.
+1.2. If L is in REC, then both L and ~L are in RE.
+1.3. If L is not in REC but is in RE, then ~L is not in Co-RE but is in NRE.
+1.4. If L is in NP and L is in NP-Hard, then L is in NP-Complete.
+- Above this are class and hierarchy related, below this are also mapping related.
+2.1. If L2 is in REC, and L1 is mapping reducible to L2, then L1 is in REC.
+2.2. If L2 is in RE, and L1 is mapping reducible to L2, then L1 is in RE.
+2.3. If L1 is not in REC, and L1 is mapping reducible to L2, then L2 is not in REC.
+2.4. If L2 is in NP, and L1 is polynomial mapping reducible to L2, then L1 is in NP.
+- P.S. these patterns can be generalized to other classes, I gave one of each for a general idea.
+
+TC. Expand everything with classes L and NL (which are linear I think? So like O(c * n + d) where n is |w| and
+both c and d are some constants I guess) ...
+
+
+
+--- Practice ---
+TC. Examples of some reducabilities, and some tricks or patterns perhaps...

@@ -1,3 +1,46 @@
-prefix-based: kinda good but suffix is faster
-suffix-based: fast algorithm, horspool is fastest in most cases
-hash based (actually just an example and very inefficient, the point is you can represent strings as numbers and do some math on that)
+We call it string search, but in here we really refer to anything in general. Whenever we are searching for any
+pattern the techniques desribed here can be applied in exactly the same way, just a different alphabet I guess.
+By the pattern what I mean here is a substring in a string, and there are 3 ways to search for those which are:
+prefix-based (searching from left to right), suffix-based (searching from right to left), and hash-based. But
+before we talk about that, here is the naive way to solve the problem: Check if our pattern of size M is at
+position N, if not do N + 1 and check again, continue until N - M + 1 checks were done, which is the end of our
+list, resulting in O(N * M), because remember that each check takes at most M steps, and it takes at most
+N - M + 1 iterations where N >= M (recall how O notation works).
+
+The naive method was an example of a basic prefix-based algorithm, but there is a better one called The
+Knuth-Morris-Pratt algorithm. The idea is that some checks we can skip and thus increment N by more than just 1.
+This is how we calculate by how much we can skip: First we find D which is the longest suffix between N and M
+that is also the same as the prefix between N and M. Next we simply skip by the length of M - D, i.e. we always
+increment N by M - D. If you are confused just check out "L3 - Prefix Search.png" which shows exactly what D is
+and by how much we may skip. This algorithm is exactly O(N) in size since the time it takes to search for D is
+the amount we skip by.
+
+Suffix-based algorithms are simply faster though. First one is Boyer-Moore algorithm, but apparently it was
+"too complicated" to explain, so we will look at Horspool which is a simplified version of this algorithm and
+very close to its performance improvement, i.e. still faster than the prefix-based KMP algorithm (I think?).
+Anyways, it still works by checking from left to right, but it is called suffix because it checks the last
+character of the substring we want first. It continues from right to left inside the checking range, and if there
+is a mismatch then we skip by the amount such that the mismatched letters now match (we do not care for the
+rest). We create a map at the start in O(N) time which tells us by how much we skip based on what letter in the
+string got a mismatch. If there is no such letter then we ignore the mismatch, and if we are done checking the
+substring but it wasn't a full match (in case if the last check was ignored) then we simply skip by M.
+
+Lastly we got a hash-based algorithm called Karp-Rabin. The idea here is instead stupid to be honest, regardless
+here is how it works: You first convert letters into numbers, and make it so each possible check (N - M + 1)
+is now a number. Creating this table of checks is done in O(N * M) which is the bottleneck here, however locate
+the substring itself it only takes an additional O(N - M), so although it isn't faster, it is good for when we
+are going to go over the same string and try to locate multiple substrings within it. Though the algorithms above
+could be modified to do the same thing. I would also like to point out that if we reuse the previous computed
+entry in our table, then we can compute the next entry in O(1) by simply stripping the value that represents
+the first letter, then bit shifting to the left by the stripped amount, and then simply sum it up with the value
+of the last letter of the next substring. Thus, making the computation of a table in O(N). The problem is that
+this has to be cleverly implemented on a low level I believe due to how the CPUs work. Though because we are
+comparing encoded strings and not letters now, the CPU might not have enough space in its register and then we
+are back to the same O(N * M) way. To prevent this we may try to hash these encoded values (double hash lol),
+but there might be collisions which would cause false-positives in case the whole (or just the collided)
+letters from the alphabet are used.
+
+However, just like with anything, a clever datastructure may often be better. And I guess the KR hash-based
+solution counts as a datastructure aswell. Well... sort of, cuz it is more than just that. Anyways, right now
+we will talk about suffix trees, an actual datastructure. This is very simple and we have learned about this
+long time ago as one of the first things, so just check out the screenshots.

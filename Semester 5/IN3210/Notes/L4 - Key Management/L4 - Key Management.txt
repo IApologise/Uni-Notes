@@ -1,0 +1,58 @@
+--- Key Lifespan ---
+Keys can be compromised, vulnerabilities can be discovered, and plans can be made around that by hackers who
+either want to sell this information on black market or use these keys that they got somehow for their own
+malicious goals. For that reason it is important to keep private information private, e.g. private keys,
+keystreams, & certificates. Because of that the keys also have to be cycled, and by that I mean that the old
+ones must be replaced from time to time with new ones to prevent any unknown leaks to cause damage. I should
+have a screenshot for that taken from NIST SP 800-57. It includes OUP which is the time the key can be used for
+encryption, and an RUP which is the time it can be used for decryption & verification (these are Cryptoperiods).
+
+First of all high-quality pseudo-randomness is very important. Keys can also be lost due to some hardware failure,
+so backups must be prepared. Hardware also has many security measures such as: 1. TPM which is a separate physical
+storage on a device outside CPU that is verified for integrity during each boot, 2. HSM which is a yet another
+module within a device that generates and stores the cryptographic information (extension of TPM)?, 3. Smart Cards
+which are tiny chips that act kind of like TPMs (but have less features?) and require a Two-Factor Auth, often
+used in debit & credit cards, 4. USB Security Tokens which are USB sticks that work similarly to Smart Cards, 5.
+OS level storage which ensures isolation and access control, as well as using TPM, encryption on files, and Secure
+Boot which verifies its own integrity.
+
+The first problem is of course keeping it all working and secure using the methods above, but the second one is
+the storage since a full-mesh connection between N end-to-end systems requires N/2 * (N - 1) key pairs which
+grows by O(N^2). Moving keys & setup also requires a secondary "Out-of-Band Delivery" channel, which is basically
+the Diffie-Helman method if done over network, perhaps the reuse of previous already established symmetric keys,
+a USB Security Tokens if physical (among many other methods), or a KDC...
+
+
+
+--- Key Distribution Center (KDC) ---
+KDC is moslty used as a background powerhouse in enterprise, for example when a worker or a student log into their
+windows machine and get access to their emails & other files without the need to provide their login information
+again: Single Sign-On or SSO for short. Instead the authentication went to a KDC which verified the authentication
+data (compared hashed user password with the one in its database) and returns a Ticket Granting Ticked (TGT) which
+is a newly generated session key from Alice to KDC server which is initially transported via encryption by Alice's
+public key, KDC's signature, and a certificate (I think?).
+
+Now is probably kind of late to mention, but KDC is a single unit that stores all the key pairs of all the users
+which minimizes the need for storage (like in full-mesh), and is convenient for usage from multiple devices, but
+may act as a single break point for hackers and an instant gold mine.
+
+If one wants to communicate to another end device, then that is also done via KDC which creates a temporary
+session key. If Alice wants to talk to Bob, then the KDC first creates a ticket encrypted with Bob's secret key
+which only KDC and Bob know, then sends the session key generated during KDC <-> Bob TGT to the Alice encrypted
+with Alice's session key, finally Alice sends this session key that KDC gave it to Bob and also sends her
+"authenticator". Since Bob was the only one who could decrypt it and since the session key inside is the one
+that KDC generated which verifies Alice's "authenticator", Bob can now establish a direct connection between
+Alice and Bob using that same session key without bothering KDC again.
+
+To prevent packet replayability attack on Alice	we simply add a Nonce which should only be used once, so if it
+gets used again that is a giveaway, and if it gets changed hash will show. And to prevent same attack on Bob we
+simply add timestamps to when the session key was created to differentiate between old and new messages, changing
+that data will also change the hash.
+
+
+
+--- Notes ---
+2.1. Kerberos is a name for a specific KDC method which is actually the one I described above (I think). By the
+     way TGS is a service that verifies Auth and grants TGT & such.
+2.2. MITRE ATT&CK mentions the attack possible on the Kerberos system, among many other non-Kerberos attacks.
+     Some of these attacks are: Kerberoasting, Golden Ticket, and Silver Ticket. Google for more information.

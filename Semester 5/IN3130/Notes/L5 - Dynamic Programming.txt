@@ -1,0 +1,45 @@
+--- Algorithmic Classes ---
+Programming algorithms can be divided into many different types/classes. Some solve a problem in a certain way,
+some solve a certain problem (note the distinction), some strategies can be applied broadly to most algorithms,
+some are techniques to solve many problems using one and the same general method. Below is my classification.
+
+A. Problem-Solving Strategies: An idea on how to get the solutions
+1. Brute Force - Trying every possible solution, also called by exhaustion sometimes.
+2. Divide and Conquer - Spliting a problem into smaller independent ones, solve them, and combine.
+3. Dynamic Programming - Splitting a problem into smaller overlapping ones, solve them, and combine.
+3. Greedy - Choosing what seems to be the optimal option at each step. The solution itself might not be optimal.
+4. Heuristic - Solving a simplified (wrong but similar) problem, or using shortcuts, to find a quicker but
+   suboptimal solution to the original problem. A simplification might be just assumptions about the original.
+5. Backtracking - Identifying every possible path to a solution, i.e. abandoning wrong paths once we see it.
+
+Note #1: These techniques can be combined, such as backtracking with the greedy, even with brute force!
+Note #2: The difference between D&C (A2) and DP (A3) is that whenever DP splits the problem, the solution to the
+         splitted part is also a solution to the other problem. Thus the difference between what I meant when I
+         wrote independent and overlapping in A2 and A3 respectively.
+Note #3: With backtracking, we can also introduce Pruning to identify and abandon all the sub-optimal solutions.
+
+B. Techniques & Patterns: A property of an algorithm
+1. Recursion - Calls itself repeatedly, but on a smaller input such that it converges to a solution.
+2. Sliding Window - Looking at a portion of the input at each step rather than the whole at all times.
+3. Two Pointers - Using multiple references to avoid complex jumps. So for easy merging/comparisons.
+
+C. Specific Problem/Solution Families:
+1. Graph Traversal - Translating to or solving a graph traversal related problem.
+2. Evolutionary - Finding solutions through simulated evolution, i.e. an AI.
+3. Mathematical Optimization - Finding the solution by maximizing/minimizing, or just solving, some equation.
+
+D. General Improvement Approaches:
+1. Learning - Improves solution finding/guessing through variuos pre-collected data and its own experiences.
+2. Modeling - Creating a model of something, like a real world problem, it solves nothing but assists in
+   understanding for a human/other programme to solve it.
+
+
+
+--- Classification Examples ---
+A2. Dynamic Programming - An example to this one to calculate the fibonacci number N: fib(N). Here we solve this
+    problem by simplifying it to fib(N - 1) + fib(N - 2) and solve those instead. Keeping a record of previous
+    solutions allows for future problems to be solved faster. Top-Down approach is when we basically utilize
+    recursion, and Bottom-Up is when we calculate every previous solution from the start and store it for
+    the next solution. The difference here is just the starting point, i.e. use recursion or not. I used both,
+    but I intuitively fall to the Bottom-Up approach almost all of the time.
+A5. Backtracking - ... Coin-Change

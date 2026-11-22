@@ -1,0 +1,47 @@
+--- Facts ---
+ P1: ????????????????????????
+P1E: ????????????????????????????????????????????????
+IV1: 3beba333e96b41142f1874aac0d7f066
+ C1: 0fbb334ba2d146a7e28113a15249b5d5a3efa09a89d17e5f
+
+ P2: Overflow in Progress ...
+P2E: 4f766572666c6f7720696e2050726f6772657373202e2e2e
+IV2: 3beba333e96b41142f1874aac0d7f066
+ C2: 0ea8224eabcf42f0b18d1ef47052aecbf1f8bc8ac28c7151
+
+--- Rules ---
+S0 = Ek(IV)
+Sn = Ek(Sn-1)
+Cn = Pn XOR Sn
+
+C XOR C = 0...
+C XOR 0... = C
+Cx XOR Cy = Cy XOR Cx
+Cx XOR (Cy XOR Cz) = (Cx XOR Cy) XOR Cz
+
+--- Idea ---
+Because the IV will get reused,
+and the key is always the same,
+S1 used in C1 = S2 used in C2.
+
+My main idea was to have it overflow,
+but apparently we already start after it did,
+and close to the finish line too. Otherwise
+it would take me a very long time to reach it...
+
+--- Formula ---
+C1 XOR C2 XOR P2 =
+= (P1 XOR S1) XOR (P2 XOR S1) XOR P2
+= P1 XOR (S1 XOR S1) XOR (P2 XOR P2)
+= P1 XOR 0... XOR 0...
+= P1
+
+--- Substitution ---
+P1 = C1 XOR C2 XOR P2
+= 0fbb334ba2d146a7e28113a15249b5d5a3efa09a89d17e5f XOR
+  0ea8224eabcf42f0b18d1ef47052aecbf1f8bc8ac28c7151 XOR
+  4f766572666c6f7720696e2050726f6772657373202e2e2e
+= 01131105091e0457530c0d55221b1b1e52171c104b5d0f0e XOR
+  4f766572666c6f7720696e2050726f6772657373202e2e2e
+= 4e6574776f726b20736563757269747920726f636b732120
+= Network security rocks!

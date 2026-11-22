@@ -1,0 +1,264 @@
+ubuntu@my-instance:~/Desktop/in3210_obligs_2026/webserver$ python --version
+Command 'python' not found, did you mean:
+  command 'python3' from deb python3
+  command 'python' from deb python-is-python3
+ubuntu@my-instance:~/Desktop/in3210_obligs_2026/webserver$ python3 --version
+Python 3.14.4
+ubuntu@my-instance:~/Desktop/in3210_obligs_2026/webserver$ nc 158.39.200.87 3210
+Access key: 
+in3210_h26
+=== OFB Encryption Oracle ===
+
+Bob's secret message : (unknown to you)
+Bob's ciphertext     : 768ed9e026c26650ff51bf2776c113168ca1ed753040d544
+IV used for Bob      : f7f07619577388b5908f6f1484d0fc47
+
+Type any plaintext (ASCII, at least 24 characters) to encrypt it.
+To submit your recovered answer type: ANSWER:<plaintext in ASCII>
+
+How the IV works here:
+  - The plaintext you type at the next 'Your plaintext' prompt is
+    encrypted with 'IV for this round' (shown directly above it).
+  - 'IV for next round' does NOT apply to that input. It is only a
+    preview of the following round: after this encryption the IV
+    counter advances by +1, and the next round will display that
+    previewed value as 'IV for this round'.
+
+IV for this round : f7f07619577388b5908f6f1484d0fc3e
+IV for next round : f7f07619577388b5908f6f1484d0fc3f
+Your plaintext    : 
+Hello World!^C
+ubuntu@my-instance:~/Desktop/in3210_obligs_2026/webserver$ nc 158.39.200.87 3210
+Access key: 
+in3210_h26
+=== OFB Encryption Oracle ===
+
+Bob's secret message : (unknown to you)
+Bob's ciphertext     : d811dc09a0f0235b5f2b136297ac8b9d45accdb1be792aa4
+IV used for Bob      : 51669aded69146a7df728b38be8c2291
+
+Type any plaintext (ASCII, at least 24 characters) to encrypt it.
+To submit your recovered answer type: ANSWER:<plaintext in ASCII>
+
+How the IV works here:
+  - The plaintext you type at the next 'Your plaintext' prompt is
+    encrypted with 'IV for this round' (shown directly above it).
+  - 'IV for next round' does NOT apply to that input. It is only a
+    preview of the following round: after this encryption the IV
+    counter advances by +1, and the next round will display that
+    previewed value as 'IV for this round'.
+
+IV for this round : 51669aded69146a7df728b38be8c2282
+IV for next round : 51669aded69146a7df728b38be8c2283
+Your plaintext    : 
+Hello World!
+Plaintext too short (12 chars). Need at least 24 characters.
+
+IV for this round : 51669aded69146a7df728b38be8c2282
+IV for next round : 51669aded69146a7df728b38be8c2283
+Your plaintext    : 
+Hello, World. Programmed to work^[[D^[[D^[[D^[[D^[[D^[[D^[[D^[[D^[[D^[[D^[[D^[[D^[[C^[[^C
+ubuntu@my-instance:~/Desktop/in3210_obligs_2026/webserver$ nc 158.39.200.87 3210
+Access key: 
+in3210_h26
+=== OFB Encryption Oracle ===
+
+Bob's secret message : (unknown to you)
+Bob's ciphertext     : 5692a3b7fd3147aacaf944c39bd951a4055e5ef96ae85e4f
+IV used for Bob      : c1a27df8ccc877014442ae2946a4b608
+
+Type any plaintext (ASCII, at least 24 characters) to encrypt it.
+To submit your recovered answer type: ANSWER:<plaintext in ASCII>
+
+How the IV works here:
+  - The plaintext you type at the next 'Your plaintext' prompt is
+    encrypted with 'IV for this round' (shown directly above it).
+  - 'IV for next round' does NOT apply to that input. It is only a
+    preview of the following round: after this encryption the IV
+    counter advances by +1, and the next round will display that
+    previewed value as 'IV for this round'.
+
+IV for this round : c1a27df8ccc877014442ae2946a4b602
+IV for next round : c1a27df8ccc877014442ae2946a4b603
+Your plaintext    : 
+Hello World! Welcome to the Show.
+Your ciphertext: f97706b29e229a1e55b7cd20e5f999831f1f3ab65cd18875282a3712a37c00d19f
+
+IV for this round : c1a27df8ccc877014442ae2946a4b603
+IV for next round : c1a27df8ccc877014442ae2946a4b604
+Your plaintext    : 
+^C
+ubuntu@my-instance:~/Desktop/in3210_obligs_2026/webserver$ nc 158.39.200.87 3210
+Access key: 
+in3210_h26
+=== OFB Encryption Oracle ===
+
+Bob's secret message : (unknown to you)
+Bob's ciphertext     : 1eae6e88cb8217680c99eedcd6da85429a24d5a2b3f41484
+IV used for Bob      : 8dac2d66a93bedfebefe6358f924cb03
+
+Type any plaintext (ASCII, at least 24 characters) to encrypt it.
+To submit your recovered answer type: ANSWER:<plaintext in ASCII>
+
+How the IV works here:
+  - The plaintext you type at the next 'Your plaintext' prompt is
+    encrypted with 'IV for this round' (shown directly above it).
+  - 'IV for next round' does NOT apply to that input. It is only a
+    preview of the following round: after this encryption the IV
+    counter advances by +1, and the next round will display that
+    previewed value as 'IV for this round'.
+
+IV for this round : 8dac2d66a93bedfebefe6358f924cafe
+IV for next round : 8dac2d66a93bedfebefe6358f924caff
+Your plaintext    : 
+Hello World! What is up?
+Your ciphertext: 71a19d27201decb89d54202b708115d0c9c0cf09bf5bab06
+
+IV for this round : 8dac2d66a93bedfebefe6358f924caff
+IV for next round : 8dac2d66a93bedfebefe6358f924cb00
+Your plaintext    : 
+Nothing Much... And you?
+Your ciphertext: ab88aaa6a5ab12a518ed721fdfbcc83ac2a16c218e684039
+
+IV for this round : 8dac2d66a93bedfebefe6358f924cb00
+IV for next round : 8dac2d66a93bedfebefe6358f924cb01
+Your plaintext    : 
+Hello World! What is u  
+Plaintext too short (22 chars). Need at least 24 characters.
+
+IV for this round : 8dac2d66a93bedfebefe6358f924cb00
+IV for next round : 8dac2d66a93bedfebefe6358f924cb01
+Your plaintext    : 
+Hello World! What is up?!
+Your ciphertext: d5120b50357cde585bce82a3e5138488222406799b1219a749
+
+IV for this round : 8dac2d66a93bedfebefe6358f924cb01
+IV for next round : 8dac2d66a93bedfebefe6358f924cb02
+Your plaintext    : 
+Overflow in Progress ...
+ubuntu@my-instance:~/Desktop/in3210_obligs_2026/webserver$ nc 158.39.200.87 3210
+Access key: 
+in3210_h26
+=== OFB Encryption Oracle ===
+
+Bob's secret message : (unknown to you)
+Bob's ciphertext     : 0fbb334ba2d146a7e28113a15249b5d5a3efa09a89d17e5f
+IV used for Bob      : 3beba333e96b41142f1874aac0d7f066
+
+Type any plaintext (ASCII, at least 24 characters) to encrypt it.
+To submit your recovered answer type: ANSWER:<plaintext in ASCII>
+
+How the IV works here:
+  - The plaintext you type at the next 'Your plaintext' prompt is
+    encrypted with 'IV for this round' (shown directly above it).
+  - 'IV for next round' does NOT apply to that input. It is only a
+    preview of the following round: after this encryption the IV
+    counter advances by +1, and the next round will display that
+    previewed value as 'IV for this round'.
+
+IV for this round : 3beba333e96b41142f1874aac0d7f057
+IV for next round : 3beba333e96b41142f1874aac0d7f058
+Your plaintext    : 
+Overflow in Progress ...
+Your ciphertext: 137239cfaa04565da3980f3a11755a5315e8b8fe0859abe9
+
+IV for this round : 3beba333e96b41142f1874aac0d7f058
+IV for next round : 3beba333e96b41142f1874aac0d7f059
+Your plaintext    : 
+Overflow in Progress ...
+Your ciphertext: 9239a88f9ac4463475dced819bae59da79cd8c3fe4931be0
+
+IV for this round : 3beba333e96b41142f1874aac0d7f059
+IV for next round : 3beba333e96b41142f1874aac0d7f05a
+Your plaintext    : 
+Overflow in Progress ...
+Your ciphertext: 0cd78c144784ddd2c8c9aef9d8050fcf1f012ba58e3b1d1e
+
+IV for this round : 3beba333e96b41142f1874aac0d7f05a
+IV for next round : 3beba333e96b41142f1874aac0d7f05b
+Your plaintext    : 
+Overflow in Progress ...
+Your ciphertext: dcc84aa79baf402f2c61c7c9548a2dd3599f7204a5e513a6
+
+IV for this round : 3beba333e96b41142f1874aac0d7f05b
+IV for next round : 3beba333e96b41142f1874aac0d7f05c
+Your plaintext    : 
+Overflow in Progress ...
+Your ciphertext: 6912daeafcfdba93a84a1f433bd7aaa01c1131d01a9258bb
+
+IV for this round : 3beba333e96b41142f1874aac0d7f05c
+IV for next round : 3beba333e96b41142f1874aac0d7f05d
+Your plaintext    : 
+Overflow in Progress ...
+Your ciphertext: 54607ece433e936a418cc1000da595e828d66243fcd65c95
+
+IV for this round : 3beba333e96b41142f1874aac0d7f05d
+IV for next round : 3beba333e96b41142f1874aac0d7f05e
+Your plaintext    : 
+Overflow in Progress ...
+Your ciphertext: 02845ef4b89ce97a39e35edb038f71f4c1860587b843ec84
+
+IV for this round : 3beba333e96b41142f1874aac0d7f05e
+IV for next round : 3beba333e96b41142f1874aac0d7f05f
+Your plaintext    : 
+Overflow in Progress ...
+Your ciphertext: c9f15cbe04117c47c049a4ce3b1241d2ea63150e39536861
+
+IV for this round : 3beba333e96b41142f1874aac0d7f05f
+IV for next round : 3beba333e96b41142f1874aac0d7f060
+Your plaintext    : 
+Overflow in Progress ...
+Your ciphertext: 03fe070f273ebf6fd3ce7c79f4bb18bb379f4e1287ff68a1
+
+IV for this round : 3beba333e96b41142f1874aac0d7f060
+IV for next round : 3beba333e96b41142f1874aac0d7f061
+Your plaintext    : 
+Overflow in Progress ...
+Your ciphertext: a87b8d3de2acb18d5dfb87be9fb2e82f131434583d1aa167
+
+IV for this round : 3beba333e96b41142f1874aac0d7f061
+IV for next round : 3beba333e96b41142f1874aac0d7f062
+Your plaintext    : 
+Overflow in Progress ...
+Your ciphertext: a9840f97a32e3f2e3c6db949fbf386a1eeccc9b38949cade
+
+IV for this round : 3beba333e96b41142f1874aac0d7f062
+IV for next round : 3beba333e96b41142f1874aac0d7f063
+Your plaintext    : 
+Overflow in Progress ...
+Your ciphertext: a292ab99ebf8ad98cc122bdefeedc34c6df869f082b20a7b
+
+IV for this round : 3beba333e96b41142f1874aac0d7f063
+IV for next round : 3beba333e96b41142f1874aac0d7f064
+Your plaintext    : 
+Overflow in Progress ...
+Your ciphertext: e85e2554163225a6a06b0e32e081e16e2f47d23ca550a8fb
+
+IV for this round : 3beba333e96b41142f1874aac0d7f064
+IV for next round : 3beba333e96b41142f1874aac0d7f065
+Your plaintext    : 
+Overflow in Progress ...
+Your ciphertext: 3a1fe8caf6a472e5342efb0d5d74dd4a8e29342700f72697
+
+IV for this round : 3beba333e96b41142f1874aac0d7f065
+IV for next round : 3beba333e96b41142f1874aac0d7f066
+Your plaintext    : 
+Overflow in Progress ...
+Your ciphertext: 5747fa8e1c8f1f9ade49c6abb141030fe4ef9cf951155677
+
+IV for this round : 3beba333e96b41142f1874aac0d7f066
+IV for next round : 3beba333e96b41142f1874aac0d7f067
+Your plaintext    : 
+Overflow in Progress ...
+Your ciphertext: 0ea8224eabcf42f0b18d1ef47052aecbf1f8bc8ac28c7151
+
+IV for this round : 3beba333e96b41142f1874aac0d7f067
+IV for next round : 3beba333e96b41142f1874aac0d7f068
+Your plaintext    : 
+ANSWER:Network security rocks!
+
+*** CORRECT! ***
+You successfully exploited the OFB keystream reuse.
+Your proof token (screenshot this): 53828a6b7a55d25d819bdf9946e9ea0a
+
+This connection is now closed.

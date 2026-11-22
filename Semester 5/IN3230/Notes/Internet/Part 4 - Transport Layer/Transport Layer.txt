@@ -1,0 +1,202 @@
+--- Introduction ---
+Technically we've already seen how the transport layer works in IN2140, and how it is used in this subject already.
+However, Let's go more in-depth and talk about even more TCP related stuff (UDP is tiny and simple), as well as
+more on congestion control and what not.
+
+First of all, a reminder that the transport layer was designed for end-to-end communication in mind and not for
+ISes, though as we've seen ISes do look into this layer (4) for good reasons (sometimes not though). An example
+to those good reasons are NAT (aka. NAPT) and Switching Fabric.
+
+
+
+--- Protocols ---
+
+   UDP: User Datagram Protocol
+UDP is connectionless, i.e. it requires little to no setup. In addition to that it does not guarantee anything
+such as the order in which the packets may arrive, nor that the packets will arive at all. The advantage is that
+it is faster and has a much more compact header. Since it is so simple all that is required are the port source
+for NAT (maybe more?), port destination. The length is technically redundant only because it can be deduced from
+the layer below (IP), but it is included today, so some people sometimes use these bits for something else...
+Lastly it would be nice to have a checksum for when the data that does arrive could at least be read correctly
+(unless too much loss occured), which is perhaps the only service that every layer behind transportation provides,
+i.e. layers 2, 3, and 4.
+
+
+   TCP: Transmission Control Protocol
+Unlike UDP, TCP requires a handshake first, i.e. some setup. Its header is much larger and contains much more data
+for various purposes such as ordering, retransmission, error correction, and congestion control, though lots of
+parts in TCP today are not used which allows for new implementations. I'd rather not point everything out
+explicitly and hope you can simply check the TCP header screenshots and my notes on it from before yourself or on
+a Wikipedia page. The goal of TCP is to guarantee that the packet has arrived its destination as intended.
+
+
+   QUIC: Quick UDP Internet Connections
+QUIC builds on top of UDP. This means that it is technically an application layer data and is not a standalone
+protocol of its own. So the UDP is still used as the layer 4 protocol, but the application layer data that is sent
+and which arrives has some logic which helps with the transportation, e.g. ordering & data loss prevention logic.
+Note how the protocols below to the same only due to ossification, whilst QUIC was meant to be dependet on UDP.
+
+
+   SCTP: Stream Control Transmission Protocol
+Unlike QUIC, it is a standalone protocol of its own (as the name implies) which means that it is a victim of
+ossification (blocked by most if not all firewalls). So in practice it is also built on top of UDP (or DTLS when
+used for WebRTC channels). It is similar to TCP in some regard, except that in TCP the data comes as an ordered
+bytestream meaning fragmentation might be involved, SCTP doesn't allow fragmentation and sends the exact block
+of data that was meant to be sent, no more and no less. This feature is called being Message-Oriented. Moreover,
+SCTP is Multi Streaming: Separates the whole file or video data into chunks each receiving ordered data, later
+those chunks are merged, similarly to how parallel optimization works. Also, Multi Homing: Multiple ports may
+refer to the same process. And finally some DoS resistance via a 4-way handshake which includes a cookie.
+
+
+   DCCP: Datagram Congestion Control Protocol
+Similarly to SCTP it is a standalone protocol of its own as well, and is also a victim of ossification meaning
+that it is also implemented in the application layer over UDP. DCCP was designed to be like UDP but with some
+congestion control in mind which UDP does not do. It allows applications to decide what type of congestion control
+they want which does require a connection establishment like that of TCP.
+
+
+
+--- Ossification ---
+Today the TCP barely changes (due to ossification), where firewalls and backwards compatability make things
+pretty much impossible to change. Instead the unused bits are being repurposed and rarely used ones or not those
+that aren't used at all are replaced with gibberish to prevent firewalls and other systems from aclimating to the
+current use. That will prevent future implementations from being dropped. Techincally ossification applies to UDP
+as well, but it was meant to stay minimal to begin with... This prevents new protocols from emerging as well.
+Instead, QUIC builds on top of UDP, SCTP and DCCP are technically independent protocols but use UDP regardless to
+avoid getting blocked by firewalls (i.e. live in the application layer as well though weren't meant to be).
+
+
+
+--- How TCP Works ---
+To have a better understanding of what all these protocols are all about, well they are trying to implement some
+of the functionality of TCP, essentially removing what isn't needed by adding some logic on top of the UDP. This
+is like having a barebones protocol where one may introduce some functionality via the application layer.
+
+ACK Clocking is the window size of the sliding window which limits how much packets can be in-flight
+simultaneously. This is important for congestion control and should always be there. The second principle is
+that if a packet is in-flight and a timeout happened, then assume that it was lost or an ACK went missing, which causes a restart because this means that something in the network has changed and we must probe the cwnd again.
+
+However, window size scaling is linear which does introduce a problem where data might be delivered before
+reaching a climax in the first place. That is one of the problems with AIMD which is scaling (not sure if I have
+mentioned that before). In cases like these the congestion control may never even get to matter in the first place
+for when RTT is quite large which slows down by how much the cwnd is increasing per second.
+
+As mentioned before (probably) TCP has SYN, FIN, ACK, RST, and other flags as well as CWR and ECE for ECN. The
+ACK number N received is the the acknowledgement that all the packets upto N (i.e. from before) and N itself have
+been received. However, this doesn't really help much for when the packets are lost, in which case each packet
+after must be retransmitted instead of only retransmitting those that were actually lost. For that reason TCP
+has an Options field where the first byte is the type of option such as SACK or DSACK, the next one is the
+length also 1 byte in size, and the rest of the 8 bytes is the option data itself. SACK is an option that tells
+which specific packet N was received, and not all up to N like with ACK. DSACK is also an option that tells which
+specific packet N was already received for which a duplicate was sent & received. The responses to this however
+is up to the implementer. Note that these aren't the only 2 options, but rather the 2 mentioned in the lectures.
+Also, note that ACK is technically redundant since if there is no data that arrived we can simply assume that it
+is an ACK, this could actually be done to any other flag, but only one must be chosen and widely accepted then.
+
+When it comes to ACKs, sending them after receiving each packet creates too much traffic and it is enough with
+one after every 2 segments or every 200 miliseconds, that is because as mentioned before ACKs are cumulative, so
+if we lose one the next one that does arrive will let us know exactly up to which point all were received, and we
+do have a limit of packets in-flight so we will be forced to wait eventually (or restart). However, if a duplicate
+is received that we already ACKed, then we must resend the ACK to let the sender know that we already received it,
+i.e. no 200 milisecond wait time in situations like these.
+
+
+
+--- Timeouts ---
+in Go-Back-N if we get packet N + 1 before we get packet N we drop it and wait for the other side to timeout. This
+saves time, but timeouts are usually quite long for safety because a false timeout causes lots of problems and
+is longer to recover from (I assume). The way we adjust our Retransmit TimeOut (RTO) is by taking the previous
+average RTT measurement {SRTT = (1 - a) * SRTT + a * RTT} where {a} is the variable we may adjust for how relevant
+the older measurements are (exponential) vs the new ones. Once we got the change we calculate by how much it
+changed, that is because if RTT changes a lot the next change (from higher to lower) might cause a false timeout,
+for that reason we also limit by how much the RTO may change {delta = (1 - b) * delta + b * [SRTT - RTT]} where we
+can adjust {b} by how big of a multiplier the deviation may change compared to previous SRTT changes (i.e.
+previous delta values). Then, {RTO = SRTT 4 * delta}, and we choose {4} here to make it more "conservative", i.e.
+prefer longer timeouts instead of shorter. This is why it takes a few RTTs to recover from ping spikes. However,
+I wonder what happens if SRTT did not change in the past like 10 or 20 RTTs and then goes up by a tiny amount like
+1 ms. This punishes incredibly stable connections, so adding a few miliseconds as a constant to the RTO calculation
+would prevent, or maybe just choose a low {b} value? Though often times {b} should be low anyways? Either way,
+because of how RTO is calculated there isn't much gain to updating RTO more than once per RTT.
+
+The problem is measuring the RTT where if we for example send a packet 1, then we timeout and send packet 1 again,
+after which we receive ACK 2, we can not know if it is the first packet that was ACKed or second one (in case there
+was no loss and we had a false timeout). This makes the measured RTT very wrong. One solution is to simply
+measure more often so that false timeouts quickly become obsolete. Second one is much more clever and better which
+is timestamps where we put the global time at which the packet was sent. This prevents false timeouts altogether!
+But it does require more header space (a small price to pay imo). This is called a spurious timeout.
+
+There is also RTOR which stands for RTO Restart. Whenever we send a packet an RTO timer starts, and once it is
+ACKed we rearm our RTO timer to count for the next packet by essentially calculating the new RTO (as we should
+once the packet gets ACKed) and substracting the time the packet (that wasn't ACKed yet) has been in-flight. So
+the problem here was that once the RTO is recalculated after an ACK we shouldn't just restart the timer, but also
+account for the current time passed with the unACKed packets that are in-flight to detect timeouts as should.
+
+
+
+--- Fast Retransmit / Fast Recovery ---
+Whenever packets are sent for a new connection we enter "Slow Start" with cwnd = iw, i.e. congestion window being
+initialized to that of the initial window value, after which the window grows exponentially, and we probe until a
+packet loss occurs, after which we go to the previous value (the one that didn't get dropped) and enter congestion
+avoidance (depends on the algorithm, such as TCP Reno, TCP Vegas, etc.). As you can see, we must probe the network
+to see at which rate we can send data without congesting the network (so how many MSS per RTT). Before that we of
+course probe for max MTU we can send via PLPMTUD. Now the way TCP works is if we receive duplicate ACKs, then a
+packet must have been lost and we resend it, but if no ACKs arrive from the receiver at all then a timeout happens
+meaning that the network is heavily congested at which point we start probing a new. The situation with duplicate
+ACKs is called Fast Retransmit / Fast Recovery.
+
+In Fast Retransmit / Fast Recovery, or FR/FR for short, what we do what we usually do since that is our classic
+congestion avoidance behaviour where we reduce the cwnd to ssthresh. After that we enter Fast Retransmit stage
+where we resend the missing packet (just the first that went missing ignoring the cwnd limit). After that goes the
+Fast Recovery stage which is when we set cwnd to ssthresh + 3 since we got 3 duplicate ACKs already, and for each
+additional duplicate ACK which might not have arrived yet we increase cwnd by 1. So we essentially wait for
+duplicate ACKs for all of the packets that we had in-flight up until we reach the point where the newly sent
+packet is ACKed. If the packet was not ACKed then we simply timeout. By this point we have ssthresh packets
+in-flight which is when we can send new packets. So during this time our cwnd acted as a counter, and after the
+counter reaches its goal, which is its old cwnd value (starting from ssthresh), then we can set the cwnd to
+ssthresh and continue sending packets where after the ACK of the retransmitted packet we got ssthresh - 1 packets
+in flight (because the first packet initially got lost).
+
+When it comes to FR/FR, Linux does it slightly differently which is called Proportional Rate Reduction, or PRR for
+short. Basically it doesn't wait for the cwnd to get all the way to ssthresh and then start sending new packets.
+Instead it assumes that there will be no timeout of the resent packet and each second (or n-th) DupACK it sends
+the next, new packet. The pipe drains twice slower, and new packets arrive twice slower, but they do arrive. I am
+not sure where that might be beneficial, but perhaps in video games or streaming where all you get is lower
+resolution for a video or twice (or n-times) the ping?
+
+Something important to note is that FR/FR is not really useful in short flows, which are flows require little
+data to be sent (like 4 KB or less such as HTTP requests) and finish much faster by having a higher initial
+window to reduce latency. The reason for that is Tail Loss which is when we simply can't get enough DupACKs to
+enter FR/FR in the first place, because today we set it to around 3 DupACKs as a sign that we need to enter FR/FR,
+but if 8th segment out of 10 gets lost, then we receive 2 DupACKs from 9 and 10 and never a third one since no
+segment 11 was ever sent (since there isn't one), so we can never enter FR/FR, at this point only the RTO can
+help us... Though to fix this tail loss problem we might just send the last packet multiple times, just enough
+for the sake of receiving 3 ACKs to detect and enter FR/FR instead of a timeout, though there is no need to do
+that right away, instead we wait right before the timeout is about to go off which is usually 2 * SRTT.
+
+Also, similarly to how timers can be used in timeouts to detect spurious timeouts, we can use timers and SACKs
+instead of ACK numbers to avoid much of all of this loss detection logic. For example, let's say that se send
+packets #1, #2, and #3 where #2 is SACKed. Since #2 was send after #1, #1 is assumed to be lost and retransmitted.
+Now if #1 is then ACKed before #3, then #3 must be retransmitted (our #1 was previously retransmitted making it
+appear after #3 now). And what if #1 and #2 got lost and we got #3 SACKed? Then we retransmit #1 and #2. But what
+if #1 got lost again? Then we get SACK #2 and retransmit #1 again. And those are the examples that DupACKs could
+never detect. Note that because there might be a tiny variation in when exactly those packets are SACKed due
+to routing path possibly changing, we add a slight time window called reordering window, and until it runs out
+after #2 got SACKed and #1 hasn't been ACKed yet, then we assume that #1 was lost, before that we still wait in
+hopes for #1 to get ACKed. Oh, and this is called RACKs which stands for Recent ACK or Recent Acknowledgement.
+
+
+
+--- Appropriate Byte Counting (ABC) ---
+Since each device may send at a different segment size to ensure fairness we msut increase the cwnd based on that
+and not on how many ACKs arrive. That is called Appropriate Byte Counting or ABC for short. To solve this problem
+we instead increase our cwnd based on the amount of bytes that we actually acknowledged, and we keep count if it
+in our new variable. This also solves delayed ACKs which previously could slow down the cwnd increase. Though
+during slow start there might be microbursts (multi-exponential growth at once) so we limit it to a multiple of 2.
+
+
+
+--- Notes & Statistics ---
+1. The initial window for short flows is 10 * MSS (i.e. 10 packets) because Google pushed this since it was the
+   perfect size to reach its servers in 1 RTT.
+2. Short flows account for 75% of the internet traffic. Mostly due to HTTP requests (I believe). Most of these
+   flows never need a retransmission (around 7% do).

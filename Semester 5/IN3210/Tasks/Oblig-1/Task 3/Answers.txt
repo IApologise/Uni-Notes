@@ -1,0 +1,37 @@
+--- Answer to the task 3a ---
+The first issue here is that TLS 1.0 is supported. Using this today would be an
+invitation for an attacker utilizing MiTM, e.g. by connecting to the attacker's
+"Free Wi-Fi", to inspect or tamper with the data sent/received. That is because
+TLS 1.2 and below all support cryptographic solutions that aren't secure
+anymore, i.e. can be deciphered. And even if secure solutions are in the list,
+the attacker can simply strip them (due to MiTM) so the server is forced to
+choose a weak one (downgrade attack). This is also possible with TLS 1.2, but
+if TLS 1.2 is configured well by only allowing the secure solutions then
+stripping those will leave no options left and thus a failed connection.
+However, since TLS 1.0 is supported the attacker might simply downgrade from a
+well configured TLS 1.2 to a TLS 1.0 by simply dropping the connection attempt,
+which at the time would cause the servers to assume that it is dealing with an
+older client and attempt a TLS 1.0 connection instead of the initial TLS 1.2.
+Though I've read that in most browsers today that would be detected by some
+flag which would not allow for these types of shenanigans to happen. But then
+again, might as well do the same by refusing RC4 and other weak insecure
+ciphers and what not... Actually, I believe that this indeed is the case today.
+Also, RSA with SHA-1 for signatures is a weak spot when used with TLS 1.2, and
+that is vulnerable to a downgrade attack. The "testssl" result from the
+screenshots also pointed out those TLS 1.0 vulnerabilities, final grade: "F".
+I believe that is mostly due to a support of TLS 1.0, and lack of TLS 1.3, but
+like I mentioned before, a well configured TLS 1.2 ALONE could do the job.
+
+--- Answer to the task 3b ---
+Yes, the website does allow for some insecure algorithms and what not, but the
+browser tells us that we are secure on the CURRENT connection. We could be
+running TLS 1.0 or be using some old vulnerable algorithms, but the current
+connection doesn't. In the "testssl" report it was pointed out that the choices
+are ordered from most secure to the least secure one, and the user choose the
+most secure option which is TLS 1.2 running ECDHE for encryption, RSA for
+authentication, with AES-128 for fast encryption (symmetric is faster) after
+the setup is complete, and importantly in GCM mode, with SHA-2-256 as our
+hashing algorithm. Moreover, the authority that signed the certificate is
+trusted since it was linked to one (or several of) the browser's Root CAs,
+which the browsers keeps an eye on (hopefully). In the screenshot you can also
+see the algorithms used for signing the certificate: SHA-2-256 & RSA (good).

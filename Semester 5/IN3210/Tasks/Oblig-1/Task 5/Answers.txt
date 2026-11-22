@@ -1,0 +1,13 @@
+--- Answer to the task 5a. Words used: 50 ---
+SYN Cookies exist to prevent SYN flood attacks - A form of Denial of Service
+where the attacker requests a SYN, but never proceeds with an ACK forcing the
+server to wait. The idea is to encode the SYN queue entry (our cookie) into
+the SYN+ACK, then reconstruct on ACK.
+
+--- Answer to the task 5b. Words used: 20 + 20 + 20 = 60 in total ---
+1. Source & Destination IPs. Needed to send to the right server device and
+spoof itself as the client device.
+2. Source & Destination Ports. Needed to send to the right server process and
+spoof itself as the client process.
+3. Next TCP sequence & acknowledgement numbers. Needed for validation checks
+which the server performs. Acknowledgement may be unnecessary sometimes.

@@ -1,0 +1,45 @@
+These are the common graph problems: Explained almost formally here
+1. Cycle - The input w coded as <G> = <V, E> is a Cycle if there is a set E of vertices V going as v1, ..., vk
+   where v1, v2, ..., vk-1, vk is in E(G). E(G) means edges E of graph G.
+2. Path - The input w coded as <V, E, a, b> is a Path if there is a set E of vertices V going as va, ..., vb in
+   E(G). Here by "v" I mean the vertice, and "a" & "b" identify some concrete target vertice.
+3. Clique - The input w coded as <V, E> is a Clique if there is a set E of vertices V going as v1, ..., vk where
+   for all i, where vi is in V, and for all j, where vj in V, the vi isn't a vj (and vice versa), and there is an
+   edge directly from vi to vj in E(G). So each vertex is visited exactly once, but not all have to be.
+4. Hamilton Path - A Path is a Hamilton Path if there is a Path P: va, ..., vb, where for all vi in V, vi is in
+   E(G). This means that the path must also contain every single vertex, and also start at va and end at vb.
+5  IndependentSet - The input w coded as <V, E, S> is an IndependentSet if for all vertices in S, u and v, where
+   S is a subset of V, where u and v aren't one and the same vertex, there is no edge between them in E(G).
+6. 2-Colourable - The input w coded as <V, E, C1, C2> (I think) is 2-Colourable if the connected vertices don't
+   share the same color. Not defined properly in the presentation, and I won't bother doing that myself.
+7. 3-Colourable - Same as 2-Colourable, but 1 more color is available. All 2-Colourable problems can also be
+   solved by a 3-Colourable setting, that is because we may simply not use the third color which would make it
+   equivalent to the 2-Colourable one.
+
+These are the logic boolean common problems:
+1. 2-SAT - The input w is a coding of a boolean formula <B> of the form C1 & C2 & ... & Ck where each Ci is of
+   the form la | lb where "la" and "lb" are some literals, and "|" is a logic OR (if it wasn't obvious already).
+   The formula is in 2-SAT if there exists a configuration that makes the formula true. This type of formula form
+   is called to be in CNF, which I already learned from IN3070.
+2. 3-SAT - Same as 2-SAT, except that Ci now contains 3 literals like la | lb | lc.
+3. SAT - Same as 2-SAT, except that Ci doesn't have a limit on how many literals it can contain.
+
+Problem Complexities:
+ 1.  P - Cycle
+ 2. NP - Clique
+ 3.  P - Path
+ 4. NP - Hamilton Path
+ 5. NP - IndependentSet
+ 6.  P - 2-Colourable
+ 7. NP - 3-Colourable
+ 8.  P - 2-SAT
+ 9. NP - 3-SAT
+10. NP - SAT
+
+Now for Cook-Levin theorem, which states that all the problems that are in NP are reducible to SAT, that's it.
+It is a standalone proof that SAT is NP-Hard, and since SAT is in NP, it is also NP-Complete. The rest of the
+problems are often shown to be NP-Hard by reduction from SAT and showing that they are in NP to show their
+NP-Completeness. Anyways, Cook-Levin theorem proved their statement, which I already looked at in IN2080. For
+more details on how it was proven (which was also done here, so I should know it) please refer to the "Part 3 -
+Complexity" folder and then open the "Part 3 - Proofs.txt" where the theorem example described is exactly the
+Cook-Levin one, though it isn't stated so there explicitly.

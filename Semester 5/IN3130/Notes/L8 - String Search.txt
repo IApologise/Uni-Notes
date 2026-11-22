@@ -1,0 +1,43 @@
+Many of the problems can be solved by turning them into a graph and then simply searching for the right path to
+the desired vertices. This works for most puzzle games and many other games such as Connect-4 or just general
+problems like game AI pathfinding or finding a route from A to B at desired time in the real world. Game states
+are like vertices, and possible actions at each game state is an edge. The state space is a term used for all
+the possible states the problem can be in, and the desired states are called goal states. The path that the
+algorithm traversing through this state space makes is called a decision sequence. One way the decision sequence
+may represent a path is by picking one of the edges to one of the vertices available, note that returning to
+the state we already visited is pointless, so even if state space isn't a tree, we act as if it is. Another way
+the decision sequence may be represented is not by storing a record of vertices visited, but the edges taken.
+This is particularly useful for when the order of edges chosen matters.
+
+A popular mix is using Backtracking with DFS and Pruning. Another one is to use Branch-and-Bound type of
+algorithm which works as follows: We have 3 lists, one with vertices we already visited A, ones we can visit B,
+and ones we haven't visited yet C. Then the idea is to simply visit a vertex in B, if B isn't a goal node then
+we add all the neighbouring vertices, i.e. those that directly have an edge from this vertex to them, from C
+that aren't in A into B. This vertex is also removed from B and added into A, i.e. marked as visited. But, if B
+is a goal node then we halt and output the path. This Branch-and-Bound is quite flexible because it allows a
+good amount of freedom on how the vertex from B can be chosen. If it FIFO then we have a classical BFS, if it
+is LIFO then it is similar to, but not quite DFS, and if it is a Priority Queue then it is Dijkstra's. However,
+the priority queue itself is flexible. If we instead of using the edge's weight directly as Dijkstra's does then
+the way algorithm explores changes. So more generally speaking Priority Queue allows for a general class of
+algorithms called Priority-First which in some way define the priority in which the nodes are to be visited in.
+
+For example, A* pronounced A-Star takes the vertex's known distance value just like Dijkstra's does from root
+to it, but an additional estimated distance to the goal is added as well, so A*'s priority value = known value +
++ estimated value, whereas Dijkstra's priority value = known value, and that's it. How the estimated value is
+calculated depends completely on how the A* is implemented, and so how we decide to measure it. Because A*
+doesn't explore all paths we are not guaranteed to be left with the optimal answer, that depends on how the
+estimated value is computed, but in general if the estimated value is never larger than the known value of the
+actual shortest path to the goal node then eventually A* will find the optimal path, though that would force us
+to return to some of the nodes we already considered finished, which is the visited set A mentioned before.
+Though note that A* algorithm also needs the estimate to be 0 once the goal node is reached, and that if there
+is a transition from vertex u to v with the estimated cost must not go up, i.e. we estimate that after the jump
+we got closer to the goal node. If these 2 aren't satisfied then technically it is an A-Search and not the A*.
+Also, we call the estimate function monotone/admissible or "always being an underestimate" if these conditions
+are satisified. Without these limitations on our heuristic (estimated cost function) it might not find the best
+solution and is not considered an algorithm in the first place. P.S. A* is also sometimes called A*-Search.
+Aslo, if the estimate cost function always returns a 0, then we get Dijkstra's algorithm.
+
+Iterative Deepening is a mix of BFS and DFS. What it does is it does DFS but to a certain depth, all the vertices
+below this depth it ignores and eventually will visit the rest of the vertices up to that depth. After that the
+depth threshold drops to a lower level, and the process repeats. Thus it acts as DFS and BFS up to each depth's
+levels until the goal is found. This algorithm isn't really the best at anything, but it is mediocre in all.

@@ -1,0 +1,153 @@
+--- Reminder & Clarification ---
+DNS (Domain Name System) are servers found in datacenters all around the world provided by ISP which the routers
+assign our devices upon a connection. The DNS chosen is the one closest to you that responds (based on CIDR,
+Anycast) which returns a specific IP of that specific chosen DNS. Contacting a DNS is done on Port 53/UDP,
+53/TCP, or 853/TCP. 53/UDP is for when the response fits in a single UDP segment, 53/TCP for when it doesn't,
+and 853/TCP for TLS. The purpose of DNS itself is to convert an IP address into a domain name. That is because
+the domain name doesn't change, but the IP might, so DNS keeps a table of Domain Name -> IP Addresses List for
+each registered domain. It maps to a list and picks the first IP in it, then shifts it to the left so that the
+most recently used one is now the last in the queue, and the last used one is now next. This allows for equally
+distributed amount of user requests sent per server available. So the DNS also allows for greater scaling. DNS
+might also be a public one such as Cloudflare's which has IP "1.1.1.1" or Google's which has IP "8.8.8.8". These
+public DNS servers also use Anycast meaning that, for example, cloudflare has multiple DNS servers all of which
+have an IP "1.1.1.1", and whichever is closest is the one that is picked (also based on CIDR). P.S. I forgot to
+mention that in addition to all the advnatages mentioned before, the DNS servers may kepp not just domain to IPv4
+tables, but also, for example and not limited to: Domain Name -> IPv6 Addresses List table. That if anything
+changes and IPv4 stops being used, we won't have to change how DNS works and may still continue to use domains as
+we did before, it's just that it will now return the newly used IPv6 instead, great!
+
+Now for how the DNS updates its Domain Name -> IPv4 Addresses List table. First you must understand that every
+domain consists of a Subdomain, Name, and the Top Level Domain. Subdomains are similar to Subdirectories, e.g.
+"store.example.com" and "example.com/store", the difference is that the "store." prefix signifies that it is a
+separate website which could be hotsed on a separate server, but which still belongs to the "example" domain.
+Prefixes such as "portal." for authentication websites, "www." for main websites, "store." for purchasing websites,
+and "en." for translation websites, are all used quite frequently. With directories it showcases that one and the
+same server is being used which hosts all those options at once.
+
+The name of the domain is used as an identifier for many, and is mostly made to be recognizable by others. Top
+Level Domain (TLD) is used to show responsibility in a tree of DNS servers. First of all, all links have a "." at
+the end which is always there and is therefore often abstracted away by browsers & consoles, e.g. "google.com.".
+We need that for scalability, because a single DNS server can't keep track of all the entries in the table in the
+whole world, so instead the DNS servers cache the popular requests and keep track of the entries to the DNS server
+that does have the IP Address of the said domain name (if it isn't them themselves). As mentioned before, it is a
+tree, and what separates the responsibility is the ".". "." is the root DNS address, ".com." is the DNS server that
+keeps track of all the domains that use ".com" suffix such as "google.com". There can be more suffixes in TLD
+such as ".ifi.uio.no" where we got the hidden root ".", ".no", ".uio", and ".ifi" suffixes all signifying a
+a separate DNS that maintains their own scope. Notice that ".no" does not keep track of layers below like ".ifi",
+that is ".uio"'s job. This means that to access ".no" websites there must be a ".no" DNS located nearby for a
+quick access, otherwise it might take a long time to fetch the IP Address unless it has been cached by root ".".
+Though caching doesn't only happen, there. This info may also be cached by the home router, and by your device.
+
+DNS store data, and that data is being transferred via internet in a specific data format called Resource Records
+or RRs for short. Authoritative Data are the RRs on the DNS's own zone (aka. scope), and Glue Data which are the
+cached RRs of its respective subzones (below its scope, e.g. ".ifi" within the ".no"'s scope containing ".uio").
+
+DNS has 2 server levels, primary and secondary. Primary/Master server is the original DNS whose data can be edited
+to add/remove from the tables that this DNS is responsible for. Secondary/Slave are DNS servers that are read-only
+and copy from Primary/Master servers. This is needed for availability (e.g. replicate a DNS in another location
+for faster ping), redundancy (e.g. if the primary DNS is down for maintenance, or if electricity cut off), and is
+convenient to change the entries. This is very similar to how Databases handle this actually.
+
+Whenever a website is made there also is a DNS for it. However, because both that DNS and website are in the same
+network, whenever client wants to get to the website they need to go to that website's DNS which is in that same
+network which it is trying to get into in the first place (circular dependency). To solve this the layer above
+doesn't store only the website's DNS, but also that website DNS's IP. In my opinion it is a bad design, but it
+does abstract and separate the website itself from the DNS. Note that DNS and the website server are two separate
+devices now though. Also, the Authoritative Data is the Domain Name -> IPv4 entry of the website server, whilst
+Glue Data is the Domain Name -> IPv4 entry of the DNS belonging to that website.
+
+To be honest, by this point I am not sure how much has been simplified to me by the AI for the sake of being
+supposedly easier to understand, so I added some of my own details which should be fact checked. This is how I
+believe all this is working right now... Anyways, for some examples on Zone files check the screenshots. There
+are more screenshots which might clarify much of the confusion I might accumulated by now.
+
+
+
+--- DNS Security ---
+To minimize the amount of requests needed to ask the DNS, it may return multiple Domain -> IP mappings such as
+in case of getting both the website's DNS and that website DNS's IP, both at once. However, at first the DNSes
+didn't check whether it was a valid mapping, so some DNS from a website A could lie about website B's IP to the
+root DNS which it would gladly cache. So, anyone coming to the root DNS and asking where website B is would instead
+be redirected to website A, which could be a malicious website. This is called DNS Poisoning, and, this is also
+the reason for why a single UDP packet might not be enough and a TCP/TLS needs to be established for multiple
+packets to be transferred since a single UDP packet might not fit all the additional DNS mappings.
+
+By now DNS poisoning isn't a thing since most if not all servers add restrictions to which mappings they accept
+from other DNS servers, which are mostly accepting only mappings to their own sites. This can be broken by client
+spoofing itself as if it is that website B's DNS and give the wrong mapping, e.g. to website A anyways. To fix
+that both the query and response must have the same ID (0-65535) which is how the DNS root (or any other DNS we
+are targetting) knows that it is the intended receiver that responsed (can't spoof itself, and why would you?).
+Though today it is still possible to do DNS Cache Poisoning, simply guess the ID whilst the DNS tries to fetch
+the response, which if fails must wait till the TTL of the cached entry runs out (any time between seconds and
+days). It is unlikely to guess, but doable. Though after the TTL runs out after you succeed you are back to
+square 1 (same if you fail).
+
+65536 tries are still doable, especially when spoofing and requesting for non-existent domain names and then
+adding the actual target domain plus the fake IP that we want to the additions list. To combat that the source
+port is also randomized which also brings the total possibilities to 2^16 IDs * 2^16 Ports = 2^32 which is only
+doable with botnets that mass spam and try different IDs and all spoof some port plus fake domain, and note that
+this scales linearly to the amount of bots that we have. Why do they not choose a larger random ID like a 32 bit
+one instead of the 16 bit one? I... don't know. So if we got enough bots where each one tries to guess in parallel
+each their part, if we got 2^32 bots and each one only can do 1 guess before the real answer arrives, then we
+would need 2^32 bots to cover all the 2^32 possibilities in order to have a 100% DNS Poisoning success rate.
+
+Either way, a new thing came up called DNSSEC which is supposed to be a DNS which also was designed to be secure.
+The basic idea is to add signatures to those DNS servers creating a hierarchy very similar to how the DigSig work.
+According to the graph showed by the professor Norway has already fully adapted the system, but not the rest of
+the world unfortunately. About 50% of the client's DNS Resolvers in the rest of the world do not perform DNSSEC
+checks. This doesn't mean that the website's DNSes don't sign, in fact in most of the world that does happen, but
+it is the clients themselves that don't validate and because of that put themselves in danger. And here I meant
+the data on DNSSECs for ccTLDs specifically.
+
+Now then, let's talk about how DNSSEC (Domain Name System Security Extensions) works. What we need is authenticity
+and integrity, confidentiality is not really needed here because all that is supposed to be public information
+in the first place. Now, all clients have a DNS Root "."'s public key to verify its signatures which are installed
+manually on every device and is used as an anchor. Then that Root signs other DNSes and they do the same creating
+a hierarchy just like with DigSigs, those DNS keys are "zsk"s, whilst the website has a "ksk" DNS key. The DNSes
+have a list of websites ksk key tags which sign their website's DNS name and DNS IP, whilst the website's DNS
+uses its zsk key to sign the website's ksk. Note that this last step is weird only because of circular dependency
+described before, but the mechanism itself still works just like with DigSigs.
+
+The problem is when the client wants to get the IP for a domain that doesn't exist. In this case the client needs
+a signed "example2.com not found" entry from the server which it must sign each time for each different domain that
+the client requests. This can cause denial of service because signing is relatively expensive. To fix that NSEC
+introduces a technique where we instead have all the entries in a linked list and return the already signed
+entries "example1.com -> example3.com" showing that there is no "example2.com" that the client requested. Note
+that all the implementations must have the canonical ordering for all of this to work, and that is what all the
+DNS Resolvers assume, however there is nothing that doesn't prevent wrong implementations. For that reason most
+reuse the already built algorithms/functions/methods that sort it automatically.
+
+However, this introduces a problem called zone-walking where one may discover all the domain names and IPs one
+would initially have to guess (okay lol?). This works because the attacker now knows the next and previous domains
+which it can use to find the next/previous zones, such as probing for "example4.com". It speeds up probing and
+guessing by the gap size which might offer a substantial boost (in most cases), or none at all (rare today). To
+fix that we simply hash the domain names, and if the DNS Resolver doesn't find its hashed value in the response
+then it wasn't on the list. That way nothing extra gets exposed, even though it wasn't that critical (I think?).
+That hashing part is introduced in what's called NSEC3 by the way.
+
+There is a new funny attack though called DNS Amplification Attack which goes as follows: The attacker client A
+wants to DoS client B, instead of sending data to client B on its own it can send it anonimously and much more of
+it with the help of a DNS server. The idea is for A to spoof its own IP as if it is B and send a UDP request to
+the DNS server for any domain with a big list (but not too big that the DNS would need a TCP for it). The DNS
+server sees that B supposedly wants to resolve some info and sends the data to B unintentionally assisting A in
+a DoS attack, yay! This way the attacker also stays hidden since its IP was never involved in the first place.
+DNSSEC makes this problem even worse because its packets are always slightly larger, though that also means that
+it is easier to reach the UDP to TCP switch limit. But by the same amount it is easier to send larger data
+packets, so regardless it is a win for the attacker. Today you can't really ask for "ANY RR" of "example.com",
+but you can ask for a specific IP Address of "example.com" so that's that.
+
+Final note, if you don't like that your ISPs and public DNSes such as Google or Cloudflare track and see what you
+visit, then you can do DNS over HTTPS (DOH) or DNS over TLS (DOT) which creates a secure connection between the
+DNS server and DNS resolver. DOH is generally better because it has the advantage of an easy integration into a
+Web server deployment, and the firewalls usually filter out the TLS encrpyted packets due to it being on a
+different port "853" whilst the HTTPS is on "443" which most firewalls do allow to pass. P.S. They still do track,
+but they are the only ones that can I believe, depending on which one you use that is...
+
+
+
+--- Notes ---
+1. By default ISP's DNS is used given by the router upon connection to LAN. However, those are often less reliable
+   and slower than the public free ones such as Cloudflare's and Google's which also offer more privacy from the
+   ISP providers (but coincidentally not from them themselves, so now they are the ones who may analyze where your
+   traffic goes instead of your ISP). For that reason Firefox usually ignores the current set DNS and uses
+   Cloudflare's i.e. "1.1.1.1", whilst Google Chrome uses Google's i.e. "8.8.8.8".

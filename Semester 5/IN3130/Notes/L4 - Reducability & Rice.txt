@@ -1,0 +1,37 @@
+Here we are simply reminded of how encoding works, of the universal turing machine, and on halting problem and
+the fact that some infinities are larger than the others. More importantly we also cover the m-reducability
+which we have already seen and struggled with in IN2080, and still do struggle. Please review it and get some
+practice, this is the only way to get the better hang of techniques and methods used to generate the transition
+funciton f(w) since those aren't really described properly since the techniques used aren't complete nor have
+they likely been investigated or at least I think so since they haven't been explained, only shown as examples.
+
+However, recall that the basic idea is to use the equation that I have screenshoted and also put up in this
+folder, as well as a few other lemmas. So the idea is to create a function f(w) such that the mapping from A
+to B using f(w) is correct in all cases. So if w is in A, then f(w) is in B. And if w is not in A, then so is
+f(w) also not in B, simple as that. So if w is in a language L(A), so is f(w) in L(B), and the other way around,
+if w is not in L(A), then so isn't f(w) in L(B). In addition to that, if A is undecidable and B is m-reducable
+to A, then B is also undecidable, that is one of the lemmas (I think they are called lemmas?).
+
+Another reminder, We got decidable and recognizable TMs. if A is recognizable, and ~A (the complement of A) is
+also a recognizer, then we can use both A and ~A to create a TM B which runs w on both A and ~A, and one of them
+will halt and give the correct answer whether it is in or isn't since both recognize one of the two outcomes,
+i.e. accept or reject, and that makes B a decider. So, iff both A and ~A are recognizers, then A is a decider.
+By the way, "iff" means "if and only if", which is a double implication (both sides), i.e. X <=> Y. P.S.
+Recognizable is also called "recursively enumerable", "semi-decidable", or "semi-computable" sometimes. Also,
+Decidable is als called "recursive" or "computable" sometimes as well.
+
+Lastly we got the Rice's theorem which states: Any non-trivial semantic property of a TM is undecidable. Property
+here means a TM accepting certain conditions (could be anything). Semantic means that it is the result of a TM,
+i.e. the defined language that matters and not its implementation, which essentially means that it is the
+language which the TM defines that we are concerned about and not the TM itself. And trivial means that the
+property is something that all or none of the languages (i.e. semantic TMs) have. Note that it says non-trivial.
+
+In a nutshell: Something of a recursively enumerable language, which is the language's property such as:
+containing word "101", being emtpy Ø, finite number of words, containing only one word, containing at least one
+word, containing all words, etc., which not all languages have nor all languages don't have, is undecidable. So
+whether this something is or isn't a part of that language which some TM determines, we can not always know for
+sure. Something like a word "101" may or may not be a part of that TM's language, and so there is no decider
+that determines that. There doesn't exist a decider N which can determine whether some turing machine M's
+language has a non-trivial property. Even if M is a decider, our decider N still has to check infinitely many
+inputs, and that will never stop, thus there is no decider for that. I guess you can say that Rice's theorem is
+about a certain turing machine, which it states can not be a decider.

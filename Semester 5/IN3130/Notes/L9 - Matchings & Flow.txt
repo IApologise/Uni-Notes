@@ -1,0 +1,62 @@
+Bipartite Graph G consists of two sets of vertices U and V and a set of edges E, so G = (U ∪ V, E). Additionally,
+G satisfied the following constraints: 1. U ∩ V = Ø, 2. ∀i∀j((i ∈ U) ∧ (j ∈ U) ∨ (i ∈ V) ∧ (j ∈ V) ⇒ (ij ∉ E)).
+Basically 1. states that no vertices are shared between U and V, and 2. states that E only contains edges from
+vertices found in U to those found in V.
+
+A Matching M is a subset of edges E where no vertices from neither U nor V are repeated, formally written as:
+∀i∀j∃k((ik ∈ M) ∧ (i ≠ j) ⇒ (i ∈ U) ∧ (j ∈ U) ∨ (i ∈ V) ∧ (j ∈ V) ⇒ (jk ∉ M)). Note that thus far I came up
+with all these formal rules myself which might be wrong. It is also kind of pointless and not that important,
+so we will continue without those from now on. Additionally there is a Perfect Matching extending Matching by
+adding a constraint which states that there must be a matching edge to all the vertices U and V, having
+|U| ≠ |V| makes it impossible to have a perfect matching due to the uniqueness rule. Regardless, often times
+we want to find the highest matching possible, even if we can't get it to be perfect.
+
+How do we know if there is or isn't a perfect match? How can we find the higheste matching possible? Well that
+is where Hall's Theorem helps us out. It states that for some S ⊆ U and R ⊆ V, where R = Γ(S), and Γ(S) = The
+set where each node j ∈ R has at least one connection to a node i ∈ S, we have that there is a perfect matching
+if and only if there is no S ⊆ U such that Γ(S) has fewer nodes than S. In other words, if there exists an S ⊆ U
+whose nodes connect to R ⊆ V and |S| > |R| then there can not be a perfect matching between U and V.
+
+Here is a proof of Hall's Theorem both ways: First, if |S| > |R|, then obviously we don't have enough nodes in R
+to match them to each node in S. Second, if there is no perfect matching, then a hungrian algorithm will point
+out an S where |S| > |R|. The hungarian algorithm makes use of the Alternate Paths A and Augmented Paths B.
+Alternating path is a set consisting vertices where ∀i ∈ A, if i ∈ M then the next vertex j ∈ A is ∉ M, and vice
+versa. And an Augmented Path is an Alternating Path that starts and ends with both vertices ∉ M, for example:
+M = {bc, ad}, U ∪ V = {a, b, c, d, e}, A = {ad, bd, bc, ce}, B = {ae, ad, bd, bc, ce}. The hungarian algorithm
+then takes the augmented path and flips the connections, so M is set to B \ M. The problem here is to find B now.
+
+Finding B is a search problem, which we solve as follows: First we start with some arbitrarily chosen edge x
+that is not in M, i.e. unmatched. Then we add some edge y that is in M, i.e. matched, and connects to x. And we
+repeat this process. If there are multiple choices we can take then we explore them all and add these deviations
+as possibilites to our tree, basically we use BFS here, though other search algorithms are also allowed. Then we
+pick one of these possiblities and continue exploring. Once all the edges in M have been added to B and an extra
+edge was found and added to B's end (we also start with one that isn't in M), then we found our augmenting path
+B and can now perform the flip. We then repeat this process from the start.
+
+Next up we got a networking problem, or more genelarly speaking, a directed weighted graph where we start from
+some node S and have to reach node T. The graph's weights which we call capacities give us the maximum flow value
+we can choose to solve the problem. The problem goes as follows: What is the maximum flow value S can send that
+T will receive in full? In the screenshot "L9 - Capacities & Flows.png" on the left you can see the setup with
+capacities, and on the right you can see the flows we chose which must be between 0 <= f(e) <= c(e) where f(e)
+is the flow of an edge e, and c(e) is the capacity of an edge e. In that problem, the maximum flow T can receive
+from S is 7. Note that red color in the screenshot represents intermediate nodes, and blue ones are the start
+and the goal node.
+
+Solving this problem with a greedy algorithm will not work, just like with bipartite we need a more advanced
+algorithm to solve it. The way we solve it is by again defining an augmenting path, and then modifying it and
+thus increasing the flow from S to T by 1. The way we do it is we calculate how much more an edge can take by
+substracting the edge's capacity from the edge's current flow, we do that to the whole graph. After that we use
+DFS/BFS to find a path where all the edges can take h > 0 more flows, or less if the direction of the edge goes
+into the opposite direction. So yes, the direction of the edge doesn't play a role on what path we may pick.
+In the "L9 - Networking Augmenting Paths.png" you can see how that works, with some unnecessary text too...
+Anyways, once we got the augmenting path and increased the flow by 1, we repeat the whole process. By the way
+this algorithm is called the Ford-Fulkerson Algorithm. Though this algorithm may loop forever if we use real
+numbers instead of natural ones, and which augmented path to choose for when we have multiple candidates is
+also not pointed out, so there are 2 given solutions which are to either use BFS and choose the minimal
+number of edges in a given augmented path, or choose an augmented path that has the highest h value.
+
+P.S. There were some more advanced stuff about bipartite and network graphs, such as cuts in network graphs and
+a proof of some theorem that is also similar to the one found in bipartite (Hall's Theorem), though no name for
+it was given. With bipartite and network there was some talk about halting which is where those theorems came in
+and there was also some talk about for when bipartite graph has an odd length cycle which could never result in
+a perfect matching, and something else about clumping some vertices together but not sure what that was about.

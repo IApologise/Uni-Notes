@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="assignment.TriesTest$TestClass1" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-10-01T21:05:55" hostname="IAPOLOGISE" time="0.003">
+  <properties/>
+  <testcase name="testLookUpInter()" classname="assignment.TriesTest$TestClass1" time="0.001"/>
+  <testcase name="testLookUpIn()" classname="assignment.TriesTest$TestClass1" time="0.001"/>
+  <testcase name="testPrintTree()" classname="assignment.TriesTest$TestClass1" time="0.0"/>
+  <testcase name="testLookUpInterweb()" classname="assignment.TriesTest$TestClass1" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,47 @@
+--- Fragmentation & Maximum Transmission Unit (MTU)---
+Before back in the 70's or so when the internet was being developed there was fragmentation in the IP layer for
+when the Maximum Transmission Unit (MTU) was too small. Today however it should not be used since there were lots
+of problems which slowed everything down substantially. A fragmented packet must be reconstructed at the
+destination router, but what if a fragment was lost? In that case it must wait for a long time in vain, and it
+was also adding unnecessarily complex logic.
+
+To avoid fragmentation people would always set the flag to 0 also known as the "don't fragment" flag. This would
+mean that the packet would be dropped instead. With PMTUD the router would then send an ICMP error message to the
+client whose packet was dropped, but this would often be filtered out by firewalls & dropped by other routers.
+For that reason a better solution is to do what's called Packetization Layer PMTUD or PLPMTUD for short. A very
+long name which also became a meme... Moving on, the way it would work is we simply start out with a reasonable
+packet size, and if it gets dropped we reduce the size. If at some point we get an ACK then we increase the size.
+Though please note that I am not sure whether the size is being reduced after a packet loss or if we simply retry
+with the highest MTU we have so far. The problem with this is the time, as well as the inconsistency since the
+packet can be dropped for many reasons such as congestion control, firewalls, etc. And it also creates traffic.
+Even the path itself may change which would cause us to essentially restart our probing.
+
+
+
+--- TCP Assumptions & Them Getting Broken ---
+TCP creates a specific order and sends data in a specific way to then organize it & more (I don't really remember
+that now). However, TCP assumes that during packet travels there is in general little re-ordering and little loss
+of data, i.e. it works fastest when there is no re-ordering and no packet loss.
+
+The problem with all this is that routers, which do not have enough data about the packets they are receiving,
+can't usually make good decisions and are likely to slow down upper protocols because of that. For example to
+ensure fairness & more reliable transmission the router might alternate the packets that are sent between similar
+paths which are likely to create re-ordering for TCP, thus likely actually slowing everything down.
+
+To not slow everything down the router might inspect the upper layer to make a per-connection distribution, i.e.
+connection A's packets go via router X, and connection B's packets go via router Y, where both reach destination D.
+However, the problem is that now the router is also working with the upper layer meant for ES-ES and no ISes.
+This creates more overhead, layering starts to make less sense, and needs special treatment per each upper layer
+protocol such as TCP, UDP, QUIC, SCTP, etc. The whole point of IP was to stay neutral, yet that is not what the
+routers who the IP is meant for are doing...
+
+
+
+--- Non-Technical Reasons for Bloat & Bad Design ---
+Notice how there are so many parts in the IP header that are often not used or ignored, and not just the IP
+header but on many layers in fact. That is because the big guys can't agree on how the systems should work and
+want others to adapt to their own designs instead of adapting themselves. Because of that often in the meetings
+peolpe would say what they want/need and what must be added to make the communication work with their routing
+and systems. So if A demands X to work, and B demands Y to do the same, then why not add both X and Y. Though in
+time the companies changed their ways and unused bits got adapted for other purposes, with backwards compatability
+for used systems taken into the consideration...

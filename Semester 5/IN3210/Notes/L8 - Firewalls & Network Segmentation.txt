@@ -1,0 +1,83 @@
+--- Network Segmentation ---
+Firewalls are used in order to limit incoming and outgoing traffic. That is used for when we want to only accept
+certain ports or allow only certain ports within our network's devices to send information outwards. For example,
+if there is a breach but all we are allowed to send out are emails from port 25 with just ACKs to tell the receiver
+that the message has been received, then upon getting a keylogger no information would be sent out and thus no
+consequences. It also limits the attacker's options on which devices can be compromised which are likely to have
+limited functionality and/or access restrictions.
+
+But what if the attack came from within? Or perhaps there was a mistake in our firewall's configuration? Maybe an
+exploit? Well in that case we use the "Swiss Cheese" way of thinking, which is basically assuming that our
+previous defences somehow got breached. So we put more firewalls in between different access points such as
+databases and offices working on different branches of our projects & stuff. This is where the Bow-Tie diagram
+comes in. Here we identify the undesired events we want to prevent, then create counter measures, and consider
+the cases for when those defences are breached to minimize consequences, i.e. damage done.
+
+Sometimes we set up a "Honeypot" which is a device whose purpose it to be accessed from outside on purpose. This
+device serves as an alarm, because it is never supposed to be pinged and has no files nor access to anything.
+So if an attacker gets access through a firewall, we can detect it and see who tried to communicate with it.
+
+
+
+--- Firewalls ---
+Either way, the basic idea to be the most secure is to segment our network, add firewalls along the way which
+limit the incoming and outgoing traffic in as many place as possible (prioritized in case of low budget). When it
+comes to firewalls itself, they can't protect from everything. DDoS attacks are a common example where the defence
+is limited. We may add a restriction to amount of requests per some time period, but having millions of devices
+spamming to their max is hard to counter. All could be potential customers, and we can't know which is which.
+Still it does work against a simple DoS attack.
+
+Firewalls exist in 2 sorts, stateless and stateful. Stateless do not consider previous connections & requests
+from certain IPs and Ports, only the current one that it just received, it has no history record and such.
+Stateful has states, and based on the state it is in the rules may change. For example, receive packets from
+connections it has initiated communication with first, otherwise drop the packets. Stateful firewalls are used
+pretty much always, except for when the performance difference might be critical: Can't come up with an example,
+likely to handle DDoS better for example (I think).
+
+
+
+--- Other Barriers ---
+Application proxy, formally Application-Layer Gateway, or ALG for short, is a service, either a separate device
+or an application within the device, which checks the Layer 7 header which is the application layer data to
+filter out incoming/outgoing traffic. For example, blocking certain URLs or .xml files from being sent/received.
+
+On the physical layer where the optical fibers are used we need a receiver and a sender on both sides, i.e. a
+device that is able to read and translate light into binary data, and other that is able to translate binary data
+into light and produce it. But for security reasons, if a device is only meant to receive data, one of those can
+be missing, which in this example is the sender. Devices that can only do 1 of these 2 things are called Diodes.
+
+Next Generation Firewalls (NGFW) are firewalls which utilize multiple strategies to better filter out the "bad"
+stuff. They include an antivirus which scans incoming packets for any malware signatures, include sandboxing
+for further packet analysis, ALG and stateful filtering, and also may act as a VPN among other things...
+
+VLANs can be used, which is specified in a dataframe (layer 2 header) on how the devices are meant to be split.
+It basically restricts which devices can talk to which within the same LAN as if they aren't in the same LAN and
+there is a firewall in between, thus the name Virtual LAN.
+
+Then there is Security Filtering which is basically whitelisting packets based on which values the headers contain
+or what structure they have. Like for example if in the TCP header you see an ACK then allow the packet to pass,
+otherwise drop it.
+
+Then there is a Guard which is basically the same as ALG but for when packets may have "security levels" in their
+application data which the Guard then determines whether the data is allowed to be sent/received or not based on
+the security level granted to the network it is protecting. The protection can also be determined via digital
+signatures, and it may include a Security Filter among other things.
+
+Zero Trust Model is more of an extreme guideline which is stating that nothing can be trusted, not even the devices
+within the LAN should be trusted. Unlike with segmentation where we are meant to minimize damage and each layer is
+a security layer acting as a fail-safe, in zero trust model even the devices inside aren't trusted to have good
+intentions and as if they might also spread malware or do a deliberate attack, i.e. their packets are to be
+examined and filtered as much as the outsider's. Each segment within LAN gets least amount of privelege necessary
+to function properly, all traffic inside is also logged (keylogger on all devices & in-between), and etc.
+
+
+
+--- Notes ---
+x.1. Imagine we have 2 devices: D1 & D2, a host router: R, and a server S. If both D1 and D2 use all their ports
+     each of which are trying to access server S, then R will run out of ports to differentiate between whether
+     the data received from S is meant to go to D1 or D2. But if the servers aren't the same, then the same port
+     may be reused, the server packet came from acts as a differentiator then.
+x.2. Port forwarding is basically whenever somebody from outside tries to reach someone in LAN. It is basically
+     like manual NAT, but instead of packets going from LAN to Global, we become able to get from Global to LAN.
+     To be more precise, it is a part of NAT for inbound connections. Whereas the automatic part (initiating a
+     connection first) is the NAT's outbound part. And it makes sense why an inbound part requires manual setup.
