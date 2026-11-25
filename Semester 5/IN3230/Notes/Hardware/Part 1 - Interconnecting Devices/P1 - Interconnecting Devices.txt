@@ -1,0 +1,332 @@
+--- High Performanec Computing ---
+Datacenters, AI, and Supercomputers all require High Performance Computing (HPC). Unlike the internet where we
+want something to get from point A to point B with fairness, protocols, and back-compatability in mind, with HPC
+we mostly want performance and don't need to worry about all that other stuff I just mentioned (probably).
+
+First we distinguish between what type of communication we need to establish between the hardware which depends
+mostly on distance and scale. On-Chip Networks (OCNs) or Network-On-Chips (NOCs) is the connection between the
+cores in the CPU, L1-L3 Caches, and more, all within a single processor. Everything within a GPU is also
+considered an OCN/NOC, same with SSDs but those are relatively simple (I think?). So yeah, it is the scope of
+a single hardware device as long as it is small scale (connections between stuff at most a centimeter away).
+System/Storage Area Networks (SANs) or Off-Chip Networks (OCNs, but different...) on the other hand is a
+connection between hardware on a larger scale and over larger distances, such as connecting multiple CPUs, GPUs,
+whole Computers, etc. all one between each other. SAN ranges between hardware connections on the same device, up
+to wired connections between multiple devices across multiple large rooms. A big example is a datacenter, but
+the biggest is a supercomputer called El Capitan made up of 11,340,000 CPU and GPU cores. Smallest example of
+a SAN is a multiprocessor (multiple CPUs or GPUs, or a connection between a CPU and a GPU). Largest example of
+an OCN on the other hand is a multichip (a single CPU/GPU with multiple chips), and anything smaller than that
+is also OCN. However, if two devices are connected via LAN, then those two devices are SANs, and both together
+aren't a SAN since LAN is always larger than the SAN. Though to be honest, it mostly depends on the way it all
+is connected (probably): I.e. what protocols and ways are used, & the distance does play a role to some degree.
+
+
+
+--- Interconnecting Two Devices ---
+Now, let's look at how we interconnect just two devices: A and B. First of all, both may share information and
+use each other's information. That is done via a Request asking device B to share certain data, which B may
+Reply to by sending the requested data to A. Request is required because only B has control over its memory
+segment, but A has a vague idea of what it does and doesn't have. B must use its resources to send it to A's
+receiving buffer to which both A and B have access to. Sharing is done via dedicated links (wires & circuits),
+that is how the data from A to B and vice versa travels. I believe that this is handled by the Motherboard,
+OS, or something else depending on where the data sharing is happening. Once the requested data arrives to A's
+buffer (for B and from B) A gets an event update. This is done because simply waiting for a reply from B isn't
+efficient, in the meantime A can do something else if possible, and it'd be best to request the data
+before-hand if possible. It is also a safe way to accept all data received from a faster device without
+getting overwhelmed, falling behind in cases like that would require more protocols, new attempts, etc.
+
+However, adding more devices doesn't scale linearly, worse than that in fact due to increased requests/replies.
+Even worse if some process becomes a bottleneck for the rest and gets spammed by constant requests slowing it
+down even further. And I haven't even mentioned deadlocks yet. Anyways, we'll get to how we solve this later.
+
+For now, let's talk about how data is being shared, because yes - it does require a protocol just like anything
+else in networking. And it not just any protocol, but a simple header + data + trailer. Header contains the
+data about the protocol such as who sent, who to deliver to, which protocol it is, etc. data is the data
+itself that we want to transfer of course, and trailer usually contains just the checksum for error
+correction. This data is usually being sent by NIC for anything that is SAN or greater.
+
+When it comes to data transfer we handle data overflow in two ways: Lossy and Lossless. Lossy is when B is
+sending the data back to A faster than A can process it, at which point extra messages are dropped and the
+message requesting B to slow down is sent. Lossless however is when A notifies B before-hand that its buffer
+starts to fill up at a faster pace than it can process it, and there are two ways Lossless flow controls can
+work which wasn't explained before:
+1. Xon/Xoff - Also called Stop & Go, is when the buffer gets close to being filled up the receiver sends the
+   Xoff message to tell the sender to stop sending data. Once the buffer gets cleared up it sends the Xon
+   message telling the sender to continue. This method requires an estimate to warn the sender before it
+   could have sent too much, otherwise I believe that a buffer overflow would occur.
+2. Credit-Based - The sender keeps the credit count which tells it how many bytes it may send to the receiver.
+   A single credit corresponds to a single packet size, and credit count available is rounded down to the
+   available buffer size. Once the receiver's buffer starts clearing up, the receiver sends the credits based
+   on the amount of bytes cleared up back to the sender.
+
+Because OCNs and SANs are in a small and tightly controlled environments centered around reliablity, lossless
+is more desirable, and it is doable here because there are no firewalls that may prevent us warning the other
+device B that A's buffer is filling up so B could slow down. And there aren't any devices that wouldn't react
+to a slow down request. Although timeouts with NACKs don't get deadlocks, they have their own logic issues
+(looking at you TCP). Besides, lossless flow control isn't always needed in the internet, but it is needed
+and is faster in SANs and OCNs since those are built around the idea that every device needs to cooperate.
+For the difference in performance check what happens when demand exceeds the bandwidth limit at "P1 - Lossy
+vs Lossless.png".
+
+In case you need a formula on how to calculate the buffer size needed to have a continuous lossless messaging
+then here is the formula where the minimum buffer size is given in credits:
+ Credits = (2 * Distance * Bandwidth) / (Velocity * Message)
+where Distance is the length of the wire/circuit connecting the two devices, Bandwidth is how many bytes the
+wire/circuit can handle sending per second, Velocity is how fast the data travels via the wire/circuit which
+is often around 2/3 * 299,792,458 meters per second or so, and Message is the size of each packet. Note that
+if Message were not to be included, the result would be not given in credits but in bytes instead.
+
+
+
+--- Interconnecting Many Devices ---
+When interconnecting to more devices there are 4 technical challenges that need to be addressed:
+1. Topology - If some device A wants data from device B, the quickest way would be to establish a direct
+   connection, e.g. from A to B and vice versa, for quick and easy communication. However, for each device
+   added making up N devices, the number of connections needed becomes N! (aka. N factorial). This is why
+   hypercube is such an efficient topology for HPCs since the number of connections scales by N * log(N)
+   whilst the number of hops increases by just log(N). This doesn't mean that other are bad, it all comes
+   down to the tradeoff of cost vs speed. At some point, paying way more doesn't give as much more speed,
+   like if we were to switch from hypercube to mesh the speed would improve by log(N), but the that would
+   cost us (N - 1)! / log(N) which is a difference of an exponential cost for multiplicative returns when
+   compared to the hypercube. Beware, most topologies here complicate the credit-based system substantially
+   in various ways.
+
+2. Routing - Multiple paths may use the same number of hops, but one device may be much more busy handling
+   other requests or its own processes at which point choosing an alternative device to go through is more
+   efficient to distribute the load equally in order to prevent bottlenecks in our system. Sometimes taking
+   more hops may prevent multiple bottlenecks at which point sacrificing own speed for all is more desired,
+   but it is often not so simple to determine as we've seen with routing in IN2140 before. However, routing
+   only applies if our topology isn't a mesh.
+
+3. Arbitration - If many devices simultaneously request data from a device (might not be same data), and if
+   we aren't working with a mesh topology, then there might be more requests than we have direct outgoing
+   connections. This requires us to prioritize which requests have to get handled first, and complicates the
+   credit-based system (not sure if easily doable now). Prioritizing requests (or discarding them) is a
+   method called Contention.
+
+4. Switching - Once the Routing decides that it should travel through, for example, connection AB, and once
+   the Arbitration allows that said packet to travel, the actual resources must be allocated and the sending
+   of the packet must start and finish. Switching is the process of actually performing that sending action.
+   Apparently when performing this action we have two choices: 1. Establish a path one fragment at a time.
+   This is basically when we simply send to the next device on our routing path via the dedicated link, and
+   let it forward from there. Each device has to think for itself how to forward this packet. This makes the
+   average propagation faster, but doesn't guarantee it arriving at any certain time which is critical for
+   important tasks. 2. Establish an entire path. This method requires some setup to allocate resources in
+   advance before the packet may be sent. Once all outgoing links are prepared to receive the packet it
+   is sent and travels without any delays along the path. Due to requiring a setup it takes longer, and the
+   setup itself may not complete in certain time, it way more likely still. On average it is slower. So, it
+   is a trade-off between speed and certainty.
+   
+   Furthermore, there are active switches which are components that help distribute the load and pick a
+   different path if one is overloaded/occupied. Imagine you send data from A to B, and along the path there
+   are devices C and D which it has to go through. Unfortunately, C which is connected to D and E is being
+   heavily overloaded by E trying to forward its messages to D, and can't handle any new ones. Luckily, there
+   is another path via F and D, and F is available, so the active switch forwards to F instead, then it goes
+   back to C as intended. All that is if we use the method 1. mentioned above. Another thing is that it allows
+   us to save some wires. Why have A and B connect to C, D, and E each if we can have a switch that connects
+   from A and B to both C, D, and E. So instead of using 6 wires we use 5, and it gets better as the number
+   gets larger. This may introduce some clashes and may need to buffer incoming packets, but the switch manages
+   that specifically. Alternatively the switch might simply wait until it can forward it, or send a response
+   that the link is busy. However, all of that depends on the type of switch and the topology and whatnot. In
+   many ways it is kind of like a switch in the internet, and possibly a router. I really am not sure...
+   Also, for some reason it was important to know that switches provide physical communication connections
+   between network components and that this is called point-to-point links, like no shit for real?
+   
+   Shared-Media Networks vs Switched-Based Networks is the problem about switching. Shared-Media uses a common
+   resource which must be shared among devices, such as having a single link connected to all simultaneously,
+   like in the bus topology. It is cheap but very innefficient and does not scale based on the number of
+   devices added at all. Improving that requires improving the whole wire, and sending one message means all
+   others must stop and wait. Switched-Based is when links, e.g. wires or circuits, are not shared between all
+   devices, but some portion of them. So adding more devices requires adding more links, but it doesn't require
+   the existing links to be upgraded, which not isn't even possible in the first place when requirements become
+   too large. Not only that, no links are shared, so less clashes will occur meaning less coordination (not
+   necessarily less complex though). Also, note that bad engineering/design may not improve the performance
+   when more switches/links get added, so keep that in mind. For a graph comparing the two's performance check
+   out "P1 - Shared vs Switched.png", which requires knowledge of Latency & Bandwidth section explained below.
+
+
+
+--- Latency & Bandwidth ---
+A quick reminder on these terms: Latency is how long it takes for packets to travel from sender to destination,
+whilst bandwidth is how many bytes system can send per second (usually seconds, can be other units of time).
+
+Calculating latency T_total is as follows: T_total = T_send + T_flight + T_transmit + + T_receive.
+1. T_send is the time it takes to prepare a packet for transmission, including both software and hardware.
+2. T_flight = T_propagate + T_route + T_arbitrate + T_switch.
+   A. T_propagate = distance / velocity. Distance refers to the physical medium's (i.e. link's) length, whilst
+      velocity refers to the signal's traveling speed over that link, i.e. physical medium's velocity.
+   B. T_route is the time it takes to determine the route, which also adds to the delay.
+   C. T_arbitrate is the delay for when the packet must wait before any resources may start getting allocated.
+   D.  T_switch is the switching delay which is the time it takes to allocate those resources once available.
+3. T_transmit = PacketSize / LinkBandwidth, which is the time it takes to transmit the packet itself.
+4. T_receive = The time it takes to process the incoming packet, i.e. reading buffer, header, reassembly, etc.
+
+When it comes to bandwidth it is not definitive since there might be three bottlenecks alogn the way:
+1. BW_injection which is how much data we can assign our link to transmit per time unit.
+2. BW_network which is how much data the link can actually send/receive per time unit.
+3. BW_reception which is how much data the receiver can process/handle per time unit. Because the receiving
+   process might not be focused on receiving any data yet, or be overflodded by other processes, we also add
+   a σ multiplier to it ranging from 0 to 1 which is the "average". Whether it is under average load, idk.
+Thus, BW_total = min(BW_injection, BW_network, σ * BW_reception). Also, checkout "P1 - Latency & Bandwidth.png"
+for a visual representation of the math you see here and how it scales.
+
+
+
+--- Network Topology ---
+Switches with lots of ports are expensive and hard to make, so the typical solution for systems is to just
+use multiple switches and interconnect them with each other instead. This interconnection of multiple switches
+is called a Switch Fabric or Network Fabric. Obviously Connectedness is a must which is the existence of a
+path from and to any device (also called Full Access), which is what the interconnections are all about...
+And remember that it is the topology that determines the performance like always, not the connectedness.
+
+Moving on from the obvious and repetitions, let's discuss how we may evaluate the topology's effectiveness.
+We do that by calculating Bisection Bandwidth which is when we split all devices into two groups A and B via
+some line/plane going through the links. It is important that the split is a straight line/plane. Once that
+division is done, we only look at the links which are on that line, those are what determine how fast A can
+communicate with B. The Bisection Bandwidth then becomes the sum of those link's bandwidths, hence the name.
+The reason we look at the minimal split is because we look at the worst-case scenario, which is where the
+links are most likely to forward the most data and have the least number of links (assuming no link generates
+own gibberish data that it "forwards" of course), thus we get the lowest sum, and that determines the big O
+complexity. Within a single image ChatGPT referenced two very good examples: "P1 - Bisection Bandwidth.png".
+Note that in the image, N refers to the number of links on that line/plane which it assumes all have same
+bandwitdh. In a way that is also how you identify the bottleneck in your networking design. So, an ideal
+bisection bandwidth (refered to as full bisection bandwidth) which is guaranteed not to cause any bottlenecks
+should be the sum of all device's bandwidths divided by two, since the worst-case scenario splits it equally
+into two halves, so that's the amount we need to support both ways. However, that is my attempt to give the
+constant a reason, yet I still don't understand why the half because both sides can request/reply and for X
+devices there is X requests/replies that can be done simultaneously. And even if a request must wait for a
+reply which could explain the contant value two we divide by, it still doesn't matter if a device can request
+more whilst waiting for its other replies and vice versa.
+
+Hypercube topology achieves this Full Bisection Bandwidth goal, namely the bandwidth sum of X/2 of the links
+over the specified split, where X is the sum of all the device's bandwidths. Hypercube topology achieves this
+goal exactly. Tree, Bus, and other single point of failure topologies do it the worst with O(1). And apparently
+a Mesh isn't short way to say Full-Mesh which I assumed it was, and even google gives me the Full-Mesh when I
+google just Mesh. And Mesh is in sqrt(X) by the way which is worse than the Hypercube. Actually, on the issue
+with Mesh, I have a screenshot of it at "P1 - Mesh (Not Full).png".
+
+
+
+--- Switch Architecture ---
+Switches translate certain inputs into certain outputs, changing the exit point of any arrival point. Imagine
+a switch with 4 IN and 4 OUT ports. Data coming from an IN port can be transfered to and exit via any OUT port
+as long as it isn't busy. However, the internal logic of a switch may not always allow that. Non-Blocking
+switches do allow that, Blocking do not. Non-Blocking are more expensive and for each amount N of INs/OUTs it
+requires N^2 crossbars. Blocking switches consists of smaller Non-Blocking switches with K INs/OUTs, and are
+laid out in such a way that requires only N * log_K(N) crossbars, but those are Blocking. For example, if IN #1
+must go to OUT #2, and then another IN #2 must go to OUT #1, the internal architecture of the Blocking switch
+may not allow for IN #2 to exit via OUT #1 because IN #1's path to OUT #2 is blocking it. Non-Blocking switch's
+architecture the way I explained it here before (the N * log(N) one) is a specific type called a MIN. Any
+packets that need to travel must wait and have to be buffered, or dropped, or something else, I don't know...
+The issue with adding more switches in-between however is the increase in the number of hops which creates
+latency.
+
+There is a way to make MINs Non-Blocking, and there are several methods in fact:
+1.Three Stage Clos Network - Visualized in "P1 - Three Clos Network.png". Clos's Network is Non-Blocking in a
+  strict sense, meaning that IN #1 to OUT #2 won't ever be rearranged to OUT #3 for example just for IN #2 to
+  get OUT #1 (just an example). In other words, all previous INs still map to the same OUTs. This is important
+  for what is coming next, which is the Benes Network.
+2. Benes Network - It simply reapplies the Clos's Three-Stage concept to its middle stage recursively until
+   those are reduced to switches 2x2 in size, i.e. 2 INs and 2 OUTs. Here the Non-Blocking may rearrange the
+   IN #1 to OUT #3 for IN #2's sake (again just an example). I have to say that Clos Network works at any size.
+   The advantage of Benes Network is that it uses standard, easy to manufacture, non-complicated, 2x2 switches
+   and is easily scaleable to any size using only these.
+3. Third method (which doesn't really have a name) is to simply add more switches, log_K(N - 1) to be more
+   precise, and in a way which is "mirroring the original topology". This is also Rerrangeably Non-Blocking
+   just like Benes's Network is, but it isn't close to Clos's Network, and thus not to Benes's too.
+4. Fat Tree Network - Is similar to the Benes Network. The difference is that it creates more of a, well...
+   fat tree like structure from left to the middle. In fact, Fat Tree Network is the same as the Benes Network,
+   and that is the same as Clos Network, just built differently for ease of understanding. In some cases Fat
+   Tree Network can also distribute the load better between the switches in the middle. This method is also
+   the most popular to be used among SANs. Also, doing Network Bisection on it is easy.
+
+Direct Networks are networks where each switch is connected to just one device. Now, let's compare the cost
+between using a switch via crossbar to connect devices in a full-mesh, versus switches using MINs which connect
+to a single device and then to each other in a full-mesh. All in the Direct Networks. Using MINs takes
+N * (N - 1) / 2 links, whilst using Crossbar takes N^2 links. Assuming NxN switches cost C^2, and that 1xN
+switches cost C (i.e. the complexity, manufacturing, etc. doesn't contribute to the cost), then we get that
+N(N - 1) / 2N^2 = (N - 1) / 2N which for large N means that MINs are twice as expensive. So it is never worth
+using MINs in a full-mesh, but there is in a Hypercube (probably).
+
+Oh, we are also introduced a new Topology which I refered to as Mesh before. It is actually called a 2D Mesh
+where the nodes are arranged in a square grid like pattern. This 2D Mesh's Full Bisection Bandwitdh is sqrt(N).
+Then there is also a Torus which is 2 * sqrt(N) whilst adding not that many more links, nice to know.
+
+When it comes to Indirect Networks, there is a technique called Bristling. It is very simple actually. You
+know how in Direct Networks each switch has just one IN but multiple OUTs and thus connects to just one device
+(can be compute node, etc. I just call it "device" everywhere)? Well Bristling is basically the same as Direct
+Networks, except that the switches connect to at least one device instead, i.e. it can be more than just one.
+The bristling factor b is the number of devices each switch connects to, e.g. b = 4 means 4 devices on each
+switch. It says nothing about how many switches there are, nor how they are connected to each other. The cool
+part is that it doubles the Full Bisection Bandwidth and lessens the number of hops by 1 (I think).
+
+
+
+--- Network Routing ---
+Each switch performs routing, even if the path has already been predetermined and resources have been allocated.
+Even if the topology is a simple Bus, we still do it. The goal is to set the path to a destination, even if it
+is trivial, to restrict certain paths, and to determine optimal ones in benefit of the system. We have already
+looked at routing and discussed how it could work in IN2140. Though here it is slightly different.
+
+With routing there are 2 problems that get introduced, namyle Livelock and Deadlock.
+1. Livelock - This case is when the packet moves through the network never reaching its destination but still
+   making hopes in doing so. It never gets dropped and always persists causing neverending, needless use of
+   the system's resources. Having max number of hops as the bound solves this issue. Why would the router even
+   assign a path that never ends? Well maybe there is a congestion, but no way through it, so the routing just
+   causes it to go in a loop until the congestion ends or something... Livelocks are possible cuz routing is
+   performed by each switch independently, probably when allocating resources to just the next hop.
+
+2. Deadlock - Classic, doesn't really need introduction. Example: Packet A waits for packet B first, B waits
+   for packet C, and C waits for A. As for how to solve it there isn't a simple way to do so, but it has been
+   discussed in IN1010, IN3020, and more I believe.
+   
+   A. In our case we use Channel Dependency Graphs which is what we do to prevent deadlocks. It is very similar
+      to the one in IN3020. Here we just look at the cycle dependency which indicates a possibility of a
+      deadlock. So if a routing rule creates a cycle, we just don't use it.
+   
+   B. Then there is DOR - Dimension Order Routing which is a determenistic method used in topologies such as
+      meshes and hypercubes. The idea is to establish an order in which packets must travel first before
+      considering alternative paths. Since the path is ordered and the target can't go to the higher ordered
+      one, eventually the packet will reach its destination (here destination is the lower order of course).
+      Ordering doesn't have to be the same for all. In fact it can't be, otherwise devices will never reply.
+   
+   Rings and Toruses naturally have indirect circular paths. There are two ways to fix that, either use Virtual
+   Channels (VCs), or Bubble Flow Control. With Virtual Channels what we do is we use DOR and impose different
+   ordering rules on the same switch. For example, if the packet visits the switch a second time it is because
+   the ordering contained the same switch twice, but no more than that so a third time is forbidden (just an
+   example). The Bubble Flow Control is basically just an 
+   
+   Instead of preventing deadlocks we may just recover from them instead, especially since the less the traffic
+   is and the higher the more choices there are, the less are the odds of it happening. And so preventing it
+   when it is unlikely to happen might be a waste of compute in most cases. And there are 2 ways we do this:
+   Regressive Recovery and Progressive Recovery.
+   
+   A. Regressive Recovery - Here the idea is very similar to the Lossy data transfer. Detect a potential
+      deadlock, abort the packet involved, wait for some time, then try sending the same packet again. This
+      requires buffering packets and awaiting confirmation, implementing retrying mechanisms, and more...
+      In other words, it is a hassle and goes against what we are trying to do here really.
+   
+   B. Progressive Recovery - Here the idea is again similar to the Lossy data transfer. Instead of reattempting
+      communication we simply resend the packet via another link/route/path, depends... We again need buffering,
+      timeouts (or some other way of detection), retrying mechanisms, duplicate handling (probably), etc.
+
+Routing can be splitted into two types based on availability and routing decision making:
+1. Determenistic Routing - For a source and destination, the routing algorithm always picks the same path.
+   It may be based on more such as ordering, etc. (Not based on variables such as congestion though).
+
+2. Adaptive Routing - Adaptive routing may still be predictable, but adapting to its environemntal changes such
+   as congestion. Of course it means it can't be easily analyzed and behave differently based on runtime
+   conditions and many other potential variables. But it is likely to be more efficient, though perhaps slower
+   at routing since it now has to be done at runtime.
+
+When it comes to routing freedom (how many viable paths we can choose from) ther are 3 tiers:
+1. Dimension Order Routing, aka. DOR which we already know. Only one predetermined route is allowed.
+
+2. Partial Adaptive Routing which allows for some alternative paths (not necessarily viable, depends...). Here
+   we'll also look at the Duato's Algorithm as an example. Here we basically allow adaptive routing but also
+   have access to a set of channels whose routing dependencies are deadlock-free. I assume it requires being
+   able to detect paths that may potentially lead to deadlocks and simply using the safe path instead.
+
+3. Recovery Routing (also called Adaptive Routing sometimes too) which is when we are able to consider multiple
+   viable paths (do not confuse with Adaptive Routing's variable adaptability during runtime). It does require
+   deadlock prevention mechanisms discussed before. The obvious drawbacks is the complexity, and as mentioned
+   it might not be runtime dependent (though it probably will be).
