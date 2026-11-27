@@ -1,2 +1,0 @@
-datacenters were using some connection like LEDBAT first I think, that is where the inspiration to make it and use
-it in UTorrent came from. That is because there it was designed to be friendly, fair, and not fill buffers.

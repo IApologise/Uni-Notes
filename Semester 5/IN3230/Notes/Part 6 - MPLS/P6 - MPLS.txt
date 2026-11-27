@@ -1,0 +1,178 @@
+--- Introduction to MPLS ---
+MPLS stands for MultiProtocol Label Switching which is a way of forwarding packets using some kind of labels
+instead of IP addresses. This is useful for when the router has decided that a certain path along the
+network should be taken and the necessary resources have already been allocated for it. The labels then guide
+the packet along that path since that isn't something IP can do on its own. MPLS is between Ethernet and IP
+layers. And it directly addresses how during switching in the previous lecture a packet can take a certain
+path it was given by the router and how those resources can be allocated. This means that instead of routers
+and other devices looking at their layer's relevant data, such as a router forwarding packets based on the
+packet header's destination IP address, it instead looks at the MPLS's label and uses that to decide where
+to forward the packet. It is typically used to inside an infrastructure that has MPLS supported where it
+sits before the IP Header.
+
+In addition to that, one may separate connections between services without creating separate physical
+networks by simply applying separate MPLS labels to each service which is what the internet providers do
+to different customers, be it usual homes with their own home routers or big companies with multiple. It
+allows for easy Network Consolidation which is the merging previously separate networks into a shared one,
+including the possibility to connect two distant offices like in Oslo and in Trondheim into a WAN via its
+own MPLS VPN, though the limitations and rules for those previously separate networks may still apply. And
+it also allows for Network Segmentation which is splitting the network into smaller parts. With MPLS we get
+lots of control over what can and can't be shared, and we also may impose limitations such as throughput,
+latency, availability, packet loss, and jitter all of which can be capped and limited. All this is determined
+in the SLA agreement between you and the service provider encoded into the MPLS labels used within the
+provider's routing infrastructure.
+
+
+
+--- Core MPLS & Its Domain ---
+MPLS is a small additional header which as mentioned before encapsulates the IP layer such that its rules
+are applied to the router first bypassing the IP routing. MPLS Headers do not make sense to routers that
+do not support MPLS protocol, and home routers don't use those mainly due to trust issues between the
+customer and the provider. As well as due to possible maintenance that the provider might need to do, and I
+wouldn't want some IT guy come whenever into my house possibly several times a day to do some "IT stuff".
+So, we distinguish between 4 types of routers:
+1. Customer (C) - Those are the customer's routers used inside their infrastructure/domain which they have
+   full access to and full control over.
+2. Customer Edge (CE) - CEs are also part C's routing infrastructure, the only difference is that CEs can
+   also forward packets to PEs since those are directly connected to each other.
+3. Provider Edge (PE) - These are the provider's routers which are supposed to take the incoming packets
+   from CEs and inject the appropriate MPLS Headers, then forward it to the P router. In case the packet was
+   received from P it must strip the MPLS Header instead and then forward it to the CE. Those two operations
+   are called Push and PoP (no typo here) for Imposition and Disposition respectively.
+4. Provider (P) - These are provider's routers which forward packets based on their MPLS Header labels.
+   They also switch the MPLS label's values on each hop. It could also perform the PE's job and also route
+   to other PEs, not just Ps, but it depends on the topology. As long as it works with MPLS and has a
+   direct connection to a CE it counts as a PE.
+Also, both PEs and Ps are part of the Label Switching Routing (LSR) where Ps are sometimes called Core
+Routers instead. Inside this LSR we have the MPLS Domain. Outside LSR there are no MPLS Headers.
+
+Each P has a table on what to do with the MPLS label based on the values it reads. Specifically, once it
+reads the label, its value determines which outgoing channel should the packet be forwarded through refered
+to as Signaling, and what should the label's value be replaced with for the next router refered to as
+Forwarding (quite counter intuitive naming at first glance, but I guess it just depends on perspective).
+To know which label the router should swap to, a system called Label Distribution Protocol (LDP) is used.
+The idea is to have routers exchange labeling tables with their neighbours. Labels represent a range of
+destionation IP Addresses that the forwarding mapping applies to, and as we know labels are set by PEs
+based on which CE it came from. Technically speaking, labels are just identifiers of different Forwarding
+Equivalence Classes (FECs) which is what actually determines how packets are to be forwarded. So, what PEs
+actually do is perform IP-routing for a whole path to be followed, i.e. FEC, and give that path an ID, i.e.
+label. Each router now using their tables and the labels know where the packet should go next.
+
+I have mentioned that MPLS Headers contain Labels, but they also contain Time To Live (TTL), Class of Service
+(COS, aka. EXP), and Bottom of Stack (S). Checkout "L6 - MPLS Header.png" for location and size in bits,
+though all in all, the header is 4B (bytes) or 32b (bits) in size. Bottom of Stack tells us whether there
+are more than just one MPLS Headers after/before each other (direction not specified), though we only need 2.
+First one is for forwarding between the Ps, and the second one is for when PEs strip the first one. The
+second MPLS tells the outgoing PE some details on what additional things it should do to the packet before
+it sends it to a CE, for instance in case CE uses a VPN. As for COS that comes later since it isn't part of
+the Core MPLS (back when it was introduced).
+
+
+
+--- Modern Extended Version of MPLS ---
+Core MPLS does not provide bandwidth reservation, congestion avoidance, guaranteed latency, guaranteed packet
+loss, automatic protection against every failure, cryptographic confidentiality, nor path selection (routing
+is the job of a router, MPLS just enforces the use of the path). However, modern MPLS can do some of that
+stuff compared to the Core MPLS which could only do Forwarding and Signaling. Check out "P6 - MPLS
+Mechanisms.png" to see what was added (things highlighted yellow is what we covered thus far).
+
+A router's job thus far can be split into 4 parts, a nice model to use is this:
+1. Routing Information Base (RIB) which is the part that creates a table determening the next hop for a
+   packet to go through using its table made up of its own telemetry and shared tables of other routers.
+2. Forwarding Information Base (FIB) is the part that uses RIB's table to forward the packet (next hop).
+3. Label Information Base (LIB) is where MPLS comes in. It contains the label-related information such as
+   label to FEC mappings learned via LDP mechanism. Though LDP takes place after the RIB's IGP is done since
+   it relies on PE's routing first. IGP is a mechanism that creates these routing tables.
+4. MPLS Forwarding Infrastructure (MFI) is much like FIB is for RIB. We simply take a look up our label in
+   our LIB to know what to do with it, such as Swap or PoP the label, or perform some sort of action.
+   Coincidentally, that is also where MPLS comes in, its usage to be more precise.
+Later we will introduce TED and maybe some more stuff, but all that will be explained later...
+
+Now then, let's talk about how modern MPLS extends the Core MPLS by introducing the following mechanisms:
+1. Quality of Service (QoS) is when a PE looks into the packet's information such as protocol, port, etc.
+   to add extra constraints to the routing process. For instance, video conferencing requires high bandwidth,
+   low delay, and low packet loss for a smooth show. It classifies the needs and inserts an identifier for
+   that class in the COS section of the MPLS Header. The routers read the identifier and use it to get the
+   class description which they have in their local database. This type of marking is called traffic-class
+   (TC). This also allows for implementing stuff like queueing priorities useful during congestion, provide
+   a weighted share of transmission capacity, and more. As a concrete example, imagine a congested network
+   and packets one of which is a file download and the other is a video conference. File download isn't
+   crucial, but a video conference's every packet loss and delay is very noticeable and frustrating. With
+   MPLS we can prioritize video conferences over file downloads fixing the video conference lagging issue
+   at the cost of slowing down that someone's file download.
+
+2. Traffic Engineering (TE) adds goals and constraints that may influence and control the paths that the
+   packets may take. An example of its usage would be to avoid congested links even though it might take
+   more hops, or a particular router/link due to high packet loss telemetry at that point. It is also
+   what may determine a specific path the packet takes called tunneling, or an altenrative path in case
+   of some unforseen failure. Core MPLS simply follows the predetermined route generated by the IGP. TE
+   on the other hand can calculate own routes independently of the IGP, meaning it does not rely on RIB.
+   
+   Since it creates a route it first needs to learn of the MPLS Domain topology. Router's original OSPF and
+   IS-IS already distribute the topology information. However, we need more information such as bandwidth,
+   latency, etc. all of which the modified OSPF-TE and IS-IS-TE provide. These aren't anything new, they
+   simply share and carry extra telemetry along with the original topology related information as they
+   usually do. All of this telemetry for TE are stored in the router's TE-Database (TED), excluding what
+   can already be found in RIB and LIB, simply to avoid duplicate data storage.
+   
+   Afterwards it must compute a path satisfying the tunnel's requirements. Traditionally routers have been
+   using Shortest Path First (SPF) computed via Dijkstra's Search Algorithm. However, using TED we may
+   impose additional contraints, i.e. compute paths via CSPF (Constrained SPF) as a way to filter out or
+   change the cost of some paths, though it now may no longer guarantee an eligible path under the given
+   constraints if we just filter it out (and we often do). Also, we perform Fast ReRoute (FRR) too which
+   is basically calculating an alternative path in case the current tunnel suddenly fails.
+   
+   Once the path has been computed we need to signal the path to the routers on that path, establish
+   forwarding state, and reserve resources. Later the tunnel's conditions might change too, so we also need
+   to update the relevant routers accordingly. Establishing a path is done via RSVP-TE mechanism which is an
+   extension of the Resource ReserVation Protocol (RSVP). It may allocate labels and distribute them across
+   the LSP, signal to reserve resources, and modify the existing establishment. The signaling is made up of
+   two messages, the "PATH" and the "RESV" which are sent to the routers along the path. "PATH" encodes the
+   necessary information to establish the tunnel such as label information, and the "RESV" is for resource
+   reservation. The implementations of "PATH" and "RESV" may differ though... RSVP-TE is similar to LDP,
+   but LDP establishes label mappings for FECs using IGP derived paths, whilst RSVP-TE uses CSPF's routes.
+
+3. Operations, Administration, and Maintenance (OAM), as well as Management Information Bases (MIBs), are
+   both used together. Note that I will not explain how it works. OMA is about monitoring, testing, and
+   maintaining the network. OAM can be used to monitor and verify MPLS paths, tunnels and services, and help
+   detect faults. For example, to verify that the MPLS LSP between the two PEs is functioning. MIB contains
+   information about a network device, which systems can access and analyze through protocols such as SNMP.
+   It helps OAM to find which device is causing problems and where.
+
+
+
+--- Virtual Private Networks ---
+Virtual Private Networks (VPNs) are private networks (LANs) which are as if connected by some private router.
+Basically we connect two LANs between the two distant places logically using encryption only the two of
+these networks may understand. Don't confuse it with VLAN which splits a single LAN into multiple distinct
+ones logically, both still are technically inside one and the same LAN but the router prohibits them from
+communicating to one another (I think?). VPNs are for when you don't want to build a kilometer length
+infrastructure yourself to connect the two distant places and would rather just use the provider's existing
+one (imagine saying no to that).
+
+The client may decide how much the provider interferes:
+1. Layer-2 VPN - The provider transports the Ethernet Headers + any additional payload. This allows the two
+   LANs to communicate as if they are in a single one. The routing is still the client's responsibility.
+   The way this data is transported is done in two ways:
+   A. Virtual Private Wire Service (VPWS) - This one provides the Point-To-Point connectivity between two
+      endpoints. We basically translate MAC of PE1 to the MAC of CE2 which is connected to PE2 & vice versa.
+      This limits the number of LANs that can be connected to just 2 though since there is no way to
+      distinguish whether MAC coming from CE1 should go to CE2 or CE3 for instance. There is a way around
+      that but I'd rather not go down the rabbit hole. AToM is how we refer to this strategy in general
+      which is when we use MPLS and don't use the CE's MAC Address that the PE gets, just forward it.
+   
+   B. Virtual Private LAN Service (VPLS) - This provides multipoint Ethernet connectivity between multiple
+      CEs, which basically is emulating that all the sides are connected by as if an Ethernet LAN or a
+      broadcast domain. PEs learn of the MAC Addresses and maintain MAC forwarding tables and learn of
+      each other's CE's MAC Addresses by sharing and via unicasts.
+
+2. Layer-3 VPN - The provider does everything that Layer-2 VPN does and is also responsible for routing too
+   such as exchanging the routing tables between the two client's LANs. The PEs on either side learn of the
+   CE's topologies and other routing information and share that information with the other side's PE. CEs
+   share that information via BGP or OSPF protocols (idk what those are). MultiProtocol BGP (MP-BGP) is what
+   is used between the PEs to share the info mentioned before. Virtual Routing and Forwarding (VRF) allows
+   PEs to maintain the separate Layer-3 VPNs between the separate customers and their CEs. It works by
+   adding an RD which is a prefix and an identifier added on top of IPv4/IPv6 Addresses, then the RTs are
+   used to actually distribute the data related to those connected PEs sharing the same VPN. That is where
+   the second, inner MPLS Header is used, it contains the label of the VPN (their values are chosen to not
+   collide with the forwarding labels).

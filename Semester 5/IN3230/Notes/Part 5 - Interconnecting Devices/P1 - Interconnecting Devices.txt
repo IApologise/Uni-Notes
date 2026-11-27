@@ -330,3 +330,10 @@ When it comes to routing freedom (how many viable paths we can choose from) ther
    viable paths (do not confuse with Adaptive Routing's variable adaptability during runtime). It does require
    deadlock prevention mechanisms discussed before. The obvious drawbacks is the complexity, and as mentioned
    it might not be runtime dependent (though it probably will be).
+
+
+
+--- P.S. ---
+I am too lazy to rename everything, but this section now counts as Part 5 instead of Part 1, though the images,
+this text file, and all notes here will still have the "P1 - " prefix. Don't pay attention to that prefix but
+still use it to locate these named files since they did not change.
